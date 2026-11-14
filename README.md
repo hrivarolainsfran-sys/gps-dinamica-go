@@ -4,7 +4,18 @@ Dinámica interactiva para GO, **Lección 6 «El Espíritu y la misión»**, pun
 
 Un GPS animado ayuda a explicar cómo guía el Espíritu Santo: un paso a la vez, recalculando cuando nos equivocamos, cerrando calles (Hechos 16:6-10) y en comunidad (Hechos 13:1-3).
 
-## Cómo usarla
+## Juego en el predio: «Ruta a la capilla» (`/juego/`)
+
+Versión con GPS real para recorrer el predio en equipos (un celular por equipo, 6-8 minutos):
+
+1. **Modo líder:** imprime los carteles (buenos y trampas se ven iguales), pégalos en el predio y marca cada uno con «Marcar aquí». Bajo techo quedan como «Solo QR».
+2. **Comparte:** genera el QR del juego y cada equipo lo escanea con la cámara.
+3. **Juego:** el GPS guía al próximo punto. Si el equipo se acerca a una trampa, salta la advertencia «Recalculando» y tienen que discernir juntos para desviarse. Escanear un cartel bueno suma 100; detectar una trampa a tiempo suma 50; escanear una trampa resta 50 y obliga a esperar 15 segundos.
+4. **Destino:** la capilla, donde se anuncia a Jesús.
+
+Con «Probar en este celular» puedes ensayar el recorrido tocando el mapa, sin moverte.
+
+## Cómo usar la presentación
 
 - **En línea:** abre la página de GitHub Pages de este repositorio.
 - **Sin internet:** descarga `index.html` y ábrelo con doble clic en cualquier navegador.
