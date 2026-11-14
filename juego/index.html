@@ -2076,7 +2076,7 @@ function showScreen() {
   function render() {
     if (view !== 'screen') return;
     const now = Date.now();
-    const stale = !!(D && D.run && !D.done && now - D.t > 30 * 60000) || !!(D && D.done && now - D.done > 30 * 60000);
+    const stale = !!(D && D.run && !D.done && now - D.t > 30 * 60000) || !!(D && D.done && now - D.done > 30 * 60000) || !!(D && D.start && now - D.start > 3 * 3600000);
     const waiting = !D || !D.run || stale;
     $('#scrWait').hidden = !waiting && !!R;
     if (!R) { $('#scrWaitT').textContent = 'Todavía no hay un recorrido guardado'; $('#scrWaitP').textContent = 'En el modo líder, entra con Google y coloca los carteles: aparecen aquí solos, con su imagen.'; }
