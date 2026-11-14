@@ -15,6 +15,14 @@ Versión con GPS real para recorrer el predio en equipos (un celular por equipo,
 
 Con «Probar en este celular» puedes ensayar el recorrido tocando el mapa, sin moverte.
 
+**Enlaces fijos (con la nube conectada):** en el modo líder, «Guardar recorrido en la nube» guarda los carteles marcados. Desde ahí funcionan siempre:
+
+- `juego/#jugador`: el adolescente que juega y transmite.
+- `juego/#pantalla`: la computadora del proyector, que muestra al jugador en vivo.
+- `juego/#equipos`: cada equipo con su celular.
+
+La nube usa Firebase (Firestore). Pega la configuración web del proyecto en `juego/config.js` y publica las reglas de `juego/firestore.rules`. Sin eso, el juego funciona igual con el recorrido guardado en el celular y los enlaces largos.
+
 **Jugador en pantalla grande:** en el modo líder, «Generar enlace del jugador» crea un enlace aparte para el adolescente que juega con el celular conectado a la pantalla. La clase ve en vivo su posición, el camino que va dejando, las advertencias de trampas (para ayudarlo a responder) y el recorrido completo al final. En horizontal, el mapa ocupa la pantalla y a la derecha queda un panel con la leyenda.
 
 ## Cómo usar la presentación
