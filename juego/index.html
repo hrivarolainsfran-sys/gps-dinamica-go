@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#EC4217">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>El Espíritu y la misión · Ruta a la capilla</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -384,6 +388,17 @@ details.more summary{color:var(--navy)}
 @keyframes pulse{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.9);opacity:0}}
 @media (prefers-reduced-motion: reduce){ .plano .pulse{animation:none;opacity:.35} }
 
+.pause-over{position:absolute;inset:0;z-index:640;background:rgba(27,34,102,.55);display:grid;place-items:center;padding:24px}
+.pause-over .card{max-width:420px;text-align:center}
+.editor{display:grid;gap:8px;background:#F3E9D9;border-radius:6px;padding:14px}
+.fieldtest{display:grid;gap:10px;border-top:2px dashed var(--line);padding-top:14px}
+.ftout{display:grid;gap:8px}
+.ftout:empty{display:none}
+.warnline{background:var(--bad-bg);color:var(--stop);border-radius:6px;padding:10px 12px;font-weight:700}
+.editor textarea{resize:vertical;min-height:72px}
+.optrow{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}
+.optrow input[type=radio]{width:22px;height:22px;accent-color:var(--navy)}
+.tag.new{background:var(--red);color:#fff}
 /* Carteles impresos con el estilo del afiche */
 .cartel{background:var(--cream);border:2px dashed #C9B89E;border-radius:6px}
 .c-top{color:var(--navy);font-family:var(--f-mono)}
@@ -402,6 +417,7 @@ details.more summary{color:var(--navy)}
 <script src="config.js?v=2"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script>
 (() => {
 'use strict';
@@ -442,8 +458,23 @@ const PRESETS = [
     why:'El Espíritu no te hace importante: te capacita para anunciar a Jesús. Todo termina en Cristo anunciado.',
     q:'¿Hacia dónde lleva siempre el Espíritu?', options:['Hacia que yo sea conocido','Hacia Jesús anunciado','Hacia lo más emocionante'], ok:1 }
 ];
-const BY_ID = Object.fromEntries(PRESETS.map(p => [p.id, p]));
-const BY_CODE = Object.fromEntries(PRESETS.map(p => [p.code, p]));
+const PRESET_IDS = new Set(PRESETS.map(p => p.id));
+const CONTENT_KEYS = { good: ['name', 'sign', 'title', 'body', 'ref'], dest: ['name', 'sign', 'title', 'body', 'ref'], trap: ['name', 'sign', 'why', 'q', 'options', 'ok'] };
+let CARTELS = [], BY_ID = {}, BY_CODE = {};
+// Mezcla los carteles originales con los textos editados y los carteles nuevos del líder
+function rebuildCartels(map) {
+  map = map || {};
+  const list = PRESETS.map(p => ({ ...p, ...(map[p.id] || {}), id: p.id, type: p.type, code: p.code, custom: false }));
+  Object.values(map).forEach(c => { if (c && c.custom && c.id && !PRESET_IDS.has(c.id) && CONTENT_KEYS[c.type]) list.push({ ...c, custom: true }); });
+  CARTELS = list; BY_ID = {}; BY_CODE = {};
+  list.forEach(c => { BY_ID[c.id] = c; BY_CODE[c.code] = c; });
+}
+function contentOf(c) {
+  const o = { id: c.id, type: c.type, code: c.code, custom: !!c.custom };
+  CONTENT_KEYS[c.type].forEach(k => { if (c[k] !== undefined) o[k] = c[k]; });
+  return o;
+}
+rebuildCartels({});
 const TYPE_LABEL = { good:'Bueno', trap:'Trampa', dest:'Destino' };
 const DEFAULT_USE = ['adora','palabra','juntos','capilla','senal','ganas','secreto'];
 const WARN_R = 8, ARRIVE_R = 6, WEAK_ACC = 30, LOCK_MS = 15000;
@@ -739,6 +770,26 @@ const Sound = {
   ping() { this.tone(988, .18); }
 };
 document.addEventListener('pointerdown', () => Sound.init(), { passive: true });
+const Voice = {
+  on: false, voice: null,
+  ok() { return 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined'; },
+  pick() {
+    if (!this.ok()) return null;
+    const vs = speechSynthesis.getVoices().filter(v => /^es/i.test(v.lang));
+    this.voice = vs.find(v => /es-(419|AR|UY|MX|US)/i.test(v.lang)) || vs[0] || null;
+    return this.voice;
+  },
+  say(text, interrupt) {
+    if (!this.on || !this.ok() || !text) return;
+    try {
+      if (interrupt) speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = (this.voice && this.voice.lang) || 'es-419'; if (this.voice || this.pick()) u.voice = this.voice;
+      u.rate = 0.98; speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+};
+if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = () => Voice.pick();
 let wake = null;
 async function keepAwake() { try { if ('wakeLock' in navigator) wake = await navigator.wakeLock.request('screen'); } catch (e) {} }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && view === 'team') keepAwake(); });
@@ -752,7 +803,12 @@ function freshLeader() {
 if (!leader || !leader.pts) leader = freshLeader();
 if (!Array.isArray(leader.r)) leader.r = [WARN_R, ARRIVE_R];
 if (leader.lim == null) leader.lim = '';
-PRESETS.forEach(p => { if (!leader.pts[p.id]) leader.pts[p.id] = { use: false, lat: null, lng: null, acc: null, hint: '' }; });
+if (!leader.content || typeof leader.content !== 'object') leader.content = {};
+function syncLeaderCartels() {
+  rebuildCartels(leader.content);
+  CARTELS.forEach(c => { if (!leader.pts[c.id]) leader.pts[c.id] = { use: c.custom, lat: null, lng: null, acc: null, hint: '' }; });
+}
+syncLeaderCartels();
 leader.pts.capilla.use = true;
 const saveLeader = () => store.set('gpsgo-leader', leader);
 
@@ -764,7 +820,7 @@ const isSim = () => !!game && ss.get('gpsgo-sim') === game.g;
 const isPantalla = () => !!game && store.get('gpsgo-pantalla', null) === game.g;
 const teamLabel = t => t.pantalla ? (t.name || 'Jugador') : `Equipo ${t.team}${t.name ? ' · ' + t.name : ''}`;
 function loadGame(g, pantalla, sim) {
-  game = g; store.set('gpsgo-game', g);
+  game = g; store.set('gpsgo-game', g); rebuildCartels(g.c || {});
   if (pantalla) store.set('gpsgo-pantalla', g.g); else if (store.get('gpsgo-pantalla', null) === g.g) store.del('gpsgo-pantalla');
   if (sim) ss.set('gpsgo-sim', g.g); else ss.del('gpsgo-sim');
 }
@@ -783,6 +839,7 @@ const Cloud = {
       if (cfg && cfg.apiKey && cfg.projectId && window.firebase) {
         const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(cfg);
         this.db = firebase.firestore(app);
+        try { this.db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch (e) {}
       } else this.db = null;
     } catch (e) { console.error(e); this.db = null; }
     return this.db;
@@ -790,8 +847,21 @@ const Cloud = {
   get ok() { return !!this.init(); },
   routeRef() { return this.init().collection('rutas').doc(ROUTE_ID); },
   liveRef() { return this.routeRef().collection('vivo').doc('actual'); },
-  toCloud(g) { return { v: 1, g: g.g, p: g.p.map(r => ({ id: r[0], lat: r[1], lng: r[2], hint: r[3] || '' })), r: g.r || [WARN_R, ARRIVE_R], lim: g.lim || '', updatedAt: Date.now() }; },
-  fromCloud(d) { return d && Array.isArray(d.p) ? { v: 1, g: d.g, p: d.p.map(o => [o.id, o.lat ?? null, o.lng ?? null, o.hint || '']), r: d.r, lim: d.lim || '' } : null; },
+  controlRef() { return this.routeRef().collection('vivo').doc('control'); },
+  async sendControl(patch) { await this.controlRef().set({ ...patch, t: Date.now() }, { merge: true }); },
+  // Ingreso del líder con su cuenta de Google (las reglas de Firebase solo dejan guardar al líder)
+  auth() { return this.ok && window.firebase && typeof firebase.auth === 'function' ? firebase.auth() : null; },
+  user: null,
+  watchAuth(cb) { const a = this.auth(); if (!a) { cb(null); return () => {}; } return a.onAuthStateChanged(u => { this.user = u; cb(u); }); },
+  async signIn() {
+    const a = this.auth(); if (!a) throw new Error('sin-auth');
+    const prov = new firebase.auth.GoogleAuthProvider(); prov.setCustomParameters({ prompt: 'select_account' });
+    try { await a.signInWithPopup(prov); }
+    catch (e) { if (e && (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment')) await a.signInWithRedirect(prov); else throw e; }
+  },
+  async signOut() { const a = this.auth(); if (a) await a.signOut(); },
+  toCloud(g) { return { v: 1, g: g.g, p: g.p.map(r => ({ id: r[0], lat: r[1], lng: r[2], hint: r[3] || '' })), r: g.r || [WARN_R, ARRIVE_R], lim: g.lim || '', c: g.c || {}, updatedAt: Date.now() }; },
+  fromCloud(d) { return d && Array.isArray(d.p) ? { v: 1, g: d.g, p: d.p.map(o => [o.id, o.lat ?? null, o.lng ?? null, o.hint || '']), r: d.r, lim: d.lim || '', c: d.c || {} } : null; },
   async saveRoute(g) { await this.routeRef().set(this.toCloud(g)); },
   async loadRoute() { const s = await this.routeRef().get(); return s.exists ? this.fromCloud(s.data()) : null; },
   _last: 0, _timer: null, _data: null,
@@ -860,8 +930,9 @@ function route() {
     return;
   }
   if (hs === 'lider') return showLeader();
+  if (hs === 'control') return showControl();
   if (hs === 'carteles') return showCarteles();
-  if (view === 'team' || view === 'final' || view === 'setup' || view === 'screen' || view === 'loading') return;
+  if (view === 'team' || view === 'final' || view === 'setup' || view === 'screen' || view === 'loading' || view === 'control') return;
   showHome();
 }
 window.addEventListener('hashchange', route);
@@ -886,18 +957,47 @@ function showHome(note) {
 }
 
 /* ---------- Líder ---------- */
-let placing = null;
+let placing = null, editing = null;
+const CODE_CHARS = 'ACDEFGHJKMNPQRTUVWXY2346789';
+function newCode() {
+  for (let i = 0; i < 500; i++) {
+    let c = ''; for (let j = 0; j < 3; j++) c += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)];
+    if (!BY_CODE[c] && /[0-9]/.test(c) && /[A-Z]/.test(c)) return c;
+  }
+  return 'Z' + Math.floor(10 + Math.random() * 89);
+}
+function editorHTML(p) {
+  const f = (k, label, max, area) => `<label class="lbl" for="ed-${k}">${label}</label>` + (area
+    ? `<textarea class="input" id="ed-${k}" data-k="${k}" rows="3" maxlength="${max}">${esc(p[k] || '')}</textarea>`
+    : `<input class="input" id="ed-${k}" data-k="${k}" maxlength="${max}" value="${esc(p[k] || '')}">`);
+  let body = f('name', 'Nombre (solo lo ves tú)', 40) + f('sign', 'Frase del cartel', 70);
+  if (p.type === 'trap') {
+    body += f('why', 'Por qué es una trampa', 260, true) + f('q', 'Pregunta para discernir', 120);
+    const opts = p.options || ['', '', ''];
+    body += `<p class="lbl">Opciones (marca la correcta)</p>` + [0, 1, 2].map(i => `<div class="optrow"><input type="radio" name="ed-ok" id="ed-ok${i}" value="${i}" ${+p.ok === i ? 'checked' : ''} aria-label="Opción ${i + 1} correcta"><input class="input" id="ed-o${i}" data-o="${i}" maxlength="90" value="${esc(opts[i] || '')}" placeholder="Opción ${i + 1}"></div>`).join('');
+  } else {
+    body += f('title', 'Título al llegar', 60) + f('body', 'Enseñanza al llegar', 320, true) + f('ref', 'Referencia (ej.: Hechos 13:2)', 40);
+  }
+  return `<div class="editor">${body}
+    <div class="row"><button class="btn small primary" data-act="save">Guardar texto</button><button class="btn small" data-act="cancel">Cancelar</button>
+    ${p.custom ? '<button class="btn small danger" data-act="del">Eliminar cartel</button>' : leader.content[p.id] ? '<button class="btn small" data-act="restore">Volver al original</button>' : ''}</div>
+    <p class="small">Si cambias la frase, vuelve a imprimir este cartel. Después toca «Guardar recorrido en la nube».</p></div>`;
+}
 function buildGame() {
   const p = [];
-  PRESETS.forEach(pr => { const s = leader.pts[pr.id]; if (s.use) p.push([pr.id, s.lat != null ? +s.lat.toFixed(6) : null, s.lng != null ? +s.lng.toFixed(6) : null, s.hint || '']); });
-  return { v: 1, g: leader.g, p, r: leader.r.slice(), lim: leader.lim || '' };
+  syncLeaderCartels();
+  const c = {};
+  CARTELS.forEach(pr => { const s = leader.pts[pr.id]; if (s && s.use) { p.push([pr.id, s.lat != null ? +s.lat.toFixed(6) : null, s.lng != null ? +s.lng.toFixed(6) : null, s.hint || '']); c[pr.id] = contentOf(pr); } });
+  return { v: 1, g: leader.g, p, r: leader.r.slice(), lim: leader.lim || '', c };
 }
 function showLeader() {
+  syncLeaderCartels();
   Geo.sim = false; if (Geo.pos && Geo.pos.sim) Geo.pos = null; Geo.start();
   placing = null;
   setView('leader', `<main class="page">
     <a class="back" href="#">← Inicio</a>
     ${poster('Modo líder · Preparar el recorrido')}
+    ${authCardHTML()}
     <p class="lead">Para los 6 a 8 minutos del punto 1: 3 puntos buenos, la capilla y 2 o 3 trampas. Un celular por equipo.</p>
 
     <section class="card"><p class="stepn">Paso 1</p><h2>Imprime los carteles</h2>
@@ -918,7 +1018,17 @@ function showLeader() {
       <p>En un terreno chico, unos metros de error del GPS se notan. Haz una vuelta de prueba: si el aviso de trampa salta donde no debe, bájalo; si cuesta «llegar» a un punto, súbelo. Los círculos del mapa muestran cada zona.</p>
       <label class="range"><span>Aviso de trampa <b id="rWv">${leader.r[0]} m</b></span><input type="range" id="rW" min="3" max="20" step="1" value="${leader.r[0]}"></label>
       <label class="range"><span>Llegada a un punto <b id="rAv">${leader.r[1]} m</b></span><input type="range" id="rA" min="3" max="15" step="1" value="${leader.r[1]}"></label>
-      <p class="small">Para un terreno de unos 12 × 30 m: aviso de 6 a 8 m y llegada de 4 a 6 m, con los carteles separados al menos 8 m. Al aire libre el GPS del celular suele errar entre 3 y 10 m, por eso la llegada siempre se confirma escaneando el cartel.</p></section>
+      <p class="small">Para un terreno de unos 12 × 30 m: aviso de 6 a 8 m y llegada de 4 a 6 m, con los carteles separados al menos 8 m. Al aire libre el GPS del celular suele errar entre 3 y 10 m, por eso la llegada siempre se confirma escaneando el cartel.</p>
+      <div class="fieldtest">
+        <p class="kicker">Prueba de campo en tu predio</p>
+        <ol class="check">
+          <li>Párate junto a un cartel y toca <b>Medir quieto</b>: en 20 segundos mide cuánto «salta» el GPS ahí.</li>
+          <li>Toca <b>Grabar vuelta</b> y camina el recorrido como lo haría el jugador. El camino aparece en el plano de arriba.</li>
+          <li>Al terminar te sugiero las distancias y te aviso si alguna trampa quedó demasiado cerca de un punto bueno.</li>
+        </ol>
+        <div class="row"><button class="btn small" id="ftStill">Medir quieto (20 s)</button><button class="btn small" id="ftWalk">Grabar vuelta</button></div>
+        <div id="ftOut" class="ftout" aria-live="polite"></div>
+      </div></section>
 
     <section class="card"><p class="stepn">Paso 4</p><h2>Antes de jugar</h2>
       <label class="lbl" for="lLim">Límites del predio (lo ve el jugador antes de empezar)</label>
@@ -960,18 +1070,19 @@ function showLeader() {
   } else $('#lmap').innerHTML = '<div class="map-off">El mapa necesita internet. Igual puedes marcar los puntos con el GPS.</div>';
 
   const preview = makePlano($('#lPlano'));
+  let ftTrack = [], ftWalking = false, ftStill = null, ftOffWalk = null;
   cleanup.push(() => preview.destroy());
   function drawPreview() {
-    const pts = PRESETS.filter(p => leader.pts[p.id].use && leader.pts[p.id].lat != null).map(p => ({ ...p, lat: leader.pts[p.id].lat, lng: leader.pts[p.id].lng }));
+    const pts = CARTELS.filter(p => leader.pts[p.id].use && leader.pts[p.id].lat != null).map(p => ({ ...p, lat: leader.pts[p.id].lat, lng: leader.pts[p.id].lng }));
     preview.setPoints(pts);
-    preview.render({ items: pts.map(p => ({ lat: p.lat, lng: p.lng, kind: p.type === 'trap' ? 'trap' : p.type === 'dest' ? 'dest' : 'target', label: p.code })), rings: pts.map(p => ({ lat: p.lat, lng: p.lng, r: p.type === 'trap' ? leader.r[0] : leader.r[1], color: p.type === 'trap' ? '#E5320B' : '#2536A8' })), trail: [], pos: Geo.pos && !Geo.pos.sim ? Geo.pos : null, name: 'Tú' });
+    preview.render({ items: pts.map(p => ({ lat: p.lat, lng: p.lng, kind: p.type === 'trap' ? 'trap' : p.type === 'dest' ? 'dest' : 'target', label: p.code })), rings: pts.map(p => ({ lat: p.lat, lng: p.lng, r: p.type === 'trap' ? leader.r[0] : leader.r[1], color: p.type === 'trap' ? '#E5320B' : '#2536A8' })), trail: ftTrack, pos: Geo.pos && !Geo.pos.sim ? Geo.pos : null, name: 'Tú' });
   }
   function draw() {
     drawPreview();
     if (!map) return;
     layer.clearLayers();
     const pts = [];
-    PRESETS.forEach(p => {
+    CARTELS.forEach(p => {
       const s = leader.pts[p.id]; if (!s.use || s.lat == null) return;
       const kind = p.type === 'trap' ? 'trap' : p.type === 'dest' ? 'destL' : 'good';
       const m = L.marker([s.lat, s.lng], { icon: mkIcon(kind, p.name), draggable: true }).addTo(layer);
@@ -984,15 +1095,17 @@ function showLeader() {
   }
   function renderList() {
     const groups = [['good', 'Puntos buenos'], ['dest', 'Destino'], ['trap', 'Trampas']];
-    $('#lList').innerHTML = groups.map(([ty, lbl]) => `<h3 class="grp">${lbl}</h3>` + PRESETS.filter(p => p.type === ty).map(p => {
+    $('#lList').innerHTML = `<div class="row"><button class="btn small" data-act="addgood">+ Agregar punto bueno</button><button class="btn small" data-act="addtrap">+ Agregar trampa</button></div>` +
+      groups.map(([ty, lbl]) => `<h3 class="grp">${lbl}</h3>` + CARTELS.filter(p => p.type === ty).map(p => {
       const s = leader.pts[p.id], loc = s.lat != null;
       const st = !s.use ? 'No se usa hoy' : loc ? (s.acc != null ? `Marcado con GPS · ±${s.acc} m` : 'Ubicado en el mapa') : 'Solo QR (sin GPS)';
       return `<div class="prow ${s.use ? '' : 'off'}" data-id="${p.id}">
         <div class="prow-top">
           <label class="sw" title="Usar en el juego"><input type="checkbox" data-act="use" aria-label="Usar ${esc(p.name)}" ${s.use ? 'checked' : ''} ${p.type === 'dest' ? 'disabled' : ''}><span></span></label>
-          <div class="prow-info"><div class="prow-name"><span class="tag ${p.type}">${TYPE_LABEL[p.type]}</span>${esc(p.name)}<span class="code">${p.code}</span></div>
+          <div class="prow-info"><div class="prow-name"><span class="tag ${p.type}">${TYPE_LABEL[p.type]}</span>${esc(p.name)}<span class="code">${p.code}</span>${p.custom ? '<span class="tag new">Nuevo</span>' : leader.content[p.id] ? '<span class="tag new">Editado</span>' : ''}</div>
             <div class="prow-sign">«${esc(p.sign)}»</div><div class="status ${s.use && loc ? 'ok' : ''}">${st}</div></div>
         </div>
+        ${editing === p.id ? editorHTML(p) : `<div class="prow-act"><button class="btn small" data-act="edit">Editar texto</button></div>`}
         ${s.use ? `<div class="prow-act">
             <button class="btn small primary" data-act="mark">Marcar aquí</button>
             <button class="btn small" data-act="place">${placing === p.id ? 'Toca el mapa…' : 'Ubicar en el mapa'}</button>
@@ -1000,7 +1113,7 @@ function showLeader() {
           <input class="input" id="hint-${p.id}" data-act="hint" maxlength="60" placeholder="Pista opcional (ej.: salón del fondo)" value="${esc(s.hint)}">` : ''}
       </div>`;
     }).join('')).join('');
-    const used = PRESETS.filter(p => leader.pts[p.id].use);
+    const used = CARTELS.filter(p => leader.pts[p.id].use);
     const n = ty => used.filter(p => p.type === ty).length;
     $('#lSum').textContent = `Hoy se usan: ${n('good')} buenos · ${n('trap')} trampas · la capilla. Con GPS: ${used.filter(p => leader.pts[p.id].lat != null).length} de ${used.length}.`;
   }
@@ -1015,10 +1128,39 @@ function showLeader() {
   });
   list.addEventListener('click', e => {
     const b = e.target.closest('button[data-act]'); if (!b) return;
-    const id = b.closest('.prow').dataset.id, s = leader.pts[id];
+    const row = b.closest('.prow'); if (!row) return;
+    const id = row.dataset.id, s = leader.pts[id];
     if (b.dataset.act === 'mark') markHere(id, b);
     if (b.dataset.act === 'place') { placing = placing === id ? null : id; if (placing) { toast('Toca el mapa donde está el cartel'); $('#lmap').scrollIntoView({ behavior: 'smooth', block: 'center' }); } renderList(); }
     if (b.dataset.act === 'clear') { Object.assign(s, { lat: null, lng: null, acc: null }); saveLeader(); renderList(); draw(); }
+    if (b.dataset.act === 'edit') { editing = id; renderList(); const ed = list.querySelector('.editor'); if (ed) ed.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    if (b.dataset.act === 'cancel') { editing = null; renderList(); }
+    if (b.dataset.act === 'restore') { delete leader.content[id]; editing = null; saveLeader(); syncLeaderCartels(); renderList(); draw(); toast('Texto original restaurado'); }
+    if (b.dataset.act === 'del') { delete leader.content[id]; delete leader.pts[id]; editing = null; saveLeader(); syncLeaderCartels(); renderList(); draw(); toast('Cartel eliminado'); }
+    if (b.dataset.act === 'save') {
+      const ed = b.closest('.editor'), cur = BY_ID[id], data = {};
+      ed.querySelectorAll('[data-k]').forEach(i => { data[i.dataset.k] = i.value.trim(); });
+      if (!data.sign) return toast('Escribe la frase del cartel.');
+      if (cur.type === 'trap') {
+        data.options = [0, 1, 2].map(i => ed.querySelector('#ed-o' + i).value.trim());
+        const okEl = ed.querySelector('input[name="ed-ok"]:checked');
+        if (!data.q || data.options.some(o => !o)) return toast('Completa la pregunta y las tres opciones.');
+        if (!okEl) return toast('Marca cuál opción es la correcta.');
+        data.ok = +okEl.value;
+      } else if (!data.title || !data.body) return toast('Completa el título y la enseñanza.');
+      if (!data.name) data.name = data.sign.slice(0, 28);
+      leader.content[id] = cur.custom ? { ...contentOf(cur), ...data, custom: true } : data;
+      editing = null; saveLeader(); syncLeaderCartels(); renderList(); draw(); toast('Texto guardado');
+    }
+  });
+  $('#lList').addEventListener('click', e => {
+    const b = e.target.closest('button[data-act="addgood"],button[data-act="addtrap"]'); if (!b) return;
+    const type = b.dataset.act === 'addgood' ? 'good' : 'trap', id = 'x' + rid();
+    leader.content[id] = type === 'good'
+      ? { id, type, code: newCode(), custom: true, name: 'Nuevo punto', sign: 'Escribe la frase del cartel', title: 'Título al llegar', body: 'Escribe la enseñanza que verán al llegar.', ref: '' }
+      : { id, type, code: newCode(), custom: true, name: 'Nueva trampa', sign: 'Escribe la frase de la trampa', why: 'Explica por qué es una trampa.', q: '¿Pregunta para discernir?', options: ['Opción 1', 'Opción 2', 'Opción 3'], ok: 1 };
+    syncLeaderCartels(); leader.pts[id].use = true; editing = id; saveLeader(); renderList(); draw();
+    const ed = list.querySelector('.editor'); if (ed) ed.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
   async function markHere(id, btn) {
     if (!Geo.pos) { toast(Geo.err === 'denied' ? 'Activa el permiso de ubicación para este sitio.' : 'Todavía no hay señal GPS. Sal a cielo abierto o usa «Ubicar en el mapa».'); return; }
@@ -1049,7 +1191,7 @@ function showLeader() {
     if (pos) drawPreview();
     const fl = $('#lField');
     if (fl && pos) {
-      const near = PRESETS.filter(p => leader.pts[p.id].use && leader.pts[p.id].lat != null)
+      const near = CARTELS.filter(p => leader.pts[p.id].use && leader.pts[p.id].lat != null)
         .map(p => ({ p, d: dist(pos, leader.pts[p.id]) })).sort((a, b) => a.d - b.d).slice(0, 2);
       if (!near.length) fl.textContent = 'Prueba de campo: marca al menos un cartel para medir distancias.';
       else fl.innerHTML = 'Prueba de campo · ' + near.map(({ p, d }) => {
@@ -1062,12 +1204,68 @@ function showLeader() {
   cleanup.push(offGeo);
   Geo.emit();
 
+  // ---- Prueba de campo
+  const pct = (arr, q) => { if (!arr.length) return 0; const a = arr.slice().sort((x, y) => x - y); return a[Math.min(a.length - 1, Math.floor(q * (a.length - 1)))]; };
+  function ftSuggest() {
+    const used = CARTELS.filter(p => leader.pts[p.id].use && leader.pts[p.id].lat != null).map(p => ({ ...p, ...leader.pts[p.id] }));
+    const noise = ftStill ? ftStill.spread : (ftTrack.length ? pct(ftTrack.map(q => q[2] || 6), .5) * .6 : null);
+    let html = '';
+    if (ftStill) html += `<p><b>Quieto:</b> el GPS se movió hasta <b>${ftStill.spread.toFixed(1)} m</b> sin que te movieras (precisión informada ±${ftStill.acc} m, ${ftStill.n} lecturas).</p>`;
+    if (ftTrack.length > 1) {
+      const near = used.map(p => ({ p, d: Math.min(...ftTrack.map(q => dist({ lat: q[0], lng: q[1] }, p))) }));
+      html += `<p><b>Vuelta:</b> ${ftTrack.length} lecturas. Lo más cerca que pasaste de cada cartel:</p><ul class="check">${near.map(({ p, d }) => `<li>${esc(p.name)} (${p.code}): ${d.toFixed(1)} m</li>`).join('')}</ul>`;
+    }
+    if (noise != null) {
+      const arrive = Math.max(4, Math.min(10, Math.ceil(noise * 1.5 + 2)));
+      const warn = Math.max(6, Math.min(14, arrive + 2));
+      const close = [];
+      used.filter(p => p.type === 'trap').forEach(t => used.filter(p => p.type !== 'trap').forEach(g => { const d = dist(t, g); if (d < warn + 1) close.push(`«${esc(t.name)}» está a ${d.toFixed(1)} m de «${esc(g.name)}»`); }));
+      html += `<p><b>Sugerencia:</b> aviso de trampa <b>${warn} m</b> y llegada <b>${arrive} m</b>.</p>
+        ${close.length ? `<p class="warnline">Ojo: ${close.join('; ')}. El aviso podría saltar al llegar a ese punto: separa más esos carteles.</p>` : ''}
+        <button class="btn small primary" id="ftApply" data-w="${warn}" data-a="${arrive}">Aplicar sugerencia</button>`;
+    }
+    $('#ftOut').innerHTML = html;
+    const ap = $('#ftApply');
+    if (ap) ap.onclick = () => { leader.r = [+ap.dataset.w, +ap.dataset.a]; saveLeader(); $('#rW').value = leader.r[0]; $('#rA').value = leader.r[1]; $('#rWv').textContent = leader.r[0] + ' m'; $('#rAv').textContent = leader.r[1] + ' m'; draw(); toast('Distancias aplicadas. Recuerda guardar el recorrido en la nube.'); };
+  }
+  $('#ftStill').onclick = async () => {
+    if (!Geo.raw) return toast(Geo.err === 'denied' ? 'Activa el permiso de ubicación.' : 'Todavía no hay señal GPS.');
+    const b = $('#ftStill'); b.disabled = true;
+    const samples = [Geo.raw];
+    const off = Geo.on(() => { if (Geo.raw && Geo.raw !== samples[samples.length - 1]) samples.push(Geo.raw); });
+    for (let i = 20; i > 0; i--) { b.textContent = `Midiendo… ${i}`; await new Promise(r => setTimeout(r, 1000)); }
+    off(); b.disabled = false; b.textContent = 'Medir quieto (20 s)';
+    const m = { lat: samples.reduce((a, q) => a + q.lat, 0) / samples.length, lng: samples.reduce((a, q) => a + q.lng, 0) / samples.length };
+    ftStill = { spread: Math.max(.5, pct(samples.map(q => dist(q, m)), .9)), acc: Math.round(pct(samples.map(q => q.acc), .5)), n: samples.length };
+    buzz(60); ftSuggest();
+  };
+  $('#ftWalk').onclick = () => {
+    const b = $('#ftWalk');
+    if (!ftWalking) {
+      if (!Geo.raw) return toast(Geo.err === 'denied' ? 'Activa el permiso de ubicación.' : 'Todavía no hay señal GPS.');
+      ftWalking = true; ftTrack = []; b.textContent = 'Terminar vuelta'; b.classList.add('primary');
+      ftOffWalk = Geo.on(() => {
+        const r = Geo.raw; if (!r) return;
+        const last = ftTrack[ftTrack.length - 1];
+        if (!last || dist({ lat: last[0], lng: last[1] }, r) >= 0.8) ftTrack.push([r.lat, r.lng, r.acc]);
+        $('#ftOut').innerHTML = `<p>Grabando… ${ftTrack.length} lecturas · precisión ±${r.acc} m</p>`;
+        drawPreview();
+      });
+      cleanup.push(() => ftOffWalk && ftOffWalk());
+    } else {
+      ftWalking = false; if (ftOffWalk) ftOffWalk(); ftOffWalk = null; b.textContent = 'Grabar vuelta'; b.classList.remove('primary');
+      buzz(60); drawPreview(); ftSuggest();
+    }
+  };
+
   const setR = (i, el, out) => { leader.r[i] = +el.value; $(out).textContent = el.value + ' m'; saveLeader(); draw(); Geo.emit(); };
   $('#rW').addEventListener('input', e => setR(0, e.target, '#rWv'));
   $('#rA').addEventListener('input', e => setR(1, e.target, '#rAv'));
   $('#lLim').addEventListener('input', e => { leader.lim = e.target.value; saveLeader(); });
 
+  wireAuthCard();
   const LINKS = [
+    ['control', 'Control del líder', 'Ábrelo en tu celular durante el juego: marcar llegada, pausar, ocultar la pregunta.'],
     ['jugador', 'Jugador (pantalla grande)', 'El adolescente lo abre en su celular. Juega y transmite su recorrido.'],
     ['pantalla', 'Pantalla grande', 'Ábrelo en la computadora del proyector: muestra en vivo al jugador.'],
     ['equipos', 'Equipos', 'Cada equipo lo abre en su celular (o escanea el QR).']
@@ -1109,7 +1307,7 @@ function showLeader() {
       await Cloud.saveRoute(g);
       cloudLine.innerHTML = `<span class="dot ok"></span><span>Recorrido guardado en la nube el ${new Date().toLocaleString('es')}. Los enlaces fijos ya lo usan.</span>`;
       toast('Recorrido guardado'); buzz(60);
-    } catch (e) { console.error(e); toast('No se pudo guardar. Revisa internet y las reglas de Firebase.'); }
+    } catch (e) { console.error(e); toast(e && e.code === 'permission-denied' ? 'Entra como líder (arriba) para guardar el recorrido.' : 'No se pudo guardar. Revisa la conexión a internet.'); }
     b.disabled = false; b.textContent = 'Guardar recorrido en la nube';
   };
   $('#lClearLive').onclick = () => {
@@ -1176,11 +1374,12 @@ function showLeader() {
 
 /* ---------- Carteles ---------- */
 function showCarteles() {
+  syncLeaderCartels();
   setView('carteles', `<main class="page wide">
     <div class="toolbar noprint"><a class="back" href="#lider">← Volver</a><button class="btn primary" id="printBtn">Imprimir</button></div>
     <div class="noprint" style="display:grid;gap:8px"><p class="kicker">Para imprimir</p><h1>Carteles del recorrido</h1>
-      <p class="lead">Salen 2 por hoja A4: recorta por la línea punteada. Los buenos y las trampas se ven iguales a propósito. En el modo líder ves cuál es cuál por el código.</p></div>
-    <div class="carteles">${PRESETS.map(p => `<article class="cartel">
+      <p class="lead">Salen 2 por hoja A4: recorta por la línea punteada. Los buenos y las trampas se ven iguales a propósito. En el modo líder ves cuál es cuál por el código. Si editaste la frase de un cartel, vuelve a imprimirlo.</p></div>
+    <div class="carteles">${CARTELS.map(p => `<article class="cartel">
       <div class="c-top">El Espíritu y la misión · <b>GO!</b></div>
       <div class="board">${esc(p.sign)}</div>
       <div class="qr" data-code="${p.code}"></div>
@@ -1194,6 +1393,7 @@ function showCarteles() {
 /* ---------- Equipo ---------- */
 function showTeam() {
   if (!game) return showHome('Todavía no hay un juego cargado en este celular.');
+  rebuildCartels(game.c || {});
   loadT();
   if (!T) return showSetup();
   if (T.done) return showFinal();
@@ -1284,7 +1484,7 @@ function showGame() {
       <div class="nav-ico" id="navIco"></div>
       <div style="min-width:0"><div class="nav-dist" id="navDist"></div><div class="nav-text" id="navText">Buscando señal…</div><span class="nav-chip" id="navChip" hidden></span></div>
     </header>
-    <div class="tv-map"><div id="tmap"></div>${pantalla ? `<div class="live-badge">EN VIVO · ${esc(teamLabel(T)).toUpperCase()}</div>` : ''}${sim ? '<div class="sim">MODO PRUEBA · toca el plano para moverte</div>' : ''}</div>
+    <div class="tv-map"><div id="tmap"></div><div class="pause-over" id="pauseOver" hidden><div class="card"><h2>Juego en pausa</h2><p>El líder pausó el recorrido. Enseguida seguimos.</p></div></div>${pantalla ? `<div class="live-badge">EN VIVO · ${esc(teamLabel(T)).toUpperCase()}</div>` : ''}${sim ? '<div class="sim">MODO PRUEBA · toca el plano para moverte</div>' : ''}</div>
     <aside class="side">
       <p class="side-title">El Espíritu y la misión</p><p class="side-ref">Hechos 13:1-4</p>
       <p class="kicker">${pantalla ? 'En vivo' : 'Recorrido'} · ${esc(teamLabel(T))}</p>
@@ -1308,7 +1508,7 @@ function showGame() {
   if (sim) {
     if (!Geo.pos || !Geo.pos.sim) {
       const c = allPts.filter(p => p.lat != null);
-      if (c.length) Geo.setSim(c.reduce((a, p) => a + p.lat, 0) / c.length - 0.00008, c.reduce((a, p) => a + p.lng, 0) / c.length);
+      if (c.length) { const south = c.reduce((a, p) => p.lat < a.lat ? p : a, c[0]); Geo.setSim(south.lat - 0.00006, south.lng); }
     }
     window.irA = (lat, lng) => Geo.setSim(lat, lng);
   }
@@ -1353,6 +1553,7 @@ function showGame() {
       }
     }
     publishLive(false);
+    if (ctrlPaused) { drawPlano(target(), pos && now - pos.t < 30000 ? pos : null); return nav('off', 'spin', 'Pausa', 'El líder pausó el juego', 'Esperen la señal'); }
 
     if (pos && !weak && !sheetOpen() && now >= T.lockUntil) {
       for (const t of traps()) {
@@ -1388,6 +1589,26 @@ function showGame() {
   };
 
   const offGeo = Geo.on(() => updateGame());
+  ctrlPaused = false;
+  if (pantalla && Cloud.ok) {
+    const unC = Cloud.controlRef().onSnapshot(sn => {
+      if (view !== 'team' || !T) return;
+      const d = sn.exists ? sn.data() : {};
+      ctrlPaused = !!d.paused;
+      const pv = $('#pauseOver'); if (pv) pv.hidden = !ctrlPaused;
+      const c = d.cmd;
+      if (c && c.at > (T.lastCmd || 0) && c.at > T.start) {
+        T.lastCmd = c.at; saveT();
+        if (c.type === 'arrive') {
+          const tgt = target();
+          if (tgt && (!c.id || c.id === tgt.id)) { closeSheet(); T.lockUntil = 0; ctrlPaused = false; handleCode(tgt.code); toast('El líder marcó la llegada'); }
+        } else if (c.type === 'end') { closeSheet(); if (!T.done) { T.done = Date.now(); saveT(); publishLive(true); return showFinal(); } }
+        else if (c.type === 'reset') { store.del(tKey()); T = null; return showTeam(); }
+      }
+      updateGame();
+    }, () => {});
+    cleanup.push(unC, () => { ctrlPaused = false; });
+  }
   const iv = setInterval(() => updateGame(), 1000);
   cleanup.push(offGeo, () => clearInterval(iv), () => { updateGame = () => {}; });
   $('#scanBtn').onclick = openScanner;
@@ -1397,7 +1618,7 @@ function showGame() {
   updateGame();
 }
 
-let activeWarn = null, lastEv = null;
+let activeWarn = null, lastEv = null, ctrlPaused = false;
 function publishLive(force) {
   if (!T || !T.pantalla || !Cloud.ok) return;
   const pos = Geo.pos, now = Date.now();
@@ -1453,6 +1674,7 @@ function handleCode(raw) {
   const p = gp(pr.id);
   if (!p) return sheetMsg('Ese cartel no está en el juego de hoy', 'Sigan buscando los puntos de su ruta.');
   if (Date.now() < T.lockUntil) return sheetMsg('Todavía están recalculando', 'Esperen a que termine la cuenta para escanear.', 'warn');
+  if (ctrlPaused) return sheetMsg('Juego en pausa', 'Esperen a que el líder reanude el recorrido.', 'warn');
   if (p.type === 'trap') return fallTrap(p);
   if (T.visited[p.id]) return sheetMsg('Ya pasaron por aquí', `«${p.sign}» ya está en su ruta. Sigan al próximo destino.`);
   if (p.type === 'dest') {
@@ -1594,8 +1816,115 @@ function showFinal() {
     fp.render({ items, rings: [], trail: T.trail, pos: null });
     cleanup.push(() => fp.destroy());
   }
+  if (T.pantalla && Cloud.ok) {
+    const doneAt = T.done;
+    const unR = Cloud.controlRef().onSnapshot(sn => {
+      const c = sn.exists ? (sn.data() || {}).cmd : null;
+      if (view === 'final' && T && T.done === doneAt && c && c.type === 'reset' && c.at > (T.lastCmd || 0) && c.at > doneAt) { store.del(tKey()); T = null; showTeam(); }
+    }, () => {});
+    cleanup.push(unR);
+  }
   const a = $('#fAgain'); if (a) a.onclick = () => { store.del(tKey()); T = null; showTeam(); };
   const h = $('#fHome'); if (h) h.onclick = () => showHome();
+}
+
+/* ---------- Clave de líder ---------- */
+function authCardHTML() {
+  return Cloud.ok ? `<section class="card" id="authCard"><p class="kicker">Clave de líder</p><p id="authTxt">Comprobando…</p><div class="row" id="authBtns"></div></section>` : '';
+}
+function authError(e) {
+  const c = (e && e.code) || '';
+  if (c === 'auth/operation-not-allowed' || c === 'auth/configuration-not-found') return 'Falta activar el ingreso con Google en Firebase.';
+  if (c === 'auth/unauthorized-domain') return 'Falta autorizar este sitio en Firebase.';
+  if (c === 'auth/popup-closed-by-user' || c === 'auth/cancelled-popup-request') return 'Cerraste la ventana antes de entrar.';
+  return 'No se pudo entrar. Intenta de nuevo.';
+}
+function wireAuthCard() {
+  if (!$('#authCard')) return;
+  const off = Cloud.watchAuth(u => {
+    const t = $('#authTxt'), b = $('#authBtns'); if (!t) return;
+    if (!Cloud.auth()) { t.textContent = 'El ingreso de líder no está disponible en este navegador.'; b.innerHTML = ''; return; }
+    if (u) {
+      t.innerHTML = `Entraste como líder con <b>${esc(u.email || 'tu cuenta')}</b>. Solo la cuenta de líder puede guardar el recorrido y usar el control en vivo.`;
+      b.innerHTML = '<button class="btn small" id="authOut">Salir</button>';
+      $('#authOut').onclick = () => Cloud.signOut();
+    } else {
+      t.textContent = 'Para guardar el recorrido y usar el control en vivo, entra con tu cuenta de Google de líder.';
+      b.innerHTML = '<button class="btn small primary" id="authIn">Entrar con Google</button>';
+      $('#authIn').onclick = async () => { try { await Cloud.signIn(); } catch (e) { console.error(e); toast(authError(e)); } };
+    }
+  });
+  cleanup.push(off);
+}
+
+/* ---------- Control del líder (en el celular del líder, durante el juego) ---------- */
+function showControl() {
+  Geo.stop();
+  if (!Cloud.ok) return setView('control', `<main class="page"><a class="back" href="#lider">← Modo líder</a>${poster('Control del líder')}<p class="notice">El control en vivo necesita la nube conectada.</p></main>`);
+  setView('control', `<main class="page">
+    <a class="back" href="#lider">← Modo líder</a>
+    ${poster('Control del líder · En vivo')}
+    ${authCardHTML()}
+    <section class="card"><p class="kicker">Estado del jugador</p><h2 id="cWho">Esperando al jugador…</h2>
+      <div class="stats3 mini"><div><strong id="cScore">0</strong><span>puntos</span></div><div><strong id="cProg">0/0</strong><span>ruta</span></div><div><strong id="cTime">0:00</strong><span>tiempo</span></div></div>
+      <p id="cNext" class="lead"></p><p class="small" id="cSig"></p></section>
+    <section class="card"><p class="kicker">Durante el juego</p>
+      <button class="btn primary block" id="cArrive">Marcar llegada al punto actual</button>
+      <p class="small">Úsalo si el jugador está en el cartel pero no puede escanearlo.</p>
+      <button class="btn block" id="cPause">Pausar el juego</button>
+      <button class="btn block" id="cHide">Ocultar la pregunta en el proyector</button>
+      <div id="cEndBox"><button class="btn danger block" id="cEnd">Terminar el recorrido</button></div></section>
+    <section class="card"><p class="kicker">Entre partidas</p>
+      <div id="cResetBox"><button class="btn block" id="cReset">Reiniciar al jugador</button></div>
+      <button class="btn block" id="cClear">Dejar la pantalla grande en espera</button></section>
+  </main>`);
+  wireAuthCard();
+  let R = null, D = null, ctrl = {};
+  const send = async (patch, ok) => {
+    try { await Cloud.sendControl(patch); if (ok) toast(ok); buzz(40); }
+    catch (e) { console.error(e); toast(e && e.code === 'permission-denied' ? 'Entra como líder (arriba) para usar el control.' : 'No se pudo enviar. Revisa la conexión.'); }
+  };
+  const confirmIn = (box, text, yes, onYes) => {
+    const el = $(box), html = el.innerHTML;
+    el.innerHTML = `<p><b>${text}</b></p><div class="row"><button class="btn danger small" data-y="1">${yes}</button><button class="btn small" data-n="1">Cancelar</button></div>`;
+    el.querySelector('[data-y]').onclick = () => { el.innerHTML = html; wire(); onYes(); };
+    el.querySelector('[data-n]').onclick = () => { el.innerHTML = html; wire(); };
+  };
+  function wire() {
+    $('#cEnd').onclick = () => confirmIn('#cEndBox', '¿Terminar el recorrido ahora?', 'Sí, terminar', () => send({ cmd: { type: 'end', at: Date.now() } }, 'Recorrido terminado'));
+    $('#cReset').onclick = () => confirmIn('#cResetBox', '¿Reiniciar al jugador? Se pierden sus puntos.', 'Sí, reiniciar', async () => {
+      await send({ cmd: { type: 'reset', at: Date.now() }, paused: false, hideQ: false }, 'Jugador reiniciado');
+      Cloud.liveRef().set({ run: 0, t: Date.now() }).catch(() => {});
+    });
+  }
+  wire();
+  $('#cArrive').onclick = () => {
+    if (!D || !D.run || D.done) return toast('No hay un recorrido en curso.');
+    send({ cmd: { type: 'arrive', id: D.target || null, at: Date.now() } }, 'Llegada marcada');
+  };
+  $('#cPause').onclick = () => send({ paused: !ctrl.paused }, ctrl.paused ? 'Juego reanudado' : 'Juego en pausa');
+  $('#cHide').onclick = () => send({ hideQ: !ctrl.hideQ }, ctrl.hideQ ? 'Pregunta visible' : 'Pregunta oculta');
+  $('#cClear').onclick = () => Cloud.liveRef().set({ run: 0, t: Date.now() }).then(() => toast('Pantalla grande en espera'), () => toast('No se pudo limpiar la pantalla'));
+  function render() {
+    if (view !== 'control') return;
+    const now = Date.now();
+    $('#cPause').textContent = ctrl.paused ? 'Reanudar el juego' : 'Pausar el juego';
+    $('#cHide').textContent = ctrl.hideQ ? 'Mostrar la pregunta en el proyector' : 'Ocultar la pregunta en el proyector';
+    const goodsN = R ? R.p.filter(r => BY_ID[r[0]] && BY_ID[r[0]].type === 'good').length : 0, total = goodsN + (R && R.p.some(r => BY_ID[r[0]] && BY_ID[r[0]].type === 'dest') ? 1 : 0);
+    if (!D || !D.run) { $('#cWho').textContent = 'Esperando al jugador…'; $('#cNext').textContent = ''; $('#cSig').textContent = ''; $('#cScore').textContent = '0'; $('#cProg').textContent = `0/${total}`; $('#cTime').textContent = '0:00'; return; }
+    $('#cWho').textContent = D.name || 'Jugador';
+    $('#cScore').textContent = D.score; $('#cProg').textContent = `${(D.visited || []).length}/${total}`; $('#cTime').textContent = fmtTime((D.done || now) - D.start);
+    const t = D.target ? BY_ID[D.target] : null;
+    $('#cNext').textContent = D.done ? 'Llegó a la capilla.' : D.warn ? `Trampa a la vista: «${BY_ID[D.warn.id] ? BY_ID[D.warn.id].sign : ''}»` : now < (D.lockUntil || 0) ? 'Recalculando después de una trampa.' : t ? `Va hacia: «${t.sign}» (${t.code})` : '';
+    const age = Math.round((now - D.t) / 1000);
+    $('#cSig').textContent = D.done ? '' : `Última señal del celular: hace ${age} s${D.weak ? ' · GPS débil' : ''}${D.pos ? ` · precisión ±${D.pos.acc} m` : ''}`;
+  }
+  const u1 = Cloud.routeRef().onSnapshot(s => { R = s.exists ? Cloud.fromCloud(s.data()) : null; if (R) rebuildCartels(R.c || {}); render(); }, () => {});
+  const u2 = Cloud.liveRef().onSnapshot(s => { D = s.exists ? s.data() : null; render(); }, () => {});
+  const u3 = Cloud.controlRef().onSnapshot(s => { ctrl = s.exists ? s.data() : {}; render(); }, () => {});
+  const iv = setInterval(render, 1000);
+  cleanup.push(u1, u2, u3, () => clearInterval(iv));
+  render();
 }
 
 /* ---------- Pantalla grande (espectador, en la computadora del proyector) ---------- */
@@ -1619,7 +1948,7 @@ function showScreen() {
       <h2 id="sideNext">Esperando al jugador…</h2>
       <div class="stats3 mini"><div><strong id="sScore">0</strong><span>puntos</span></div><div><strong id="sProg">0/0</strong><span>ruta</span></div><div><strong id="sTime">0:00</strong><span>tiempo</span></div></div>
       ${LEGEND}
-      <button class="btn small" id="sndBtn">Activar sonido</button>
+      <div class="row"><button class="btn small" id="sndBtn">Activar sonido y voz</button><button class="btn small" id="voiceBtn" hidden>Silenciar voz</button></div>
       <p class="small" id="scrStale"></p>
     </aside>
     <div class="scr-over" id="scrOver" hidden></div>
@@ -1628,7 +1957,7 @@ function showScreen() {
   let R = null, D = null;
   const plano = makePlano($('#tmap'));
   cleanup.push(() => plano.destroy());
-  let overKey = '', lastWarnId = '', lastEvAt = 0, evUntil = 0, evHTML = '', lastRot = null;
+  let overKey = '', lastWarnId = '', lastEvAt = 0, evUntil = 0, evHTML = '', lastRot = null, ctrl = {}, spokenAns = '';
   const P = id => { if (!R) return null; const r = R.p.find(x => x[0] === id); return r && BY_ID[id] ? { ...BY_ID[id], lat: r[1], lng: r[2], hint: r[3] || '' } : null; };
   const goodsR = () => R ? R.p.filter(r => BY_ID[r[0]] && BY_ID[r[0]].type === 'good').map(r => r[0]) : [];
   const hasDest = () => !!(R && R.p.some(r => BY_ID[r[0]] && BY_ID[r[0]].type === 'dest'));
@@ -1663,9 +1992,11 @@ function showScreen() {
     if (overKey === key) return;
     overKey = key; o.innerHTML = `<div class="sheet big">${html}</div>`; o.hidden = false;
   }
-  function warnHTML(w) {
+  function warnHTML(w, hide) {
     const t = BY_ID[w.id]; if (!t) return '';
     const answered = w.ans === true || w.ans === false;
+    if (hide && !answered) return `<div class="sheet-head stop"><div class="sh-k">${ICON.warn} Recalculando</div><h2>Reporte de peligro a ${w.d} m</h2></div>
+      <div class="sheet-body"><div class="cartel-quote">«${esc(t.sign)}»</div><p class="class-q">Lean el cartel juntos. ¿Es un buen camino?</p></div>`;
     return `<div class="sheet-head stop"><div class="sh-k">${ICON.warn} Recalculando</div><h2>Reporte de peligro a ${w.d} m</h2></div>
       <div class="sheet-body"><div class="cartel-quote">«${esc(t.sign)}»</div><p><b>${esc(t.q)}</b></p>
       ${answered ? '' : '<p class="class-q">Clase: ¿qué le responderían? Díganlo en voz alta antes de que elija.</p>'}
@@ -1724,16 +2055,24 @@ function showScreen() {
       else nav('go', 'arrow', fmtDist(d), label + (tgt.hint ? ' · ' + tgt.hint : ''), 'Flecha según el plano', bearing(D.pos, tgt) + plano.rot());
     }
 
-    if (D.warn) {
-      if (D.warn.id !== lastWarnId) { lastWarnId = D.warn.id; Sound.warn(); }
-      overlay('w' + D.warn.id + String(D.warn.ans), warnHTML(D.warn));
+    if (ctrl.paused && !D.done) {
+      if (overKey !== 'pause') Voice.say('Juego en pausa.', true);
+      overlay('pause', `<div class="sheet-head off"><div class="sh-k">Pausa</div><h2>Juego en pausa</h2></div><div class="sheet-body"><p>El líder pausó el recorrido. Enseguida seguimos.</p></div>`);
+    } else if (D.warn) {
+      const t = BY_ID[D.warn.id];
+      if (D.warn.id !== lastWarnId) { lastWarnId = D.warn.id; Sound.warn(); if (t) Voice.say(`Recalculando. Reporte de peligro. El cartel dice: ${t.sign}. ${ctrl.hideQ ? '¿Es un buen camino?' : t.q}`, true); }
+      const ansKey = D.warn.id + String(D.warn.ans);
+      if ((D.warn.ans === true || D.warn.ans === false) && spokenAns !== ansKey && t) { spokenAns = ansKey; Voice.say((D.warn.ans ? '¡Desvío a tiempo! Más cincuenta. ' : 'Esa no era. ') + t.why, true); }
+      overlay('w' + ansKey + (ctrl.hideQ ? 'h' : ''), warnHTML(D.warn, !!ctrl.hideQ));
     } else if (D.done) {
-      if (overKey !== 'final' + D.run) Sound.good();
+      if (overKey !== 'final' + D.run) { Sound.good(); Voice.say(`${D.name || 'El jugador'} llegó a la capilla con ${D.score} puntos. El Espíritu guía a sus hijos y les enseña a discernir juntos.`, true); }
       overlay('final' + D.run, finalHTML());
     } else {
       if (D.ev && D.ev.at > lastEvAt && D.ev.at >= D.start && now - D.ev.at < 15000) {
         lastEvAt = D.ev.at; evUntil = now + 8000; evHTML = evHTMLFor(D.ev);
         if (D.ev.type === 'trap') Sound.bad(); else Sound.good();
+        const p = BY_ID[D.ev.id];
+        if (p) Voice.say(D.ev.type === 'trap' ? `Cayó en una trampa. ${p.why}` : `Punto alcanzado. ${p.title}. ${p.body}`, true);
       }
       if (now < evUntil && evHTML) overlay('e' + lastEvAt, evHTML); else overlay('', '');
       if (!D.warn) lastWarnId = '';
@@ -1742,17 +2081,26 @@ function showScreen() {
 
   const unR = Cloud.routeRef().onSnapshot(s => {
     R = s.exists ? Cloud.fromCloud(s.data()) : null;
-    if (R) plano.setPoints(R.p.map(r => P(r[0])).filter(Boolean));
+    if (R) { rebuildCartels(R.c || {}); plano.setPoints(R.p.map(r => P(r[0])).filter(Boolean)); }
     render();
   }, e => { console.error(e); toast('No pude leer el recorrido de la nube.'); });
   const unD = Cloud.liveRef().onSnapshot(s => { D = s.exists ? s.data() : null; render(); }, e => { console.error(e); toast('No pude conectarme a la transmisión.'); });
+  const unCtl = Cloud.controlRef().onSnapshot(s => { ctrl = s.exists ? s.data() : {}; render(); }, () => {});
+  cleanup.push(unCtl, () => { try { speechSynthesis.cancel(); } catch (e) {} });
   const iv = setInterval(render, 1000);
   cleanup.push(unR, unD, () => clearInterval(iv));
-  $('#sndBtn').onclick = () => { Sound.init(); Sound.ping(); $('#sndBtn').hidden = true; toast('Sonido activado'); };
+  $('#sndBtn').onclick = () => {
+    Sound.init(); Sound.ping(); Voice.on = Voice.ok(); Voice.pick();
+    Voice.say('Sonido y voz activados.', true);
+    $('#sndBtn').hidden = true; $('#voiceBtn').hidden = !Voice.ok();
+    toast(Voice.ok() ? 'Sonido y voz activados' : 'Sonido activado (este navegador no tiene voz)');
+  };
+  $('#voiceBtn').onclick = () => { Voice.on = !Voice.on; if (!Voice.on) { try { speechSynthesis.cancel(); } catch (e) {} } $('#voiceBtn').textContent = Voice.on ? 'Silenciar voz' : 'Activar voz'; };
   render();
 }
 
 route();
+if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('../sw.js').catch(() => {});
 })();
 </script>
 </body>
