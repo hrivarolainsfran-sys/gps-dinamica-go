@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Ruta a la capilla: recorrido guardado por el líder y transmisión en vivo del jugador.
+    // Si ya tienes reglas en el proyecto, copia solo este bloque «match /rutas/...» dentro del tuyo.
+    match /rutas/{ruta} {
+      allow read: if true;
+      allow write: if request.resource.data.keys().hasOnly(['v', 'g', 'p', 'r', 'lim', 'updatedAt']);
+
+      match /vivo/{doc} {
+        allow read: if true;
+        allow write: if request.resource.data.keys().hasOnly([
+          'run', 'name', 'start', 'score', 'visited', 'warned', 'fallen', 'avoided',
+          'pos', 't', 'weak', 'trail', 'target', 'lockUntil', 'done', 'warn', 'ev'
+        ]);
+      }
+    }
+  }
+}

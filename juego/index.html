@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#242680">
+<meta name="theme-color" content="#0B6B45">
 <title>Ruta a la capilla</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Overpass+Mono:wght@500;700&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Overpass+Mono:wght@500;700&family=Overpass:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
 /* Juego al aire libre: un solo tema claro a propósito, para leer bajo el sol. Lenguaje visual de cartel vial verde. */
 :root{
@@ -133,6 +133,42 @@ label.lbl{font:700 12px/1 var(--f-mono);text-transform:uppercase;letter-spacing:
   .sheet{border-radius:22px}
 }
 
+/* Pantalla del proyector */
+.tv.screen .nav{grid-template-columns:96px minmax(0,1fr)}
+.tv.screen .nav-ico{width:96px;height:96px}
+.tv.screen .nav-ico svg{width:86px;height:86px}
+.tv.screen .nav-dist{font-size:3.6rem}
+.tv.screen .nav-text{font-size:1.4rem}
+.tv.screen .side h2{font-size:1.6rem}
+.scr-wait{position:absolute;inset:0;z-index:650;background:rgba(238,242,236,.82);display:grid;place-items:center;padding:24px}
+.scr-wait .card{max-width:520px;text-align:center}
+.scr-over{position:fixed;inset:0;z-index:1500;background:rgba(10,20,15,.45);display:flex;align-items:center;justify-content:center;padding:24px}
+.scr-over .sheet{animation:up .35s ease;max-height:92vh;border-radius:22px}
+.scr-over .sheet-head{border-radius:22px 22px 0 0}
+.stats3.mini strong{font-size:1.6rem}
+.stats3.mini div{padding:10px 6px}
+@media (orientation:landscape) and (min-width:700px){ .tv.screen .side{grid-row:2 / span 2} }
+@media (orientation:portrait){ .tv.screen{grid-template-rows:auto 1fr} }
+
+/* Modo líder: extras */
+.range{display:grid;gap:6px}
+.range span{display:flex;justify-content:space-between;font-weight:700}
+.range input{width:100%;accent-color:var(--sign)}
+.gpsline.field{flex-wrap:wrap;font-weight:500;line-height:1.5}
+.gpsline .ok{color:var(--sign)} .gpsline .bad{color:var(--stop)}
+.check{margin:0;padding-left:1.2em;display:grid;gap:6px}
+.check a{color:var(--sign);font-weight:700}
+.links{display:grid;gap:12px}
+.linkrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end;border-top:1px solid var(--line);padding-top:12px}
+.linkrow .linkbox{margin-top:6px}
+@media (max-width:480px){ .linkrow{grid-template-columns:1fr} }
+details.more{border-top:1px dashed var(--line);padding-top:12px}
+details.more summary{cursor:pointer;font-weight:700;color:var(--muted)}
+details.more[open]{display:grid;gap:10px}
+.card.next{border-color:var(--sign)}
+.card.next .verse{font-style:italic;font-size:1.1rem}
+.card.safety{background:var(--good-bg);border-color:transparent}
+
 /* Hojas */
 .sheet-wrap{position:fixed;inset:0;z-index:1500;background:rgba(10,20,15,.5);display:flex;align-items:flex-end;justify-content:center}
 .sheet{background:var(--surface);width:100%;max-width:560px;border-radius:22px 22px 0 0;max-height:94%;overflow:auto;animation:up .3s ease;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 18px)}
@@ -226,48 +262,6 @@ label.lbl{font:700 12px/1 var(--f-mono);text-transform:uppercase;letter-spacing:
   .cartel .qr{width:60mm}
   @page{size:A4;margin:10mm}
 }
-
-/* Identidad GO · Capilla CFA Central */
-:root {
-  --bg:#fceedd; --surface:#fff8ee; --ink:#151747; --muted:#545574; --line:#decbba;
-  --sign:#242680; --sign-dark:#17194e; --route:#3449ad;
-  --warn:#ffd367; --warn-ink:#291c05; --stop:#a82430; --off:#545673;
-  --good-bg:#e8edff; --bad-bg:#fbe3de;
-  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
-  --f-body:"Atkinson Hyperlegible",system-ui,sans-serif;
-  --go-orange:#f43a0a; --go-cream:#fff4e5;
-}
-h1 {font-size:clamp(2.8rem,7vw,4.9rem);font-weight:900;line-height:.87;letter-spacing:-.018em;text-transform:uppercase}
-h2 {font-size:1.8rem}
-h3 {font-size:1.35rem}
-.hero-sign {position:relative;isolation:isolate;overflow:hidden;gap:13px;padding:clamp(21px,5vw,40px);border:2px solid #a32a12;border-radius:8px;background:var(--go-orange);color:#1b154b;box-shadow:5px 5px #a32a12}
-.hero-sign::after {content:"";position:absolute;inset:0 0 0 55%;z-index:-1;opacity:.18;background:repeating-linear-gradient(90deg,transparent 0 23px,var(--go-cream) 23px 24px),repeating-linear-gradient(0deg,transparent 0 23px,var(--go-cream) 23px 24px);mask-image:linear-gradient(to right,transparent,#000)}
-.hero-sign h1 {color:var(--go-cream);text-shadow:2px 3px #93260f;max-width:13ch;text-wrap:initial}
-.hero-sign .kicker.light {align-self:flex-start;background:var(--sign);color:#fff;opacity:1;padding:7px 10px;transform:rotate(-2deg)}
-.hero-sign p:last-child {font:700 1rem/1.35 var(--f-body)}
-.hero-arrow {position:absolute;right:5%;top:27%;width:clamp(40px,10vw,85px);height:auto;z-index:-1;color:var(--sign);opacity:.65;transform:rotate(-12deg)}
-.hero-arrow svg {display:block;width:100%}
-.card {box-shadow:0 3px #e5d1bb}
-.stepn {align-self:flex-start;background:#e8eaff;color:var(--sign);padding:6px 9px;border-radius:4px}
-.btn {min-height:46px;border-radius:12px;font-family:var(--f-body);line-height:1.15}
-.btn.small {min-height:44px}
-.btn.primary {box-shadow:0 3px #14154d}
-.btn:not(:disabled):hover {filter:brightness(.92)}
-:focus-visible,.sw input:focus-visible + span {outline:3px solid #4c4ed2;outline-offset:3px}
-.go-player .rules {border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:12px 14px}
-.go-player .rules b {font-size:1.3rem}
-.tv.pantalla .nav {border-bottom:4px solid var(--go-orange);grid-template-columns:clamp(48px,15vw,84px) minmax(0,1fr)}
-.tv.pantalla .nav-ico {width:100%;height:auto;aspect-ratio:1}
-.tv.pantalla .nav-ico svg {width:90%;height:90%}
-.tv.pantalla .nav-dist {font-size:clamp(2.25rem,8vw,3.75rem)}
-.tv.pantalla .nav-text {font:700 clamp(1rem,3.3vw,1.45rem)/1.15 var(--f-body)}
-.tv.pantalla .stat strong {font-size:clamp(1.65rem,5vw,2.5rem)}
-.tv.pantalla .bar {border-top:3px solid var(--sign);background:var(--go-cream)}
-.live-badge {top:12px;left:50%;transform:translateX(-50%);max-width:calc(100% - 108px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;background:var(--sign);border:2px solid var(--go-cream);box-shadow:0 2px 5px #15174755}
-.live-badge::before {display:inline-block;background:#ff8658;margin-right:7px;animation:none}
-.carteles {grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
-@media screen and (max-width:480px) { .toolbar {flex-wrap:wrap} }
-@media print { .cartel .board {font-family:var(--f-body)} }
 </style>
 </head>
 <body>
@@ -276,6 +270,9 @@ h3 {font-size:1.35rem}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 (() => {
 'use strict';
@@ -385,9 +382,9 @@ const PIN_IN = {
 };
 function mkIcon(kind, label) {
   const conf = {
-    target: ['#242680', PIN_IN.dot, 'target'], dest: ['#B07A00', PIN_IN.flag, 'target'],
-    visited: ['#7B8A82', PIN_IN.check, ''], trap: ['#A82430', PIN_IN.bang, ''],
-    good: ['#242680', PIN_IN.dot, ''], destL: ['#B07A00', PIN_IN.flag, '']
+    target: ['#0B6B45', PIN_IN.dot, 'target'], dest: ['#B07A00', PIN_IN.flag, 'target'],
+    visited: ['#7B8A82', PIN_IN.check, ''], trap: ['#C33A2E', PIN_IN.bang, ''],
+    good: ['#0B6B45', PIN_IN.dot, ''], destL: ['#B07A00', PIN_IN.flag, '']
   }[kind];
   return L.divIcon({ className: '', iconSize: [32, 40], iconAnchor: [16, 39],
     html: `<div class="mk ${conf[2]}">${label ? `<span class="mk-label">${esc(label)}</span>` : ''}${pin(conf[0], conf[1])}</div>` });
@@ -464,9 +461,11 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 let game = store.get('gpsgo-game', null);
 let leader = store.get('gpsgo-leader', null);
 function freshLeader() {
-  return { g: rid(), pts: Object.fromEntries(PRESETS.map(p => [p.id, { use: DEFAULT_USE.includes(p.id), lat: null, lng: null, acc: null, hint: '' }])) };
+  return { g: rid(), r: [WARN_R, ARRIVE_R], lim: '', pts: Object.fromEntries(PRESETS.map(p => [p.id, { use: DEFAULT_USE.includes(p.id), lat: null, lng: null, acc: null, hint: '' }])) };
 }
 if (!leader || !leader.pts) leader = freshLeader();
+if (!Array.isArray(leader.r)) leader.r = [WARN_R, ARRIVE_R];
+if (leader.lim == null) leader.lim = '';
 PRESETS.forEach(p => { if (!leader.pts[p.id]) leader.pts[p.id] = { use: false, lat: null, lng: null, acc: null, hint: '' }; });
 leader.pts.capilla.use = true;
 const saveLeader = () => store.set('gpsgo-leader', leader);
@@ -483,6 +482,41 @@ function loadGame(g, pantalla, sim) {
   if (pantalla) store.set('gpsgo-pantalla', g.g); else if (store.get('gpsgo-pantalla', null) === g.g) store.del('gpsgo-pantalla');
   if (sim) ss.set('gpsgo-sim', g.g); else ss.del('gpsgo-sim');
 }
+const WR = () => (game && game.r && +game.r[0]) || WARN_R;
+const AR = () => (game && game.r && +game.r[1]) || ARRIVE_R;
+
+/* ================= Nube (Firebase): recorrido fijo y transmisión en vivo ================= */
+const ROUTE_ID = 'capilla';
+const LIVE_KEYS = ['run','name','start','score','visited','warned','fallen','avoided','pos','t','weak','trail','target','lockUntil','done','warn','ev'];
+const Cloud = {
+  db: undefined,
+  init() {
+    if (this.db !== undefined) return this.db;
+    try {
+      const cfg = window.FIREBASE_CONFIG;
+      if (cfg && cfg.apiKey && cfg.projectId && window.firebase) {
+        const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(cfg);
+        this.db = firebase.firestore(app);
+      } else this.db = null;
+    } catch (e) { console.error(e); this.db = null; }
+    return this.db;
+  },
+  get ok() { return !!this.init(); },
+  routeRef() { return this.init().collection('rutas').doc(ROUTE_ID); },
+  liveRef() { return this.routeRef().collection('vivo').doc('actual'); },
+  toCloud(g) { return { v: 1, g: g.g, p: g.p.map(r => ({ id: r[0], lat: r[1], lng: r[2], hint: r[3] || '' })), r: g.r || [WARN_R, ARRIVE_R], lim: g.lim || '', updatedAt: Date.now() }; },
+  fromCloud(d) { return d && Array.isArray(d.p) ? { v: 1, g: d.g, p: d.p.map(o => [o.id, o.lat ?? null, o.lng ?? null, o.hint || '']), r: d.r, lim: d.lim || '' } : null; },
+  async saveRoute(g) { await this.routeRef().set(this.toCloud(g)); },
+  async loadRoute() { const s = await this.routeRef().get(); return s.exists ? this.fromCloud(s.data()) : null; },
+  _last: 0, _timer: null, _data: null,
+  pushLive(data, force) {
+    if (!this.ok) return;
+    this._data = data;
+    const send = () => { this._timer = null; this._last = Date.now(); this.liveRef().set(this._data).catch(e => console.error(e)); };
+    if (force || Date.now() - this._last >= 1000) { clearTimeout(this._timer); send(); }
+    else if (!this._timer) this._timer = setTimeout(send, 1000 - (Date.now() - this._last));
+  }
+};
 
 function gp(id) { const r = game.p.find(x => x[0] === id); return r && BY_ID[id] ? { ...BY_ID[id], lat: r[1], lng: r[2], hint: r[3] || '' } : null; }
 const ofType = ty => game.p.filter(r => BY_ID[r[0]] && BY_ID[r[0]].type === ty).map(r => gp(r[0]));
@@ -509,18 +543,30 @@ function route() {
     catch (e) { clearHash(); return showHome('El enlace del juego está incompleto. Pídanle al líder que vuelva a mostrar el QR.'); }
     clearHash(); return showTeam();
   }
-  if (hs.startsWith('jugador')) {
-    const raw = hs.slice(7).replace(/^=/, '');
-    let g = null;
+  if (hs.startsWith('jugador') || hs === 'equipos') {
+    const pantalla = hs !== 'equipos';
+    const raw = pantalla ? hs.slice(7).replace(/^=/, '') : '';
+    clearHash();
     if (raw) {
+      let g = null;
       try { g = dec(raw); if (!g || g.v !== 1 || !Array.isArray(g.p)) throw 0; }
-      catch (e) { clearHash(); return showHome('El enlace del jugador está incompleto. Vuelve a generarlo en el modo líder.'); }
-    } else {
-      g = buildGame();
-      if (!g.p.some(r => BY_ID[r[0]].type === 'good')) { clearHash(); return showHome('Este celular no tiene un recorrido preparado. Abre el enlace del jugador que generaste en el modo líder.'); }
+      catch (e) { return showHome('El enlace del jugador está incompleto. Vuelve a generarlo en el modo líder.'); }
+      loadGame(g, true, false); return showTeam();
     }
-    loadGame(g, true, false); clearHash(); return showTeam();
+    const fromDevice = () => {
+      const g = buildGame();
+      if (!g.p.some(r => BY_ID[r[0]].type === 'good')) return showHome('No encontré el recorrido. En el modo líder, toca «Guardar recorrido en la nube» después de marcar los carteles.');
+      loadGame(g, pantalla, false); showTeam();
+    };
+    if (!Cloud.ok) return fromDevice();
+    showLoading('Cargando el recorrido…');
+    Cloud.loadRoute().then(g => {
+      if (g && g.p.some(r => BY_ID[r[0]] && BY_ID[r[0]].type === 'good')) { loadGame(g, pantalla, false); showTeam(); }
+      else fromDevice();
+    }).catch(e => { console.error(e); fromDevice(); });
+    return;
   }
+  if (hs === 'pantalla') { clearHash(); return showScreen(); }
   if (hs.startsWith('c=')) {
     const code = hs.slice(2); clearHash();
     if (game && loadT() && !T.done) { showTeam(); setTimeout(() => handleCode(code), 350); }
@@ -529,10 +575,13 @@ function route() {
   }
   if (hs === 'lider') return showLeader();
   if (hs === 'carteles') return showCarteles();
-  if (view === 'team' || view === 'final' || view === 'setup') return;
+  if (view === 'team' || view === 'final' || view === 'setup' || view === 'screen' || view === 'loading') return;
   showHome();
 }
 window.addEventListener('hashchange', route);
+function showLoading(msg) {
+  setView('loading', `<main class="page"><div class="hero-sign"><span class="hero-arrow">${ICON.spin.replace('<svg', '<svg class="spinning"')}</span><p class="kicker light">Ruta a la capilla</p><h1>${esc(msg)}</h1></div></main>`);
+}
 
 /* ---------- Inicio ---------- */
 function showHome(note) {
@@ -560,14 +609,14 @@ let placing = null;
 function buildGame() {
   const p = [];
   PRESETS.forEach(pr => { const s = leader.pts[pr.id]; if (s.use) p.push([pr.id, s.lat != null ? +s.lat.toFixed(6) : null, s.lng != null ? +s.lng.toFixed(6) : null, s.hint || '']); });
-  return { v: 1, g: leader.g, p };
+  return { v: 1, g: leader.g, p, r: leader.r.slice(), lim: leader.lim || '' };
 }
 function showLeader() {
   Geo.sim = false; if (Geo.pos && Geo.pos.sim) Geo.pos = null; Geo.start();
   placing = null;
   setView('leader', `<main class="page">
     <a class="back" href="#">← Inicio</a>
-    <header class="hero-sign"><span class="hero-arrow">${ICON.turn}</span><p class="kicker light">GO · Modo líder</p><h1>Preparar el recorrido</h1><p>Capilla CFA Central</p></header>
+    <div><p class="kicker">Modo líder</p><h1>Preparar el recorrido</h1></div>
     <p class="lead">Para los 6 a 8 minutos del punto 1: 3 puntos buenos, la capilla y 2 o 3 trampas. Un celular por equipo.</p>
 
     <section class="card"><p class="stepn">Paso 1</p><h2>Imprime los carteles</h2>
@@ -577,19 +626,40 @@ function showLeader() {
     <section class="card"><p class="stepn">Paso 2</p><h2>Ubica cada cartel en el predio</h2>
       <p>Pega cada cartel, párate al lado y toca <b>Marcar aquí</b>. Bajo techo el GPS no sirve: deja el punto como <b>Solo QR</b> y escribe una pista. Pon las trampas en el camino, a unos 15 a 20 m de los puntos buenos.</p>
       <div class="gpsline" id="lGps"><span class="dot"></span><span>GPS: buscando señal…</span></div>
+      <div class="gpsline field" id="lField">Prueba de campo: camina entre los carteles y aquí verás a cuántos metros estás de cada uno.</div>
       <div class="lmap" id="lmap"></div>
       <p class="summary" id="lSum"></p>
       <div id="lList"></div></section>
 
-    <section class="card"><p class="stepn">Paso 3 · Opción A</p><h2>Un jugador en la pantalla grande</h2>
-      <p>Un adolescente juega con el celular que se ve en la pantalla grande, y la clase sigue en vivo cómo se mueve, el camino que deja y las trampas que aparecen. En las trampas, la clase lo ayuda a responder.</p>
-      <div class="row"><button class="btn primary" id="lPlayer">Generar enlace del jugador</button><button class="btn" id="lTestP">Probar como jugador</button></div>
-      <div id="lOutP" class="card soft" hidden></div></section>
+    <section class="card"><p class="stepn">Paso 3</p><h2>Ajusta las distancias</h2>
+      <p>El GPS del celular tiene entre 5 y 15 m de error. Haz una vuelta de prueba: si el aviso de trampa salta donde no debe, bájalo; si cuesta «llegar» a un punto, súbelo. Los círculos del mapa muestran cada zona.</p>
+      <label class="range"><span>Aviso de trampa <b id="rWv">${leader.r[0]} m</b></span><input type="range" id="rW" min="6" max="30" step="1" value="${leader.r[0]}"></label>
+      <label class="range"><span>Llegada a un punto <b id="rAv">${leader.r[1]} m</b></span><input type="range" id="rA" min="4" max="25" step="1" value="${leader.r[1]}"></label>
+      <p class="small">Recomendado: aviso de 12 a 15 m y llegada de 8 a 10 m, con los carteles separados al menos 20 m.</p></section>
 
-    <section class="card"><p class="stepn">Paso 3 · Opción B</p><h2>Equipos con su propio celular</h2>
-      <p>Genera el QR y muéstraselo a cada equipo. Lo escanean con la cámara y el juego se abre en su celular. Antes, puedes probar el recorrido tocando el mapa.</p>
-      <div class="row"><button class="btn primary" id="lShare">Generar QR del juego</button><button class="btn" id="lTest">Probar en este celular</button></div>
-      <div id="lOut" class="card soft" hidden></div></section>
+    <section class="card"><p class="stepn">Paso 4</p><h2>Antes de jugar</h2>
+      <label class="lbl" for="lLim">Límites del predio (lo ve el jugador antes de empezar)</label>
+      <input class="input" id="lLim" maxlength="90" placeholder="Ej.: no salir del portón ni subir al primer piso" value="${esc(leader.lim)}">
+      <ul class="check">
+        <li>El jugador camina acompañado por un compañero que mira el camino: él va mirando el celular.</li>
+        <li>Caminar, nunca correr. Cuidado con escalones, autos y puertas.</li>
+        <li>Celular con batería, sonido alto y datos móviles encendidos.</li>
+        <li>Haz una vuelta de prueba antes de la clase con «Probar como jugador» y otra caminando.</li>
+        <li>Plan B si falla la señal o internet: <a href="../" target="_blank" rel="noopener">la presentación «El GPS y la señal perdida»</a>.</li>
+      </ul></section>
+
+    <section class="card"><p class="stepn">Paso 5</p><h2>Guarda el recorrido y usa los enlaces fijos</h2>
+      <p>Guarda el recorrido una vez y los enlaces de abajo funcionan siempre, en cualquier celular o computadora. Si cambias un cartel, vuelve a guardar.</p>
+      <div class="row"><button class="btn primary" id="lSave">Guardar recorrido en la nube</button></div>
+      <p class="gpsline" id="lCloud"></p>
+      <div id="lLinks" class="links"></div>
+      <div class="row"><button class="btn" id="lTestP">Probar como jugador</button><button class="btn" id="lTest">Probar como equipo</button><span id="lLiveReset"><button class="btn small" id="lClearLive">Limpiar la pantalla grande</button></span></div>
+      <details class="more"><summary>Sin conexión a la nube: enlaces largos</summary>
+        <p class="small">Estos enlaces llevan el recorrido adentro, así que funcionan aunque la nube no esté conectada. La pantalla grande en vivo sí necesita la nube; sin ella, conecta el celular del jugador al proyector.</p>
+        <div class="row"><button class="btn small primary" id="lPlayer">Enlace largo del jugador</button><button class="btn small" id="lShare">QR largo para equipos</button></div>
+        <div id="lOutP" class="card soft" hidden></div>
+        <div id="lOut" class="card soft" hidden></div>
+      </details></section>
 
     <section class="card soft"><h3>Empezar de cero</h3><p class="small">Borra todas las ubicaciones guardadas en este celular.</p><div id="lReset"><button class="btn danger small" id="lResetBtn">Borrar ubicaciones</button></div></section>
   </main>`);
@@ -615,7 +685,7 @@ function showLeader() {
       const kind = p.type === 'trap' ? 'trap' : p.type === 'dest' ? 'destL' : 'good';
       const m = L.marker([s.lat, s.lng], { icon: mkIcon(kind, p.name), draggable: true }).addTo(layer);
       m.on('dragend', ev => { const ll = ev.target.getLatLng(); Object.assign(s, { lat: ll.lat, lng: ll.lng, acc: null }); saveLeader(); renderList(); });
-      L.circle([s.lat, s.lng], { radius: p.type === 'trap' ? WARN_R : ARRIVE_R, color: p.type === 'trap' ? '#A82430' : '#242680', weight: 1, fillOpacity: .08 }).addTo(layer);
+      L.circle([s.lat, s.lng], { radius: p.type === 'trap' ? leader.r[0] : leader.r[1], color: p.type === 'trap' ? '#C33A2E' : '#0B6B45', weight: 1, fillOpacity: .08 }).addTo(layer);
       pts.push([s.lat, s.lng]);
     });
     if (pts.length && !centered) { map.fitBounds(pts, { padding: [40, 40], maxZoom: 19 }); centered = true; }
@@ -684,9 +754,75 @@ function showLeader() {
       else { me.setLatLng([pos.lat, pos.lng]); meAcc.setLatLng([pos.lat, pos.lng]).setRadius(pos.acc); }
       if (!centered) { map.setView([pos.lat, pos.lng], 19); centered = true; }
     }
+    const fl = $('#lField');
+    if (fl && pos) {
+      const near = PRESETS.filter(p => leader.pts[p.id].use && leader.pts[p.id].lat != null)
+        .map(p => ({ p, d: dist(pos, leader.pts[p.id]) })).sort((a, b) => a.d - b.d).slice(0, 2);
+      if (!near.length) fl.textContent = 'Prueba de campo: marca al menos un cartel para medir distancias.';
+      else fl.innerHTML = 'Prueba de campo · ' + near.map(({ p, d }) => {
+        const r = p.type === 'trap' ? leader.r[0] : leader.r[1];
+        const inside = d <= r;
+        return `<span><b>${esc(p.name)}</b> a ${Math.round(d)} m${inside ? (p.type === 'trap' ? ' · <b class="bad">saltaría el aviso</b>' : ' · <b class="ok">zona de llegada</b>') : ''}</span>`;
+      }).join(' · ');
+    }
   });
   cleanup.push(offGeo);
   Geo.emit();
+
+  const setR = (i, el, out) => { leader.r[i] = +el.value; $(out).textContent = el.value + ' m'; saveLeader(); draw(); Geo.emit(); };
+  $('#rW').addEventListener('input', e => setR(0, e.target, '#rWv'));
+  $('#rA').addEventListener('input', e => setR(1, e.target, '#rAv'));
+  $('#lLim').addEventListener('input', e => { leader.lim = e.target.value; saveLeader(); });
+
+  const LINKS = [
+    ['jugador', 'Jugador (pantalla grande)', 'El adolescente lo abre en su celular. Juega y transmite su recorrido.'],
+    ['pantalla', 'Pantalla grande', 'Ábrelo en la computadora del proyector: muestra en vivo al jugador.'],
+    ['equipos', 'Equipos', 'Cada equipo lo abre en su celular (o escanea el QR).']
+  ];
+  function renderLinks(saved) {
+    const box = $('#lLinks');
+    box.innerHTML = LINKS.map(([h, t, d]) => `<div class="linkrow"><div><b>${t}</b><p class="small">${d}</p>
+      <input class="linkbox" readonly value="${esc(BASE() + '#' + h)}" aria-label="Enlace ${esc(t)}"></div>
+      <div class="row"><button class="btn small" data-copy="${h}">Copiar</button><button class="btn small" data-qr="${h}">QR</button></div></div>`).join('');
+    box.onclick = e => {
+      const c = e.target.closest('[data-copy]'), q = e.target.closest('[data-qr]');
+      if (c) { const link = BASE() + '#' + c.dataset.copy; try { navigator.clipboard.writeText(link).then(() => toast('Enlace copiado'), () => toast(link)); } catch (er) { toast(link); } }
+      if (q) {
+        const link = BASE() + '#' + q.dataset.qr;
+        const o = document.createElement('div'); o.className = 'bigqr';
+        o.innerHTML = `<p class="kicker">${esc(LINKS.find(l => l[0] === q.dataset.qr)[1])}</p><div class="qrbox" id="qrBig"></div><p class="small">${esc(link)}</p><button class="btn">Cerrar</button>`;
+        document.body.appendChild(o); makeQR($('#qrBig'), link, 500);
+        o.querySelector('button').onclick = () => o.remove();
+      }
+    };
+  }
+  const cloudLine = $('#lCloud');
+  if (!Cloud.ok) {
+    cloudLine.innerHTML = '<span class="dot bad"></span><span>La nube todavía no está conectada. Mientras tanto, los enlaces fijos usan el recorrido guardado en este celular, y la pantalla grande en vivo no funciona.</span>';
+    $('#lSave').disabled = true; $('#lClearLive').disabled = true;
+  } else {
+    cloudLine.innerHTML = '<span class="dot"></span><span>Comprobando el recorrido guardado…</span>';
+    Cloud.routeRef().get().then(s => {
+      const d = s.exists ? s.data() : null;
+      cloudLine.innerHTML = d ? `<span class="dot ok"></span><span>Recorrido guardado en la nube el ${new Date(d.updatedAt).toLocaleString('es')}.</span>` : '<span class="dot mid"></span><span>Todavía no guardaste el recorrido en la nube.</span>';
+    }).catch(() => { cloudLine.innerHTML = '<span class="dot bad"></span><span>No pude leer la nube. Revisa la conexión a internet.</span>'; });
+  }
+  renderLinks();
+  $('#lSave').onclick = async () => {
+    const g = buildGame();
+    if (!g.p.some(r => BY_ID[r[0]].type === 'good')) return toast('Elige al menos un punto bueno.');
+    const b = $('#lSave'); b.disabled = true; b.textContent = 'Guardando…';
+    try {
+      await Cloud.saveRoute(g);
+      cloudLine.innerHTML = `<span class="dot ok"></span><span>Recorrido guardado en la nube el ${new Date().toLocaleString('es')}. Los enlaces fijos ya lo usan.</span>`;
+      toast('Recorrido guardado'); buzz(60);
+    } catch (e) { console.error(e); toast('No se pudo guardar. Revisa internet y las reglas de Firebase.'); }
+    b.disabled = false; b.textContent = 'Guardar recorrido en la nube';
+  };
+  $('#lClearLive').onclick = () => {
+    if (!Cloud.ok) return;
+    Cloud.liveRef().set({ run: 0, t: Date.now() }).then(() => toast('Pantalla grande en espera'), () => toast('No se pudo limpiar la pantalla'));
+  };
 
   $('#lShare').onclick = () => {
     const g = buildGame();
@@ -770,13 +906,21 @@ function showTeam() {
   if (T.done) return showFinal();
   showGame();
 }
+function safetyHTML() {
+  const pantalla = isPantalla();
+  return `<div class="card safety"><h3>Antes de salir</h3><ul class="check">
+    <li>${pantalla ? 'Camina con un compañero al lado que mire el camino por ti.' : 'Uno lleva el celular; los demás miran el camino.'}</li>
+    <li>Caminar, nunca correr. Cuidado con escalones, autos y puertas.</li>
+    ${game && game.lim ? `<li><b>Límites:</b> ${esc(game.lim)}</li>` : '<li>No salgan del predio.</li>'}
+  </ul></div>`;
+}
 function showSetup() {
   Geo.stop();
   const ng = goods().length, nt = traps().length;
   let team = 1;
   if (isPantalla()) {
-    setView('setup', `<main class="page go-player">
-      <div class="hero-sign"><span class="hero-arrow">${ICON.turn}</span><p class="kicker light">${isSim() ? 'Modo prueba · ' : ''}GO · Jugador en pantalla grande</p><h1>Ruta a la capilla</h1>
+    setView('setup', `<main class="page">
+      <div class="hero-sign"><span class="hero-arrow">${ICON.turn}</span><p class="kicker light">${isSim() ? 'Modo prueba · ' : ''}Jugador en pantalla grande</p><h1>Ruta a la capilla</h1>
         <p>${ng} punto${ng !== 1 ? 's' : ''} que guían, ${nt} trampa${nt !== 1 ? 's' : ''} y la capilla</p></div>
       <p class="lead">Este celular se va a ver en la pantalla grande: toda la clase sigue tu recorrido en vivo. El GPS te lleva al próximo punto. Si te acercas a una trampa, la clase te ayuda a decidir.</p>
       <label class="lbl" for="tName">¿Quién maneja hoy?</label>
@@ -786,7 +930,7 @@ function showSetup() {
         <li><b class="p">+50</b><span>si el GPS avisa de una trampa y responden bien</span></li>
         <li><b class="n">−50</b><span>si escaneas una trampa, y 15 segundos recalculando</span></li>
       </ul>
-      <button class="btn primary block" id="goBtn">Empezar recorrido</button>
+      ${safetyHTML()}<button class="btn primary block" id="goBtn">Empezar recorrido</button>
       <p class="small center">Antes de empezar, conecta este celular a la pantalla grande. Al empezar, pide permiso para usar la ubicación${Compass.needsPermission() ? ' y la brújula' : ''}.</p>
     </main>`);
     $('#goBtn').onclick = () => {
@@ -809,7 +953,7 @@ function showSetup() {
       <li><b class="p">+50</b><span>si el GPS avisa de una trampa y responden bien</span></li>
       <li><b class="n">−50</b><span>si escanean una trampa, y 15 segundos recalculando</span></li>
     </ul>
-    <button class="btn primary block" id="goBtn">Empezar recorrido</button>
+    ${safetyHTML()}<button class="btn primary block" id="goBtn">Empezar recorrido</button>
     <p class="small center">Al empezar, el celular pide permiso para usar la ubicación${Compass.needsPermission() ? ' y la brújula' : ''}.</p>
   </main>`);
   app.querySelector('.seg').addEventListener('click', e => {
@@ -854,9 +998,9 @@ function showGame() {
       <p class="kicker">${pantalla ? 'En vivo' : 'Recorrido'} · ${esc(teamLabel(T))}</p>
       <h2 id="sideNext">Buscando señal…</h2>
       <ul class="legend">
-        <li>${pin('#242680', PIN_IN.dot)}<span>Próximo punto</span></li>
+        <li>${pin('#0B6B45', PIN_IN.dot)}<span>Próximo punto</span></li>
         <li>${pin('#7B8A82', PIN_IN.check)}<span>Punto visitado</span></li>
-        <li>${pin('#A82430', PIN_IN.bang)}<span>Trampa detectada</span></li>
+        <li>${pin('#C33A2E', PIN_IN.bang)}<span>Trampa detectada</span></li>
         <li>${pin('#B07A00', PIN_IN.flag)}<span>La capilla</span></li>
         <li><span class="me"></span><span>${pantalla ? 'Jugador' : 'Tu equipo'}</span></li>
         <li><span class="trail"></span><span>Camino recorrido</span></li>
@@ -887,7 +1031,7 @@ function showGame() {
       window.irA = (lat, lng) => Geo.setSim(lat, lng);
     }
     trailCase = L.polyline(T.trail, { color: '#ffffff', weight: 11, opacity: .9, interactive: false }).addTo(map);
-    trailLine = L.polyline(T.trail, { color: '#242680', weight: 6, opacity: .95, interactive: false }).addTo(map);
+    trailLine = L.polyline(T.trail, { color: '#0B6B45', weight: 6, opacity: .95, interactive: false }).addTo(map);
     cleanup.push(() => map.remove());
   } else $('#tmap').innerHTML = '<div class="map-off">Sin internet no se ve el mapa, pero el GPS y los carteles siguen funcionando.</div>';
 
@@ -952,12 +1096,13 @@ function showGame() {
         if (trailLine) { trailLine.setLatLngs(tr); trailCase.setLatLngs(tr); }
       }
     }
+    publishLive(false);
 
     if (pos && !weak && !sheetOpen() && now >= T.lockUntil) {
       for (const t of traps()) {
         if (t.lat == null || T.warned[t.id] || T.fallen[t.id]) continue;
         const d = dist(pos, t);
-        if (d <= WARN_R) { T.warned[t.id] = now; saveT(); openWarn(t, Math.max(1, Math.round(d))); break; }
+        if (d <= WR()) { T.warned[t.id] = now; saveT(); openWarn(t, Math.max(1, Math.round(d))); break; }
       }
     }
 
@@ -978,7 +1123,7 @@ function showGame() {
     if (lastTgt === tgt.id && lastD != null) { if (d < lastD - 2) trend = 'Más cerca'; else if (d > lastD + 2) trend = 'Más lejos'; }
     else trend = '';
     if (lastTgt !== tgt.id || Math.abs(d - lastD) > 2) { lastD = d; lastTgt = tgt.id; }
-    if (d <= ARRIVE_R) {
+    if (d <= AR()) {
       if (!T.arrived[tgt.id]) { T.arrived[tgt.id] = now; saveT(); Sound.ping(); buzz(90); }
       return nav('go', 'flag', 'Llegaron', `${label} · busquen el cartel y escanéenlo`, 'Están en la zona');
     }
@@ -995,10 +1140,27 @@ function showGame() {
   updateGame();
 }
 
-let activeWarn = null;
+let activeWarn = null, lastEv = null;
+function publishLive(force) {
+  if (!T || !T.pantalla || !Cloud.ok) return;
+  const pos = Geo.pos, now = Date.now();
+  const tgt = T.done ? null : target();
+  Cloud.pushLive({
+    run: T.start, name: T.name || 'Jugador', start: T.start, score: T.score,
+    visited: Object.keys(T.visited), warned: Object.keys(T.warned), fallen: Object.keys(T.fallen),
+    avoided: Object.keys(T.avoided).filter(k => T.avoided[k].ok),
+    pos: pos ? { lat: +pos.lat.toFixed(6), lng: +pos.lng.toFixed(6), acc: pos.acc || 0 } : null,
+    t: now, weak: !pos || pos.acc > WEAK_ACC || now - pos.t > 30000,
+    trail: (T.trail || []).slice(-400).flat(),
+    target: tgt ? tgt.id : null, lockUntil: T.lockUntil || 0, done: T.done || 0,
+    warn: activeWarn ? { id: activeWarn.id, d: activeWarn.d, ans: activeWarn.ans == null ? null : activeWarn.ans } : null,
+    ev: lastEv
+  }, force);
+}
 function openWarn(t, d) {
   Sound.warn(); buzz([220, 90, 220, 90, 220]);
   activeWarn = { id: t.id, d };
+  publishLive(true);
   const opts = shuffle(t.options.map((o, i) => ({ o, i })));
   const w = openSheet(`<div class="sheet-head stop"><div class="sh-k">${ICON.warn} Recalculando</div><h2>Reporte de peligro a ${d} m</h2></div>
     <div class="sheet-body">
@@ -1009,12 +1171,13 @@ function openWarn(t, d) {
       <div class="opts">${opts.map(x => `<button class="opt" data-i="${x.i}">${esc(x.o)}</button>`).join('')}</div>
       <div class="feedback" hidden></div>
       <button class="btn primary block" id="wDone" hidden>Desviar y seguir</button>
-    </div>`, () => { activeWarn = null; updateGame(); });
+    </div>`, () => { activeWarn = null; publishLive(true); updateGame(); });
   updateGame();
   w.querySelector('.opts').addEventListener('click', e => {
     const b = e.target.closest('.opt'); if (!b || T.avoided[t.id]) return;
     const ok = +b.dataset.i === t.ok;
     T.avoided[t.id] = { ok, at: Date.now() }; if (ok) T.score += 50; saveT();
+    if (activeWarn) { activeWarn.ans = ok; publishLive(true); }
     w.querySelectorAll('.opt').forEach(o => { o.disabled = true; if (+o.dataset.i === t.ok) o.classList.add('ok'); else if (o === b) o.classList.add('no'); });
     const fb = w.querySelector('.feedback'); fb.hidden = false;
     fb.innerHTML = (ok ? '<div class="pts good">+50</div><p><b>¡Desvío a tiempo!</b></p>' : '<p><b>Esa no era.</b> La respuesta correcta está en verde.</p>') +
@@ -1041,8 +1204,9 @@ function handleCode(raw) {
   }
   T.visited[p.id] = Date.now(); T.score += 100;
   Sound.good(); buzz([60, 40, 60]);
-  if (p.type === 'dest') { T.done = Date.now(); saveT(); return showFinal(); }
-  saveT();
+  lastEv = { type: p.type === 'dest' ? 'dest' : 'good', id: p.id, at: Date.now() };
+  if (p.type === 'dest') { T.done = Date.now(); saveT(); publishLive(true); return showFinal(); }
+  saveT(); publishLive(true);
   const n = goodsDone(), tot = goods().length;
   const w = openSheet(`<div class="sheet-head"><div class="sh-k">Punto ${n} de ${tot}</div><h2>${esc(p.title)}</h2></div>
     <div class="sheet-body"><div class="pts good">+100</div><div class="cartel-quote">«${esc(p.sign)}»</div><p>${esc(p.body)}</p><p class="ref">${esc(p.ref)}</p>
@@ -1053,6 +1217,7 @@ function handleCode(raw) {
 function fallTrap(t) {
   if (T.fallen[t.id]) return sheetMsg('Ya cayeron en esta trampa', 'No hace falta escanearla otra vez. Sigan la ruta del GPS.');
   T.fallen[t.id] = Date.now(); T.score -= 50; T.lockUntil = Date.now() + LOCK_MS; saveT();
+  lastEv = { type: 'trap', id: t.id, at: Date.now() }; publishLive(true);
   Sound.bad(); buzz([400, 120, 400]);
   const w = openSheet(`<div class="sheet-head stop"><div class="sh-k">${ICON.warn} Cayeron en una trampa</div><h2>«${esc(t.sign)}»</h2></div>
     <div class="sheet-body"><div class="pts bad">−50</div><p>${esc(t.why)}</p>
@@ -1142,6 +1307,9 @@ function openMenu() {
   });
 }
 
+const PUNTO2 = `<div class="card next"><p class="kicker">Lo que sigue · Punto 2</p><h2>Enviados por el Espíritu Santo</h2>
+  <p class="verse">«Entonces Bernabé y Saulo fueron enviados por el Espíritu Santo».</p><p class="ref">Hechos 13:4 (NTV)</p>
+  <p>El que guía es el mismo que envía. La misión no es un proyecto nuestro que el Espíritu apoya: es su obra, y nosotros participamos.</p></div>`;
 function showFinal() {
   Geo.stop();
   const ok = Object.values(T.avoided).filter(a => a.ok).length, fell = Object.keys(T.fallen).length;
@@ -1155,6 +1323,7 @@ function showFinal() {
     </div>
     ${window.L && (T.trail || []).length > 1 ? '<p class="kicker">Así fue el recorrido</p><div class="final-map" id="fmap"></div>' : ''}
     <div class="card"><p class="kicker">Frase del punto 1</p><h2>El Espíritu guía a sus hijos y les enseña a discernir juntos.</h2></div>
+    ${PUNTO2}
     <p>${esc(BY_ID.capilla.body)}</p>
     <p class="lead center"><b>${T.pantalla ? '¡Un aplauso para quien manejó!' : 'Muéstrenle esta pantalla a su líder.'}</b></p>
     ${isSim() ? '<button class="btn primary block" id="fAgain">Probar de nuevo</button><a class="btn block" href="#lider">Volver al modo líder</a>' : '<button class="btn block" id="fHome">Inicio</button>'}
@@ -1164,7 +1333,7 @@ function showFinal() {
     const fm = L.map('fmap', { zoomControl: false, attributionControl: true });
     tiles(fm);
     L.polyline(T.trail, { color: '#ffffff', weight: 11, opacity: .9 }).addTo(fm);
-    const line = L.polyline(T.trail, { color: '#242680', weight: 6, opacity: .95 }).addTo(fm);
+    const line = L.polyline(T.trail, { color: '#0B6B45', weight: 6, opacity: .95 }).addTo(fm);
     game.p.forEach(r => {
       const p = gp(r[0]); if (!p || p.lat == null) return;
       let kind = null;
@@ -1177,6 +1346,197 @@ function showFinal() {
   }
   const a = $('#fAgain'); if (a) a.onclick = () => { store.del(tKey()); T = null; showTeam(); };
   const h = $('#fHome'); if (h) h.onclick = () => showHome();
+}
+
+/* ---------- Pantalla grande (espectador, en la computadora del proyector) ---------- */
+function showScreen() {
+  Geo.stop();
+  if (!Cloud.ok) {
+    return setView('screen', `<main class="page">
+      <div class="hero-sign"><span class="hero-arrow">${ICON.nosig}</span><p class="kicker light">Pantalla grande</p><h1>Falta conectar la nube</h1><p>La transmisión en vivo necesita Firebase</p></div>
+      <p class="lead">Mientras tanto, conecta el celular del jugador al proyector, o usa la <a href="../">presentación «El GPS y la señal perdida»</a> como plan B.</p></main>`);
+  }
+  setView('screen', `<div class="tv screen">
+    <header class="nav" id="nav" data-tone="off" aria-live="polite">
+      <div class="nav-ico" id="navIco">${ICON.spin.replace('<svg', '<svg class="spinning"')}</div>
+      <div style="min-width:0"><div class="nav-dist" id="navDist" hidden></div><div class="nav-text" id="navText">Esperando al jugador…</div><span class="nav-chip" id="navChip" hidden></span></div>
+    </header>
+    <div class="tv-map"><div id="tmap"></div><div class="live-badge" id="liveBadge">EN VIVO</div>
+      <div class="scr-wait" id="scrWait"><div class="card"><h2>Esperando al jugador</h2><p>Cuando toque «Empezar recorrido» en su celular, su camino aparece aquí en vivo.</p></div></div></div>
+    <aside class="side">
+      <p class="kicker" id="scrWho">Ruta a la capilla</p>
+      <h2 id="sideNext">Esperando al jugador…</h2>
+      <div class="stats3 mini"><div><strong id="sScore">0</strong><span>puntos</span></div><div><strong id="sProg">0/0</strong><span>ruta</span></div><div><strong id="sTime">0:00</strong><span>tiempo</span></div></div>
+      <ul class="legend">
+        <li>${pin('#0B6B45', PIN_IN.dot)}<span>Próximo punto</span></li>
+        <li>${pin('#7B8A82', PIN_IN.check)}<span>Punto visitado</span></li>
+        <li>${pin('#C33A2E', PIN_IN.bang)}<span>Trampa detectada</span></li>
+        <li>${pin('#B07A00', PIN_IN.flag)}<span>La capilla</span></li>
+        <li><span class="me"></span><span>Jugador</span></li>
+        <li><span class="trail"></span><span>Camino recorrido</span></li>
+      </ul>
+      <button class="btn small" id="sndBtn">Activar sonido</button>
+      <p class="small" id="scrStale"></p>
+    </aside>
+    <div class="scr-over" id="scrOver" hidden></div>
+  </div>`);
+
+  let R = null, D = null, map = null, me = null, meAcc = null, trailCase = null, trailLine = null, marks = {}, fitted = false;
+  let overKey = '', lastWarnId = '', lastEvAt = 0, evUntil = 0, evHTML = '', lastRot = null;
+  const P = id => { if (!R) return null; const r = R.p.find(x => x[0] === id); return r && BY_ID[id] ? { ...BY_ID[id], lat: r[1], lng: r[2], hint: r[3] || '' } : null; };
+  const goodsR = () => R ? R.p.filter(r => BY_ID[r[0]] && BY_ID[r[0]].type === 'good').map(r => r[0]) : [];
+  const hasDest = () => !!(R && R.p.some(r => BY_ID[r[0]] && BY_ID[r[0]].type === 'dest'));
+
+  if (window.L) {
+    map = L.map('tmap', { zoomControl: false }).setView([-15, -60], 3);
+    tiles(map);
+    trailCase = L.polyline([], { color: '#ffffff', weight: 12, opacity: .9, interactive: false }).addTo(map);
+    trailLine = L.polyline([], { color: '#0B6B45', weight: 7, opacity: .95, interactive: false }).addTo(map);
+    cleanup.push(() => map.remove());
+  } else $('#tmap').innerHTML = '<div class="map-off">El mapa necesita internet.</div>';
+
+  function nav(tone, icon, distTxt, text, chip, rot) {
+    const n = $('#nav'); if (!n) return;
+    n.dataset.tone = tone;
+    const ic = $('#navIco');
+    if (ic.dataset.icon !== icon) { ic.innerHTML = ICON[icon]; ic.dataset.icon = icon; lastRot = null; }
+    const svg = ic.firstElementChild;
+    if (svg) {
+      svg.classList.toggle('spinning', icon === 'spin');
+      if (rot != null) { let r = rot; if (lastRot != null) { while (r - lastRot > 180) r -= 360; while (r - lastRot < -180) r += 360; } lastRot = r; svg.style.transform = `rotate(${r}deg)`; }
+      else svg.style.transform = '';
+    }
+    const d = $('#navDist'); d.textContent = distTxt || ''; d.hidden = !distTxt;
+    $('#navText').textContent = text;
+    const c = $('#navChip'); c.textContent = chip || ''; c.hidden = !chip;
+  }
+  function drawMarks(tgtId) {
+    if (!map || !R) return;
+    const vis = new Set(D ? D.visited || [] : []), seen = new Set(D ? [...(D.warned || []), ...(D.fallen || []), ...(D.avoided || [])] : []);
+    R.p.forEach(r => {
+      const p = P(r[0]); if (!p || p.lat == null) return;
+      let kind = null, label = '';
+      if (p.type === 'trap') { if (seen.has(p.id)) { kind = 'trap'; label = 'Trampa'; } }
+      else if (vis.has(p.id)) kind = p.type === 'dest' ? 'destL' : 'visited';
+      else if (tgtId === p.id) { kind = p.type === 'dest' ? 'dest' : 'target'; label = p.type === 'dest' ? 'Capilla' : 'Próximo'; }
+      else if (p.type === 'dest') kind = 'destL';
+      const key = kind + label, m = marks[p.id];
+      if (!kind) { if (m) { m.remove(); delete marks[p.id]; } return; }
+      if (m && m._key === key) return;
+      if (m) m.remove();
+      const nm = L.marker([p.lat, p.lng], { icon: mkIcon(kind, label), interactive: false, keyboard: false }).addTo(map);
+      nm._key = key; marks[p.id] = nm;
+    });
+  }
+  function overlay(key, html) {
+    const o = $('#scrOver'); if (!o) return;
+    if (!html) { o.hidden = true; overKey = ''; return; }
+    if (overKey === key) return;
+    overKey = key; o.innerHTML = `<div class="sheet big">${html}</div>`; o.hidden = false;
+  }
+  function warnHTML(w) {
+    const t = BY_ID[w.id]; if (!t) return '';
+    const answered = w.ans === true || w.ans === false;
+    return `<div class="sheet-head stop"><div class="sh-k">${ICON.warn} Recalculando</div><h2>Reporte de peligro a ${w.d} m</h2></div>
+      <div class="sheet-body"><div class="cartel-quote">«${esc(t.sign)}»</div><p><b>${esc(t.q)}</b></p>
+      ${answered ? '' : '<p class="class-q">Clase: ¿qué le responderían? Díganlo en voz alta antes de que elija.</p>'}
+      <div class="opts">${t.options.map((o, i) => `<div class="opt ${answered && i === t.ok ? 'ok' : ''}">${esc(o)}</div>`).join('')}</div>
+      ${answered ? (w.ans ? '<div class="pts good">+50 · ¡Desvío a tiempo!</div>' : '<p><b>Esa no era.</b> La respuesta correcta está en verde.</p>') + `<p>${esc(t.why)}</p>` : ''}</div>`;
+  }
+  function evHTMLFor(ev) {
+    const p = BY_ID[ev.id]; if (!p) return '';
+    if (ev.type === 'trap') return `<div class="sheet-head stop"><div class="sh-k">${ICON.warn} Cayó en una trampa</div><h2>«${esc(p.sign)}»</h2></div><div class="sheet-body"><div class="pts bad">−50</div><p>${esc(p.why)}</p><p class="small">Recalculando: 15 segundos de espera.</p></div>`;
+    return `<div class="sheet-head"><div class="sh-k">Punto alcanzado</div><h2>${esc(p.title)}</h2></div><div class="sheet-body"><div class="pts good">+100</div><div class="cartel-quote">«${esc(p.sign)}»</div><p>${esc(p.body)}</p><p class="ref">${esc(p.ref)}</p></div>`;
+  }
+  function finalHTML() {
+    const ok = (D.avoided || []).length, fell = (D.fallen || []).length;
+    return `<div class="sheet-head"><div class="sh-k">${ICON.flag} Llegó a la capilla · ${esc(D.name || 'Jugador')}</div><h2>${D.score} puntos · ${fmtTime(D.done - D.start)}</h2></div>
+      <div class="sheet-body"><div class="stats3"><div><strong>${(D.visited || []).filter(id => BY_ID[id] && BY_ID[id].type === 'good').length}</strong><span>puntos que guían</span></div><div><strong>${ok}</strong><span>trampas detectadas</span></div><div><strong>${fell}</strong><span>trampas en las que cayó</span></div></div>
+      <div class="card"><p class="kicker">Frase del punto 1</p><h2>El Espíritu guía a sus hijos y les enseña a discernir juntos.</h2></div>${PUNTO2}</div>`;
+  }
+
+  function render() {
+    if (view !== 'screen') return;
+    const now = Date.now();
+    const waiting = !D || !D.run;
+    $('#scrWait').hidden = !waiting;
+    $('#liveBadge').hidden = waiting;
+    if (waiting) {
+      nav('off', 'spin', '', 'Esperando al jugador…', 'Ruta a la capilla');
+      $('#sideNext').textContent = 'Esperando al jugador…'; $('#scrWho').textContent = 'Ruta a la capilla';
+      $('#sScore').textContent = '0'; $('#sTime').textContent = '0:00'; $('#sProg').textContent = `0/${goodsR().length + (hasDest() ? 1 : 0)}`;
+      if (trailLine) { trailLine.setLatLngs([]); trailCase.setLatLngs([]); }
+      if (me) { me.remove(); meAcc.remove(); me = meAcc = null; }
+      drawMarks(null); overlay('', ''); $('#scrStale').textContent = '';
+      return;
+    }
+    $('#scrWho').textContent = 'En vivo · ' + (D.name || 'Jugador');
+    $('#liveBadge').textContent = 'EN VIVO · ' + (D.name || 'Jugador').toUpperCase();
+    $('#sScore').textContent = D.score;
+    $('#sProg').textContent = `${(D.visited || []).length}/${goodsR().length + (hasDest() ? 1 : 0)}`;
+    $('#sTime').textContent = fmtTime((D.done || now) - D.start);
+    const age = Math.round((now - D.t) / 1000);
+    $('#scrStale').textContent = !D.done && age > 15 ? `Última señal del celular del jugador hace ${age} s.` : '';
+
+    const tr = []; const f = D.trail || []; for (let i = 0; i + 1 < f.length; i += 2) tr.push([f[i], f[i + 1]]);
+    if (trailLine) { trailLine.setLatLngs(tr); trailCase.setLatLngs(tr); }
+    if (map && D.pos) {
+      const ll = [D.pos.lat, D.pos.lng];
+      if (!me) {
+        meAcc = L.circle(ll, { radius: D.pos.acc || 5, color: '#1F6FEB', weight: 1, fillOpacity: .1, interactive: false }).addTo(map);
+        me = L.circleMarker(ll, { radius: 11, color: '#fff', weight: 4, fillColor: '#1F6FEB', fillOpacity: 1, interactive: false }).addTo(map);
+      } else { me.setLatLng(ll); meAcc.setLatLng(ll).setRadius(D.pos.acc || 5); }
+      if (!fitted) { map.setView(ll, 19); fitted = true; }
+      else if (!map.getBounds().pad(-0.25).contains(ll)) map.panTo(ll);
+    }
+    const tgt = D.target ? P(D.target) : null;
+    drawMarks(tgt ? tgt.id : null);
+
+    const vg = (D.visited || []).filter(id => BY_ID[id] && BY_ID[id].type === 'good').length;
+    const label = tgt ? (tgt.type === 'dest' ? 'Destino final: la capilla' : `Punto ${vg + 1} de ${goodsR().length}`) : '';
+    $('#sideNext').textContent = D.done ? 'Llegó a la capilla' : D.warn ? 'Trampa a la vista: ¿qué le responderían?' : now < D.lockUntil ? 'Recalculando después de una trampa' : tgt ? (tgt.type === 'dest' ? 'Rumbo a la capilla' : `Rumbo al punto ${vg + 1} de ${goodsR().length}`) : '';
+    if (D.done) nav('go', 'flag', 'Llegó', 'Recorrido completo', null);
+    else if (D.warn) nav('stop', 'warn', 'Peligro', `Trampa a ${D.warn.d} m`, 'Recalculando');
+    else if (now < D.lockUntil) nav('warn', 'spin', Math.ceil((D.lockUntil - now) / 1000) + ' s', 'Recalculando… cayó en una trampa', null);
+    else if (!tgt) nav('go', 'flag', '', 'Recorrido completo', null);
+    else if (tgt.lat == null) nav('off', 'qr', 'Bajo techo', label + (tgt.hint ? ' · ' + tgt.hint : ''), 'Busca el cartel');
+    else if (D.weak || !D.pos) nav('off', 'nosig', 'Sin señal', label, 'Sigue por la ruta marcada');
+    else {
+      const d = dist(D.pos, tgt);
+      if (d <= ((R && R.r && +R.r[1]) || ARRIVE_R)) nav('go', 'flag', 'Llegó', label + ' · busca el cartel', 'En la zona');
+      else nav('go', 'arrow', fmtDist(d), label + (tgt.hint ? ' · ' + tgt.hint : ''), 'Flecha = norte del mapa', bearing(D.pos, tgt));
+    }
+
+    if (D.warn) {
+      if (D.warn.id !== lastWarnId) { lastWarnId = D.warn.id; Sound.warn(); }
+      overlay('w' + D.warn.id + String(D.warn.ans), warnHTML(D.warn));
+    } else if (D.done) {
+      if (overKey !== 'final' + D.run) Sound.good();
+      overlay('final' + D.run, finalHTML());
+    } else {
+      if (D.ev && D.ev.at > lastEvAt && D.ev.at >= D.start && now - D.ev.at < 15000) {
+        lastEvAt = D.ev.at; evUntil = now + 8000; evHTML = evHTMLFor(D.ev);
+        if (D.ev.type === 'trap') Sound.bad(); else Sound.good();
+      }
+      if (now < evUntil && evHTML) overlay('e' + lastEvAt, evHTML); else overlay('', '');
+      if (!D.warn) lastWarnId = '';
+    }
+  }
+
+  const unR = Cloud.routeRef().onSnapshot(s => {
+    R = s.exists ? Cloud.fromCloud(s.data()) : null;
+    Object.values(marks).forEach(m => m.remove()); marks = {};
+    if (map && R && !fitted) {
+      const pts = R.p.filter(r => r[1] != null).map(r => [r[1], r[2]]);
+      if (pts.length) { map.fitBounds(pts, { padding: [60, 60], maxZoom: 19 }); fitted = true; }
+    }
+    render();
+  }, e => { console.error(e); toast('No pude leer el recorrido de la nube.'); });
+  const unD = Cloud.liveRef().onSnapshot(s => { D = s.exists ? s.data() : null; render(); }, e => { console.error(e); toast('No pude conectarme a la transmisión.'); });
+  const iv = setInterval(render, 1000);
+  cleanup.push(unR, unD, () => clearInterval(iv));
+  $('#sndBtn').onclick = () => { Sound.init(); Sound.ping(); $('#sndBtn').hidden = true; toast('Sonido activado'); };
+  render();
 }
 
 route();
