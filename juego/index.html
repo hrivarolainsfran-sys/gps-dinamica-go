@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0B6B45">
-<title>Ruta a la capilla</title>
+<meta name="theme-color" content="#EC4217">
+<title>El Espíritu y la misión · Ruta a la capilla</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Overpass+Mono:wght@500;700&family=Overpass:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Gochi+Hand&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* Juego al aire libre: un solo tema claro a propósito, para leer bajo el sol. Lenguaje visual de cartel vial verde. */
 :root{
@@ -262,6 +262,135 @@ details.more[open]{display:grid;gap:10px}
   .cartel .qr{width:60mm}
   @page{size:A4;margin:10mm}
 }
+
+/* ===== Tema GO (afiche «El Espíritu y la misión»): rojo, crema y azul marino; Anton + Space Mono + Gochi Hand ===== */
+:root{
+  --bg:#EC4217; --surface:#FBF4E9; --ink:#1B2266; --muted:#5D6190; --line:#E4D6C1;
+  --sign:#2536A8; --sign-dark:#17237A; --route:#2536A8;
+  --warn:#FFB321; --warn-ink:#2A1A00; --stop:#E5320B; --off:#5D6190;
+  --good-bg:#E1E5FB; --bad-bg:#FDE1D7;
+  --navy:#2536A8; --red:#EC4217; --cream:#FBF4E9;
+  --f-display:"Anton","Impact","Arial Narrow",sans-serif;
+  --f-body:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Space Mono",ui-monospace,Menlo,monospace;
+  --f-hand:"Gochi Hand","Comic Sans MS",cursive;
+}
+body{background:var(--red);color:#fff}
+.card,.sheet,.tv,.toast,.bigqr,.stats3 div,.cartel{color:var(--ink)}
+h1,h2,h3{font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:1.02}
+h2{font-size:1.5rem}
+h3{font-size:1.15rem}
+.kicker{color:var(--cream);font-weight:700}
+.card .kicker,.sheet .kicker,.side .kicker,.tv .kicker{color:var(--navy)}
+.page > .small,.page > p.small{color:var(--cream);opacity:.9}
+.back{color:var(--cream)}
+.lead{font-size:1.1rem;line-height:1.5}
+label.lbl{color:var(--cream)}
+.card label.lbl{color:var(--muted)}
+.btn{font:400 1.05rem/1 var(--f-display);text-transform:uppercase;letter-spacing:.05em;border-radius:10px;border:2.5px solid var(--navy);color:var(--navy);background:var(--cream);box-shadow:4px 4px 0 var(--navy);padding:.85em 1.2em .8em;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--navy)}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:4px 4px 0 #0E1550}
+.btn.danger{color:var(--stop);border-color:var(--stop);box-shadow:4px 4px 0 var(--stop);background:var(--cream)}
+.btn.small{font-size:.9rem;padding:.65em .95em .6em;box-shadow:3px 3px 0 var(--navy)}
+.btn.primary.small{box-shadow:3px 3px 0 #0E1550}
+.card{border:0;border-radius:6px;box-shadow:7px 7px 0 rgba(23,30,90,.28);padding:20px}
+.card.soft{background:transparent;color:#fff;border:2px dashed rgba(251,244,233,.7);box-shadow:none}
+.card.soft h3{color:#fff}
+.card .card.soft,.sheet .card.soft{color:var(--ink);border-color:var(--line)}
+.card .card.soft h3{color:var(--ink)}
+.notice{background:var(--cream);color:var(--stop);box-shadow:4px 4px 0 var(--navy);border-radius:6px}
+.stepn{color:var(--stop);font-weight:700}
+.input{border:2.5px solid var(--navy);border-radius:8px;font-family:var(--f-body);font-weight:500}
+.seg button{border:2.5px solid var(--navy);background:var(--cream);color:var(--navy);border-radius:8px;font:400 1.5rem/1 var(--f-display);box-shadow:3px 3px 0 var(--navy)}
+.seg button[aria-pressed="true"]{background:var(--navy);color:#fff}
+.rules b{font:400 1.15rem var(--f-display);border-radius:4px}
+.rules .p{background:var(--cream);color:var(--navy)} .rules .n{background:var(--navy);color:#fff}
+.card.safety{background:var(--cream)}
+.card.next{box-shadow:7px 7px 0 var(--navy)}
+.card.next h2{color:var(--stop)}
+.card.next .verse{font-family:var(--f-hand);font-style:normal;font-size:1.4rem;color:var(--navy)}
+.ref{font-family:var(--f-mono);color:var(--stop)}
+.gpsline{background:#F3E9D9;color:var(--ink);border-radius:6px}
+.summary,.grp{color:var(--muted)}
+.tag{border-radius:3px}
+.tag.good{background:var(--good-bg);color:var(--navy)} .tag.dest{background:var(--navy);color:#fff} .tag.trap{background:var(--bad-bg);color:var(--stop)}
+.code{border-color:var(--navy);color:var(--navy)}
+.sw input:checked + span{background:var(--navy)}
+.status.ok{color:var(--navy)}
+.lmap{border:2.5px solid var(--navy);border-radius:6px}
+.linkbox{background:#F3E9D9;border-color:var(--line)}
+details.more summary{color:var(--navy)}
+.toast{background:var(--navy);box-shadow:4px 4px 0 rgba(0,0,0,.25)}
+
+/* Encabezado tipo afiche */
+.poster{position:relative;display:grid;gap:10px;padding:10px 0 6px;color:#fff;isolation:isolate}
+.poster .serie{font:700 12.5px/1.3 var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--cream)}
+.poster h1{color:#fff;font-size:clamp(3.1rem,2rem + 6.5vw,5.6rem);line-height:.9;max-width:8.5ch}
+.poster .ref-hand{font:400 clamp(1.7rem,1.3rem + 1.4vw,2.3rem)/1 var(--f-hand);color:#fff;margin-top:2px;text-transform:uppercase}
+.poster-note{font:700 12px/1.3 var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--cream)}
+.sticker{position:relative;justify-self:start;background:var(--cream);color:var(--red);font:400 1.35rem/1.1 var(--f-hand);padding:10px 16px 8px;transform:rotate(-2deg);box-shadow:5px 5px 0 rgba(23,30,90,.25);margin-top:8px}
+.tape::before{content:"";position:absolute;top:-13px;left:50%;width:96px;height:24px;transform:translateX(-50%) rotate(-5deg);background-color:var(--navy);
+  background-image:linear-gradient(rgba(255,255,255,.35) 1.5px,transparent 1.5px),linear-gradient(90deg,rgba(255,255,255,.35) 1.5px,transparent 1.5px);background-size:8px 8px;opacity:.95}
+.tape.dots::before{background-image:radial-gradient(rgba(255,255,255,.55) 2.2px,transparent 2.6px);background-size:10px 10px}
+.doodle{position:absolute;color:var(--navy);pointer-events:none;z-index:-1}
+.doodle svg{width:100%;height:100%;display:block}
+.d-star{width:92px;height:92px;right:-6px;top:-8px}
+.d-spiral{width:64px;height:64px;right:22%;top:44%}
+.go-badge{display:inline-block;font:400 2.1rem/1 var(--f-display);color:#fff;transform:skewX(-10deg);letter-spacing:.01em;text-shadow:3px 3px 0 var(--navy)}
+.hero-sign{background:var(--navy);border:0;box-shadow:7px 7px 0 rgba(23,30,90,.3);border-radius:6px;padding:22px 20px}
+.hero-sign h1{color:#fff}
+.hero-sign p:last-child{font-family:var(--f-hand);font-weight:400;font-size:1.4rem}
+
+/* Juego: banda GPS, plano y panel */
+.tv{background:var(--cream)}
+.nav{background:var(--navy);box-shadow:0 5px 0 rgba(23,30,90,.25)}
+.nav[data-tone="stop"]{background:var(--stop)}
+.nav-dist{font:400 2.5rem/1 var(--f-display);letter-spacing:.02em}
+.nav-text{font:700 1.05rem/1.25 var(--f-body)}
+.nav-chip{font-family:var(--f-mono);border-radius:3px}
+.tv.pantalla .nav-dist{font-size:3.3rem} .tv.screen .nav-dist{font-size:3.9rem}
+.tv.pantalla .nav-text,.tv.screen .nav-text{font-size:1.35rem}
+.tv-map{background:var(--cream)}
+.bar{background:var(--cream);border-top:3px solid var(--navy)}
+.stat strong{font:400 1.6rem/1.1 var(--f-display)}
+.icon-btn{border:2.5px solid var(--navy);color:var(--navy);background:var(--cream)}
+.side{background:var(--cream)!important;border-left:3px solid var(--navy)!important}
+.side-title{font:400 2.1rem/.95 var(--f-display);text-transform:uppercase;color:var(--red)}
+.side-ref{font:400 1.4rem/1 var(--f-hand);color:var(--navy);text-transform:uppercase}
+.live-badge{background:var(--red);font-family:var(--f-mono);border-radius:3px;box-shadow:3px 3px 0 var(--navy)}
+.sim{background:var(--navy);font-family:var(--f-mono);border-radius:3px}
+.legend li{font:700 1rem/1.2 var(--f-body)}
+.legend svg{width:30px;height:30px}
+.scr-wait{background:rgba(251,244,233,.85)}
+.sheet{border-radius:10px 10px 0 0;background:var(--cream)}
+.sheet-head{background:var(--navy);border-radius:10px 10px 0 0}
+.sheet-head h2{font-size:1.6rem}
+.sheet.big h2{font-size:2rem}
+.scr-over .sheet,.scr-over .sheet-head{border-radius:10px}
+.scr-over .sheet-head{border-radius:10px 10px 0 0}
+.cartel-quote{background:var(--red);border:6px solid var(--red);box-shadow:inset 0 0 0 2.5px var(--cream);border-radius:6px;font:400 1.35rem/1.12 var(--f-display);text-transform:uppercase;letter-spacing:.01em}
+.sheet.big .cartel-quote{font-size:1.8rem}
+.opt{background:#fff;border:2.5px solid var(--line);border-radius:8px;font:700 1rem/1.3 var(--f-body)}
+.opt.ok{border-color:var(--navy);background:var(--good-bg)}
+.pts{font:400 2.8rem/1 var(--f-display)}
+.class-q{background:var(--navy);color:#fff;font:400 1.35rem/1.15 var(--f-hand);border-radius:6px}
+.stats3 div{border:0;border-radius:6px;box-shadow:5px 5px 0 rgba(23,30,90,.25)}
+.stats3 strong{font:400 2.3rem/1 var(--f-display);color:var(--red)}
+.final-map{height:300px;border:2.5px solid var(--navy);border-radius:6px;background:var(--cream)}
+.plano{display:block;width:100%;height:100%;touch-action:manipulation}
+.plano text{font-family:var(--f-mono)}
+.plano .hand{font-family:var(--f-hand)}
+.plano .pulse{animation:pulse 1.6s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes pulse{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.9);opacity:0}}
+@media (prefers-reduced-motion: reduce){ .plano .pulse{animation:none;opacity:.35} }
+
+/* Carteles impresos con el estilo del afiche */
+.cartel{background:var(--cream);border:2px dashed #C9B89E;border-radius:6px}
+.c-top{color:var(--navy);font-family:var(--f-mono)}
+.c-top b{font-family:var(--f-display);font-weight:400;color:var(--red);letter-spacing:.02em;font-size:1.15em}
+.cartel .board{background:var(--red);border:8px solid var(--red);box-shadow:inset 0 0 0 3px var(--cream);border-radius:6px;font:400 1.9rem/1.05 var(--f-display);text-transform:uppercase;letter-spacing:.01em}
+.cartel .code-big{font-family:var(--f-mono);color:var(--navy)}
+@media print{ .cartel{background:#fff} .cartel .board{font-size:30pt} }
 </style>
 </head>
 <body>
@@ -317,7 +446,7 @@ const BY_ID = Object.fromEntries(PRESETS.map(p => [p.id, p]));
 const BY_CODE = Object.fromEntries(PRESETS.map(p => [p.code, p]));
 const TYPE_LABEL = { good:'Bueno', trap:'Trampa', dest:'Destino' };
 const DEFAULT_USE = ['adora','palabra','juntos','capilla','senal','ganas','secreto'];
-const WARN_R = 15, ARRIVE_R = 10, WEAK_ACC = 35, LOCK_MS = 15000;
+const WARN_R = 8, ARRIVE_R = 6, WEAK_ACC = 30, LOCK_MS = 15000;
 
 /* ================= Utilidades ================= */
 const app = document.getElementById('app');
@@ -398,19 +527,176 @@ function makeQR(el, text, size, low) {
   else el.innerHTML = '<p class="small">Sin conexión: no se pudo generar el QR.</p>';
 }
 
+/* ================= Encabezado del afiche ================= */
+const DOODLE = {
+  star: '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"><path d="M50 6 58 34 84 18 68 44 96 52 66 60 80 88 52 70 42 96 38 66 10 80 28 56 4 44 32 40 18 14 44 30Z"/></svg>',
+  spiral: '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"><path d="M52 50c0-4 6-4 6 0 0 8-12 8-12 0 0-12 18-12 18 0 0 16-24 16-24 0 0-20 30-20 30 0 0 24-36 24-36 0"/></svg>'
+};
+function poster(sub, extra = '') {
+  return `<header class="poster">
+    <span class="doodle d-star" aria-hidden="true">${DOODLE.star}</span>
+    <span class="doodle d-spiral" aria-hidden="true">${DOODLE.spiral}</span>
+    <p class="serie">Serie: Una vida en el Espíritu · Lección 6</p>
+    <h1>El Espíritu y la misión</h1>
+    <p class="ref-hand">Hechos 13:1-4</p>
+    ${sub ? `<p class="sticker tape">${esc(sub)}</p>` : ''}
+    ${extra}
+  </header>`;
+}
+
+/* ================= Plano del terreno (SVG) =================
+   Dibuja el terreno en metros y siempre muestra todos los carteles dentro de la pantalla.
+   Funciona sin mapas de internet; pensado para predios chicos (unos 12 × 30 m). */
+function makePlano(el, opts = {}) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('class', 'plano'); svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'Plano del terreno');
+  el.appendChild(svg);
+  let pts = [], lat0 = 0, lng0 = 0, kx = 111320, ky = 110540, view = { s: 1, ox: 0, oy: 0 }, last = null;
+  let axis = null, phi = 0; // eje largo del terreno y giro aplicado (radianes, horario en pantalla)
+  const toM = (lat, lng) => { const x = (lng - lng0) * kx, y = -(lat - lat0) * ky, c = Math.cos(phi), s = Math.sin(phi); return [x * c - y * s, x * s + y * c]; };
+  const fromM = (xr, yr) => { const c = Math.cos(phi), s = Math.sin(phi), x = xr * c + yr * s, y = -xr * s + yr * c; return [lat0 - y / ky, lng0 + x / kx]; };
+  function setPoints(list) {
+    pts = list.filter(p => p && p.lat != null);
+    if (pts.length) {
+      lat0 = pts.reduce((a, p) => a + p.lat, 0) / pts.length;
+      lng0 = pts.reduce((a, p) => a + p.lng, 0) / pts.length;
+      kx = 111320 * Math.cos(lat0 * Math.PI / 180);
+      // eje principal: si el terreno es alargado, se gira para aprovechar la pantalla
+      const m = pts.map(p => [(p.lng - lng0) * kx, -(p.lat - lat0) * ky]);
+      let sxx = 0, syy = 0, sxy = 0; m.forEach(([x, y]) => { sxx += x * x; syy += y * y; sxy += x * y; });
+      const a = 0.5 * Math.atan2(2 * sxy, sxx - syy);
+      const l1 = (sxx + syy) / 2 + Math.sqrt(((sxx - syy) / 2) ** 2 + sxy ** 2), l2 = (sxx + syy) / 2 - Math.sqrt(((sxx - syy) / 2) ** 2 + sxy ** 2);
+      axis = pts.length >= 3 && l1 > 2.2 * Math.max(l2, 1e-6) ? a : null;
+    }
+  }
+  const star = (cx, cy, r1, r2, n = 8) => { let d = ''; for (let i = 0; i < n * 2; i++) { const r = i % 2 ? r2 : r1, a = Math.PI * i / n - Math.PI / 2; d += (i ? 'L' : 'M') + (cx + r * Math.cos(a)).toFixed(1) + ' ' + (cy + r * Math.sin(a)).toFixed(1); } return d + 'Z'; };
+  function render(s) {
+    last = s;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    phi = axis == null ? 0 : -axis + (H > W * 1.1 ? Math.PI / 2 : 0);
+    // preferir que el norte quede «más o menos arriba»
+    while (phi > Math.PI / 2) phi -= Math.PI; while (phi < -Math.PI / 2) phi += Math.PI;
+    if (!pts.length && s.pos) setPoints([s.pos]);
+    const xs = [], ys = [];
+    pts.forEach(p => { const [x, y] = toM(p.lat, p.lng); xs.push(x); ys.push(y); });
+    if (!xs.length) { xs.push(-15, 15); ys.push(-6, 6); }
+    const tb = { x0: Math.min(...xs) - 3, x1: Math.max(...xs) + 3, y0: Math.min(...ys) - 3, y1: Math.max(...ys) + 3 };
+    const b = { x0: tb.x0 - 2, x1: tb.x1 + 2, y0: tb.y0 - 2, y1: tb.y1 + 2 };
+    let posM = s.pos ? toM(s.pos.lat, s.pos.lng) : null, outside = false;
+    if (posM) {
+      const far = posM[0] < b.x0 - 20 || posM[0] > b.x1 + 20 || posM[1] < b.y0 - 20 || posM[1] > b.y1 + 20;
+      if (far) outside = true;
+      else { b.x0 = Math.min(b.x0, posM[0] - 3); b.x1 = Math.max(b.x1, posM[0] + 3); b.y0 = Math.min(b.y0, posM[1] - 3); b.y1 = Math.max(b.y1, posM[1] + 3); }
+    }
+    const minW = 14; if (b.x1 - b.x0 < minW) { const c = (b.x0 + b.x1) / 2; b.x0 = c - minW / 2; b.x1 = c + minW / 2; }
+    if (b.y1 - b.y0 < minW) { const c = (b.y0 + b.y1) / 2; b.y0 = c - minW / 2; b.y1 = c + minW / 2; }
+    const pad = Math.max(30, Math.min(W, H) * .07);
+    const sc = Math.min((W - 2 * pad) / (b.x1 - b.x0), (H - 2 * pad) / (b.y1 - b.y0));
+    const ox = (W - (b.x1 - b.x0) * sc) / 2 - b.x0 * sc, oy = (H - (b.y1 - b.y0) * sc) / 2 - b.y0 * sc;
+    view = { s: sc, ox, oy };
+    const X = x => x * sc + ox, Y = y => y * sc + oy;
+    const P = (lat, lng) => { const [x, y] = toM(lat, lng); return [X(x), Y(y)]; };
+    const big = Math.min(W, H) > 520 ? 1.35 : 1;
+    let h = `<rect width="${W}" height="${H}" fill="#FBF4E9"/>`;
+    // cuadrícula cada 5 m
+    const g0x = Math.floor((-ox / sc) / 5) * 5, g1x = Math.ceil(((W - ox) / sc) / 5) * 5;
+    const g0y = Math.floor((-oy / sc) / 5) * 5, g1y = Math.ceil(((H - oy) / sc) / 5) * 5;
+    let grid = '';
+    for (let x = g0x; x <= g1x; x += 5) grid += `M${X(x).toFixed(1)} 0V${H}`;
+    for (let y = g0y; y <= g1y; y += 5) grid += `M0 ${Y(y).toFixed(1)}H${W}`;
+    h += `<path d="${grid}" stroke="#2536A8" stroke-opacity=".09" stroke-width="1"/>`;
+    // terreno
+    const tw = (tb.x1 - tb.x0), th = (tb.y1 - tb.y0);
+    h += `<rect x="${X(tb.x0)}" y="${Y(tb.y0)}" width="${tw * sc}" height="${th * sc}" rx="10" fill="#F3E6D2" stroke="#2536A8" stroke-width="3" stroke-dasharray="10 7"/>`;
+    h += `<text x="${X(tb.x0) + 4}" y="${Y(tb.y1) + 17 * big}" font-size="${11 * big}" font-weight="700" fill="#2536A8" letter-spacing="1">TERRENO ≈ ${Math.round(tw)} × ${Math.round(th)} M</text>`;
+    // anillos (zonas)
+    (s.rings || []).forEach(r => { const [cx, cy] = P(r.lat, r.lng); h += `<circle cx="${cx}" cy="${cy}" r="${Math.max(6, r.r * sc)}" fill="${r.color}" fill-opacity=".08" stroke="${r.color}" stroke-opacity=".55" stroke-width="2" stroke-dasharray="6 5"/>`; });
+    // recorrido
+    if (s.trail && s.trail.length > 1) {
+      const d = s.trail.map((q, i) => { const [x, y] = P(q[0], q[1]); return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }).join('');
+      h += `<path d="${d}" fill="none" stroke="#fff" stroke-width="${10 * big}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="#2536A8" stroke-width="${5 * big}" stroke-linecap="round" stroke-linejoin="round"/>`;
+    }
+    // carteles
+    (s.items || []).forEach(it => {
+      const [x, y] = P(it.lat, it.lng), r = 15 * big;
+      let shape = '';
+      if (it.kind === 'trap') shape = `<path d="${star(x, y, r * 1.35, r * .75)}" fill="#E5320B" stroke="#fff" stroke-width="3"/><text x="${x}" y="${y + 6 * big}" text-anchor="middle" font-size="${17 * big}" font-weight="700" fill="#fff">!</text>`;
+      else if (it.kind === 'visited') shape = `<circle cx="${x}" cy="${y}" r="${r}" fill="#8A8FB5" stroke="#fff" stroke-width="3"/><path d="M${x - 6 * big} ${y}l${4 * big} ${5 * big} ${8 * big}-${9 * big}" fill="none" stroke="#fff" stroke-width="${3.4 * big}" stroke-linecap="round" stroke-linejoin="round"/>`;
+      else if (it.kind === 'dest') shape = `${it.target ? `<circle class="pulse" cx="${x}" cy="${y}" r="${r * 1.2}" fill="#E5320B" fill-opacity=".35"/>` : ''}<path d="${star(x, y, r * 1.3, r * .95, 10)}" fill="#E5320B" stroke="#fff" stroke-width="3"/><path d="M${x - 4 * big} ${y + 7 * big}V${y - 8 * big}h${9 * big}l-2 ${3.5 * big} 2 ${3.5 * big}h-${9 * big}" fill="none" stroke="#fff" stroke-width="${2.6 * big}" stroke-linejoin="round" stroke-linecap="round"/>`;
+      else if (it.kind === 'target') shape = `<circle class="pulse" cx="${x}" cy="${y}" r="${r * 1.2}" fill="#2536A8" fill-opacity=".35"/><circle cx="${x}" cy="${y}" r="${r}" fill="#2536A8" stroke="#fff" stroke-width="3"/><circle cx="${x}" cy="${y}" r="${r * .38}" fill="#fff"/>`;
+      else shape = `<circle cx="${x}" cy="${y}" r="${r * .8}" fill="#FBF4E9" stroke="#2536A8" stroke-width="3"/>`;
+      h += `<g>${shape}${it.label ? `<text class="hand" x="${x}" y="${y - r - 9 * big}" text-anchor="middle" font-size="${20 * big}" fill="${it.kind === 'trap' || it.kind === 'dest' ? '#E5320B' : '#2536A8'}" stroke="#FBF4E9" stroke-width="5" paint-order="stroke">${esc(it.label)}</text>` : ''}</g>`;
+    });
+    // jugador
+    if (posM) {
+      let px = X(posM[0]), py = Y(posM[1]);
+      if (outside) { px = Math.max(18, Math.min(W - 18, px)); py = Math.max(18, Math.min(H - 18, py)); }
+      if (!outside) h += `<circle cx="${px}" cy="${py}" r="${Math.max(10, (s.pos.acc || 4) * sc)}" fill="#E5320B" fill-opacity=".12" stroke="#E5320B" stroke-opacity=".35" stroke-width="1.5"/>`;
+      h += `<circle cx="${px}" cy="${py}" r="${12 * big}" fill="#E5320B" stroke="#fff" stroke-width="${4 * big}"/>`;
+      if (s.name || outside) h += `<text class="hand" x="${px}" y="${py + 30 * big}" text-anchor="middle" font-size="${18 * big}" fill="#E5320B" stroke="#FBF4E9" stroke-width="5" paint-order="stroke">${esc(outside ? 'Fuera del terreno' : s.name)}</text>`;
+    }
+    // escala y norte
+    const bar = 5 * sc, bx = W - 16 - bar, by = H - 16;
+    h += `<path d="M${bx} ${by - 6}V${by}H${bx + bar}V${by - 6}" fill="none" stroke="#2536A8" stroke-width="2.5"/><text x="${bx - 6}" y="${by + 1}" text-anchor="end" font-size="12" font-weight="700" fill="#2536A8">5 M</text>`;
+    h += `<g transform="translate(${W - 26} 32) rotate(${(phi * 180 / Math.PI).toFixed(1)})"><path d="M0 -14 7 8 0 3 -7 8Z" fill="#2536A8"/><text y="24" text-anchor="middle" font-size="12" font-weight="700" fill="#2536A8">N</text></g>`;
+    svg.innerHTML = h;
+  }
+  function toLatLng(px, py) { return fromM((px - view.ox) / view.s, (py - view.oy) / view.s); }
+  if (opts.onTap) svg.addEventListener('click', e => { const r = svg.getBoundingClientRect(); const [lat, lng] = toLatLng(e.clientX - r.left, e.clientY - r.top); opts.onTap(lat, lng); });
+  let ro = null;
+  if ('ResizeObserver' in window) { ro = new ResizeObserver(() => { if (last) render(last); }); ro.observe(el); }
+  return { setPoints, render, rot: () => phi * 180 / Math.PI, destroy() { if (ro) ro.disconnect(); svg.remove(); } };
+}
+function planoItems(list, st) {
+  // list: puntos con lat/lng; st: { visited:Set, seen:Set, target:id }
+  const items = [], rings = [];
+  list.forEach(p => {
+    if (!p || p.lat == null) return;
+    if (p.type === 'trap') {
+      if (st.seen.has(p.id)) { items.push({ lat: p.lat, lng: p.lng, kind: 'trap', label: 'Trampa' }); if (st.warnR) rings.push({ lat: p.lat, lng: p.lng, r: st.warnR, color: '#E5320B' }); }
+      return;
+    }
+    if (st.visited.has(p.id)) items.push({ lat: p.lat, lng: p.lng, kind: p.type === 'dest' ? 'dest' : 'visited', label: p.type === 'dest' ? 'Capilla' : '' });
+    else if (st.target === p.id) { items.push({ lat: p.lat, lng: p.lng, kind: p.type === 'dest' ? 'dest' : 'target', target: true, label: p.type === 'dest' ? 'Capilla' : 'Próximo' }); if (st.arriveR) rings.push({ lat: p.lat, lng: p.lng, r: st.arriveR, color: '#2536A8' }); }
+    else if (p.type === 'dest') items.push({ lat: p.lat, lng: p.lng, kind: 'dest', label: 'Capilla' });
+    else items.push({ lat: p.lat, lng: p.lng, kind: 'pending', label: '' });
+  });
+  return { items, rings };
+}
+const LEGEND = `<ul class="legend">
+  <li><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="11" fill="#2536A8" stroke="#fff" stroke-width="2.5"/><circle cx="15" cy="15" r="4" fill="#fff"/></svg><span>Próximo punto</span></li>
+  <li><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="9" fill="#FBF4E9" stroke="#2536A8" stroke-width="2.5"/></svg><span>Punto por descubrir</span></li>
+  <li><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="11" fill="#8A8FB5" stroke="#fff" stroke-width="2.5"/><path d="M10 15l3.5 4 7-8" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Punto visitado</span></li>
+  <li><svg viewBox="0 0 30 30"><path d="M15 1 18 9 26 5 22 13 29 15 22 17 26 25 18 21 15 29 12 21 4 25 8 17 1 15 8 13 4 5 12 9Z" fill="#E5320B"/></svg><span>Trampa detectada</span></li>
+  <li><span class="me" style="background:#E5320B;box-shadow:0 0 0 1px #E5320B"></span><span>Jugador</span></li>
+  <li><span class="trail" style="background:#2536A8"></span><span>Camino recorrido</span></li>
+</ul>`;
+
 /* ================= Sensores ================= */
 const Geo = {
-  pos: null, err: null, watchId: null, sim: false, subs: new Set(),
+  pos: null, raw: null, buf: [], err: null, watchId: null, sim: false, subs: new Set(),
   start() {
     if (this.sim || this.watchId !== null) return;
     if (!('geolocation' in navigator)) { this.err = 'nogeo'; this.emit(); return; }
     this.watchId = navigator.geolocation.watchPosition(
-      p => { this.pos = { lat: p.coords.latitude, lng: p.coords.longitude, acc: Math.round(p.coords.accuracy), t: Date.now() }; this.err = null; this.emit(); },
+      p => {
+        const now = Date.now();
+        const r = { lat: p.coords.latitude, lng: p.coords.longitude, acc: Math.max(1, Math.round(p.coords.accuracy)), t: now };
+        this.raw = r;
+        this.buf = (this.buf || []).concat([r]).filter(x => now - x.t < 8000).slice(-4);
+        let W = 0, la = 0, ln = 0;
+        this.buf.forEach(x => { const w = 1 / Math.max(x.acc, 2) ** 2; W += w; la += x.lat * w; ln += x.lng * w; });
+        this.pos = { lat: la / W, lng: ln / W, acc: Math.min(...this.buf.map(x => x.acc)), t: now };
+        this.err = null; this.emit();
+      },
       e => { this.err = e.code === 1 ? 'denied' : 'unavailable'; this.emit(); },
       { enableHighAccuracy: true, maximumAge: 2000, timeout: 20000 });
   },
   stop() { if (this.watchId !== null) { navigator.geolocation.clearWatch(this.watchId); this.watchId = null; } },
-  setSim(lat, lng) { this.pos = { lat, lng, acc: 4, t: Date.now(), sim: true }; this.err = null; this.emit(); },
+  setSim(lat, lng) { this.pos = this.raw = { lat, lng, acc: 4, t: Date.now(), sim: true }; this.buf = []; this.err = null; this.emit(); },
   on(f) { this.subs.add(f); return () => this.subs.delete(f); },
   emit() { this.subs.forEach(f => f(this.pos, this.err)); }
 };
@@ -580,7 +866,7 @@ function route() {
 }
 window.addEventListener('hashchange', route);
 function showLoading(msg) {
-  setView('loading', `<main class="page"><div class="hero-sign"><span class="hero-arrow">${ICON.spin.replace('<svg', '<svg class="spinning"')}</span><p class="kicker light">Ruta a la capilla</p><h1>${esc(msg)}</h1></div></main>`);
+  setView('loading', `<main class="page">${poster(msg)}</main>`);
 }
 
 /* ---------- Inicio ---------- */
@@ -589,12 +875,7 @@ function showHome(note) {
   const t = game ? store.get('gpsgo-team-' + game.g, null) : null;
   const cont = t && !t.done;
   setView('home', `<main class="page">
-    <div class="hero-sign">
-      <span class="hero-arrow">${ICON.turn}</span>
-      <p class="kicker light">GO · Lección 6 · Punto 1</p>
-      <h1>Ruta a la capilla</h1>
-      <p>Un GPS real para recorrer el predio en equipos</p>
-    </div>
+    ${poster('Ruta a la capilla · GPS en el predio')}
     ${note ? `<p class="notice">${esc(note)}</p>` : ''}
     <p class="lead">El GPS guía a cada equipo por el predio. En el camino hay carteles que ayudan a discernir y carteles trampa que parecen buenos. Si se acercan a una trampa, el GPS avisa y tienen que desviarse. El destino es la capilla, donde se anuncia a Jesús.</p>
     ${cont ? `<button class="btn primary block" id="hCont">Continuar recorrido · ${esc(teamLabel(t))}</button>` : ''}
@@ -616,7 +897,7 @@ function showLeader() {
   placing = null;
   setView('leader', `<main class="page">
     <a class="back" href="#">← Inicio</a>
-    <div><p class="kicker">Modo líder</p><h1>Preparar el recorrido</h1></div>
+    ${poster('Modo líder · Preparar el recorrido')}
     <p class="lead">Para los 6 a 8 minutos del punto 1: 3 puntos buenos, la capilla y 2 o 3 trampas. Un celular por equipo.</p>
 
     <section class="card"><p class="stepn">Paso 1</p><h2>Imprime los carteles</h2>
@@ -624,18 +905,20 @@ function showLeader() {
       <a class="btn" href="#carteles">Ver carteles para imprimir</a></section>
 
     <section class="card"><p class="stepn">Paso 2</p><h2>Ubica cada cartel en el predio</h2>
-      <p>Pega cada cartel, párate al lado y toca <b>Marcar aquí</b>. Bajo techo el GPS no sirve: deja el punto como <b>Solo QR</b> y escribe una pista. Pon las trampas en el camino, a unos 15 a 20 m de los puntos buenos.</p>
+      <p>Pega cada cartel, párate al lado y toca <b>Marcar aquí</b>. Bajo techo el GPS no sirve: deja el punto como <b>Solo QR</b> y escribe una pista. Pon las trampas en el camino, a unos 8 m de los puntos buenos.</p>
       <div class="gpsline" id="lGps"><span class="dot"></span><span>GPS: buscando señal…</span></div>
       <div class="gpsline field" id="lField">Prueba de campo: camina entre los carteles y aquí verás a cuántos metros estás de cada uno.</div>
       <div class="lmap" id="lmap"></div>
+      <p class="kicker">Así se verá en la pantalla grande</p>
+      <div class="final-map" id="lPlano"></div>
       <p class="summary" id="lSum"></p>
       <div id="lList"></div></section>
 
     <section class="card"><p class="stepn">Paso 3</p><h2>Ajusta las distancias</h2>
-      <p>El GPS del celular tiene entre 5 y 15 m de error. Haz una vuelta de prueba: si el aviso de trampa salta donde no debe, bájalo; si cuesta «llegar» a un punto, súbelo. Los círculos del mapa muestran cada zona.</p>
-      <label class="range"><span>Aviso de trampa <b id="rWv">${leader.r[0]} m</b></span><input type="range" id="rW" min="6" max="30" step="1" value="${leader.r[0]}"></label>
-      <label class="range"><span>Llegada a un punto <b id="rAv">${leader.r[1]} m</b></span><input type="range" id="rA" min="4" max="25" step="1" value="${leader.r[1]}"></label>
-      <p class="small">Recomendado: aviso de 12 a 15 m y llegada de 8 a 10 m, con los carteles separados al menos 20 m.</p></section>
+      <p>En un terreno chico, unos metros de error del GPS se notan. Haz una vuelta de prueba: si el aviso de trampa salta donde no debe, bájalo; si cuesta «llegar» a un punto, súbelo. Los círculos del mapa muestran cada zona.</p>
+      <label class="range"><span>Aviso de trampa <b id="rWv">${leader.r[0]} m</b></span><input type="range" id="rW" min="3" max="20" step="1" value="${leader.r[0]}"></label>
+      <label class="range"><span>Llegada a un punto <b id="rAv">${leader.r[1]} m</b></span><input type="range" id="rA" min="3" max="15" step="1" value="${leader.r[1]}"></label>
+      <p class="small">Para un terreno de unos 12 × 30 m: aviso de 6 a 8 m y llegada de 4 a 6 m, con los carteles separados al menos 8 m. Al aire libre el GPS del celular suele errar entre 3 y 10 m, por eso la llegada siempre se confirma escaneando el cartel.</p></section>
 
     <section class="card"><p class="stepn">Paso 4</p><h2>Antes de jugar</h2>
       <label class="lbl" for="lLim">Límites del predio (lo ve el jugador antes de empezar)</label>
@@ -676,7 +959,15 @@ function showLeader() {
     cleanup.push(() => map.remove());
   } else $('#lmap').innerHTML = '<div class="map-off">El mapa necesita internet. Igual puedes marcar los puntos con el GPS.</div>';
 
+  const preview = makePlano($('#lPlano'));
+  cleanup.push(() => preview.destroy());
+  function drawPreview() {
+    const pts = PRESETS.filter(p => leader.pts[p.id].use && leader.pts[p.id].lat != null).map(p => ({ ...p, lat: leader.pts[p.id].lat, lng: leader.pts[p.id].lng }));
+    preview.setPoints(pts);
+    preview.render({ items: pts.map(p => ({ lat: p.lat, lng: p.lng, kind: p.type === 'trap' ? 'trap' : p.type === 'dest' ? 'dest' : 'target', label: p.code })), rings: pts.map(p => ({ lat: p.lat, lng: p.lng, r: p.type === 'trap' ? leader.r[0] : leader.r[1], color: p.type === 'trap' ? '#E5320B' : '#2536A8' })), trail: [], pos: Geo.pos && !Geo.pos.sim ? Geo.pos : null, name: 'Tú' });
+  }
   function draw() {
+    drawPreview();
     if (!map) return;
     layer.clearLayers();
     const pts = [];
@@ -688,7 +979,8 @@ function showLeader() {
       L.circle([s.lat, s.lng], { radius: p.type === 'trap' ? leader.r[0] : leader.r[1], color: p.type === 'trap' ? '#C33A2E' : '#0B6B45', weight: 1, fillOpacity: .08 }).addTo(layer);
       pts.push([s.lat, s.lng]);
     });
-    if (pts.length && !centered) { map.fitBounds(pts, { padding: [40, 40], maxZoom: 19 }); centered = true; }
+    if (pts.length && !centered) { map.fitBounds(pts, { padding: [40, 40], maxZoom: 21 }); centered = true; }
+    drawPreview();
   }
   function renderList() {
     const groups = [['good', 'Puntos buenos'], ['dest', 'Destino'], ['trap', 'Trampas']];
@@ -731,8 +1023,8 @@ function showLeader() {
   async function markHere(id, btn) {
     if (!Geo.pos) { toast(Geo.err === 'denied' ? 'Activa el permiso de ubicación para este sitio.' : 'Todavía no hay señal GPS. Sal a cielo abierto o usa «Ubicar en el mapa».'); return; }
     btn.disabled = true;
-    const samples = [Geo.pos];
-    const off = Geo.on(p => { if (p) samples.push(p); });
+    const samples = [Geo.raw || Geo.pos];
+    const off = Geo.on(() => { if (Geo.raw) samples.push(Geo.raw); });
     for (let s = 5; s > 0; s--) { btn.textContent = `Midiendo… ${s}`; await new Promise(r => setTimeout(r, 1000)); }
     off();
     const good = samples.filter(p => p.acc <= 60 && Date.now() - p.t < 15000);
@@ -752,8 +1044,9 @@ function showLeader() {
     if (map && pos) {
       if (!me) { meAcc = L.circle([pos.lat, pos.lng], { radius: pos.acc, color: '#1F6FEB', weight: 1, fillOpacity: .1 }).addTo(map); me = L.circleMarker([pos.lat, pos.lng], { radius: 8, color: '#fff', weight: 3, fillColor: '#1F6FEB', fillOpacity: 1 }).addTo(map); }
       else { me.setLatLng([pos.lat, pos.lng]); meAcc.setLatLng([pos.lat, pos.lng]).setRadius(pos.acc); }
-      if (!centered) { map.setView([pos.lat, pos.lng], 19); centered = true; }
+      if (!centered) { map.setView([pos.lat, pos.lng], 20); centered = true; }
     }
+    if (pos) drawPreview();
     const fl = $('#lField');
     if (fl && pos) {
       const near = PRESETS.filter(p => leader.pts[p.id].use && leader.pts[p.id].lat != null)
@@ -888,7 +1181,7 @@ function showCarteles() {
     <div class="noprint" style="display:grid;gap:8px"><p class="kicker">Para imprimir</p><h1>Carteles del recorrido</h1>
       <p class="lead">Salen 2 por hoja A4: recorta por la línea punteada. Los buenos y las trampas se ven iguales a propósito. En el modo líder ves cuál es cuál por el código.</p></div>
     <div class="carteles">${PRESETS.map(p => `<article class="cartel">
-      <div class="c-top">GO · Ruta a la capilla</div>
+      <div class="c-top">El Espíritu y la misión · <b>GO!</b></div>
       <div class="board">${esc(p.sign)}</div>
       <div class="qr" data-code="${p.code}"></div>
       <div class="code-big">${p.code}</div>
@@ -920,8 +1213,7 @@ function showSetup() {
   let team = 1;
   if (isPantalla()) {
     setView('setup', `<main class="page">
-      <div class="hero-sign"><span class="hero-arrow">${ICON.turn}</span><p class="kicker light">${isSim() ? 'Modo prueba · ' : ''}Jugador en pantalla grande</p><h1>Ruta a la capilla</h1>
-        <p>${ng} punto${ng !== 1 ? 's' : ''} que guían, ${nt} trampa${nt !== 1 ? 's' : ''} y la capilla</p></div>
+      ${poster((isSim() ? 'Modo prueba · ' : '') + 'Jugador en pantalla grande', `<p class="poster-note">${ng} punto${ng !== 1 ? 's' : ''} que guían · ${nt} trampa${nt !== 1 ? 's' : ''} · la capilla</p>`)}
       <p class="lead">Este celular se va a ver en la pantalla grande: toda la clase sigue tu recorrido en vivo. El GPS te lleva al próximo punto. Si te acercas a una trampa, la clase te ayuda a decidir.</p>
       <label class="lbl" for="tName">¿Quién maneja hoy?</label>
       <input class="input" id="tName" maxlength="24" placeholder="Nombre del jugador" autocomplete="off">
@@ -941,8 +1233,7 @@ function showSetup() {
     return;
   }
   setView('setup', `<main class="page">
-    <div class="hero-sign"><span class="hero-arrow">${ICON.turn}</span><p class="kicker light">${isSim() ? 'Modo prueba' : 'GO · Lección 6'}</p><h1>Ruta a la capilla</h1>
-      <p>${ng} punto${ng !== 1 ? 's' : ''} que guían, ${nt} trampa${nt !== 1 ? 's' : ''} y la capilla</p></div>
+    ${poster((isSim() ? 'Modo prueba · ' : '') + 'Equipos', `<p class="poster-note">${ng} punto${ng !== 1 ? 's' : ''} que guían · ${nt} trampa${nt !== 1 ? 's' : ''} · la capilla</p>`)}
     <p class="lead">Recorran el predio con este celular. El GPS los lleva al próximo punto; en el camino hay carteles que parecen buenos pero son trampas. <b>Discutan juntos antes de escanear.</b></p>
     <label class="lbl" id="teamLbl">Número de equipo</label>
     <div class="seg" role="group" aria-labelledby="teamLbl">${[1,2,3,4,5,6].map(n => `<button type="button" data-n="${n}" aria-pressed="${n === 1}">${n}</button>`).join('')}</div>
@@ -993,18 +1284,12 @@ function showGame() {
       <div class="nav-ico" id="navIco"></div>
       <div style="min-width:0"><div class="nav-dist" id="navDist"></div><div class="nav-text" id="navText">Buscando señal…</div><span class="nav-chip" id="navChip" hidden></span></div>
     </header>
-    <div class="tv-map"><div id="tmap"></div>${pantalla ? `<div class="live-badge">EN VIVO · ${esc(teamLabel(T)).toUpperCase()}</div>` : ''}${sim ? '<div class="sim">MODO PRUEBA · toca el mapa para moverte</div>' : ''}</div>
+    <div class="tv-map"><div id="tmap"></div>${pantalla ? `<div class="live-badge">EN VIVO · ${esc(teamLabel(T)).toUpperCase()}</div>` : ''}${sim ? '<div class="sim">MODO PRUEBA · toca el plano para moverte</div>' : ''}</div>
     <aside class="side">
+      <p class="side-title">El Espíritu y la misión</p><p class="side-ref">Hechos 13:1-4</p>
       <p class="kicker">${pantalla ? 'En vivo' : 'Recorrido'} · ${esc(teamLabel(T))}</p>
       <h2 id="sideNext">Buscando señal…</h2>
-      <ul class="legend">
-        <li>${pin('#0B6B45', PIN_IN.dot)}<span>Próximo punto</span></li>
-        <li>${pin('#7B8A82', PIN_IN.check)}<span>Punto visitado</span></li>
-        <li>${pin('#C33A2E', PIN_IN.bang)}<span>Trampa detectada</span></li>
-        <li>${pin('#B07A00', PIN_IN.flag)}<span>La capilla</span></li>
-        <li><span class="me"></span><span>${pantalla ? 'Jugador' : 'Tu equipo'}</span></li>
-        <li><span class="trail"></span><span>Camino recorrido</span></li>
-      </ul>
+      ${LEGEND}
       <p class="small">El Espíritu guía a sus hijos y les enseña a discernir juntos.</p>
     </aside>
     <footer class="bar">
@@ -1016,41 +1301,22 @@ function showGame() {
     </footer>
   </div>`);
 
-  let map = null, me = null, meAcc = null, marks = {}, fitted = false, trailLine = null, trailCase = null;
-  if (window.L) {
-    map = L.map('tmap', { zoomControl: false });
-    tiles(map);
-    const pts = game.p.filter(r => r[1] != null).map(r => [r[1], r[2]]);
-    if (pts.length) { map.fitBounds(pts, { padding: [50, 50], maxZoom: 19 }); fitted = true; } else map.setView([-15, -60], 3);
-    if (sim) {
-      if (!Geo.pos || !Geo.pos.sim) {
-        const c = pts.length ? pts.reduce((a, p) => [a[0] + p[0] / pts.length, a[1] + p[1] / pts.length], [0, 0]) : null;
-        if (c) Geo.setSim(c[0] - 0.00035, c[1]);
-      }
-      map.on('click', e => Geo.setSim(e.latlng.lat, e.latlng.lng));
-      window.irA = (lat, lng) => Geo.setSim(lat, lng);
+  const allPts = game.p.map(r => gp(r[0])).filter(Boolean);
+  const plano = makePlano($('#tmap'), sim ? { onTap: (lat, lng) => Geo.setSim(lat, lng) } : {});
+  plano.setPoints(allPts);
+  cleanup.push(() => plano.destroy());
+  if (sim) {
+    if (!Geo.pos || !Geo.pos.sim) {
+      const c = allPts.filter(p => p.lat != null);
+      if (c.length) Geo.setSim(c.reduce((a, p) => a + p.lat, 0) / c.length - 0.00008, c.reduce((a, p) => a + p.lng, 0) / c.length);
     }
-    trailCase = L.polyline(T.trail, { color: '#ffffff', weight: 11, opacity: .9, interactive: false }).addTo(map);
-    trailLine = L.polyline(T.trail, { color: '#0B6B45', weight: 6, opacity: .95, interactive: false }).addTo(map);
-    cleanup.push(() => map.remove());
-  } else $('#tmap').innerHTML = '<div class="map-off">Sin internet no se ve el mapa, pero el GPS y los carteles siguen funcionando.</div>';
-
-  function drawMarks(tgt) {
-    if (!map) return;
-    game.p.forEach(r => {
-      const p = gp(r[0]); if (!p || p.lat == null) return;
-      let kind = null, label = '';
-      if (p.type === 'trap') { if (T.warned[p.id] || T.fallen[p.id] || T.avoided[p.id]) { kind = 'trap'; label = 'Trampa'; } }
-      else if (T.visited[p.id]) kind = 'visited';
-      else if (tgt && tgt.id === p.id) { kind = p.type === 'dest' ? 'dest' : 'target'; label = p.type === 'dest' ? 'Capilla' : 'Próximo'; }
-      const key = kind + label;
-      const m = marks[p.id];
-      if (!kind) { if (m) { m.remove(); delete marks[p.id]; } return; }
-      if (m && m._key === key) return;
-      if (m) m.remove();
-      const nm = L.marker([p.lat, p.lng], { icon: mkIcon(kind, label), interactive: false, keyboard: false }).addTo(map);
-      nm._key = key; marks[p.id] = nm;
-    });
+    window.irA = (lat, lng) => Geo.setSim(lat, lng);
+  }
+  const nearHits = {};
+  function drawPlano(tgt, pos) {
+    const st = { visited: new Set(Object.keys(T.visited)), seen: new Set([...Object.keys(T.warned), ...Object.keys(T.fallen), ...Object.keys(T.avoided)]), target: tgt ? tgt.id : null, warnR: WR(), arriveR: AR() };
+    const { items, rings } = planoItems(allPts, st);
+    plano.render({ items, rings, trail: T.trail, pos: pos ? { lat: pos.lat, lng: pos.lng, acc: pos.acc } : null, name: pantalla ? (T.name || 'Jugador') : '' });
   }
 
   let lastRot = null, lastD = null, lastTgt = null, trend = '';
@@ -1078,22 +1344,12 @@ function showGame() {
     $('#sProg').textContent = `${Object.keys(T.visited).length}/${totalStops()}`;
     $('#sTime').textContent = fmtTime(now - T.start);
 
-    if (map && pos) {
-      const ll = [pos.lat, pos.lng];
-      if (!me) {
-        meAcc = L.circle(ll, { radius: pos.acc, color: '#1F6FEB', weight: 1, fillOpacity: .1, interactive: false }).addTo(map);
-        me = L.circleMarker(ll, { radius: 9, color: '#fff', weight: 3, fillColor: '#1F6FEB', fillOpacity: 1, interactive: false }).addTo(map);
-        if (!fitted) { map.setView(ll, 19); fitted = true; }
-        else if (!map.getBounds().contains(ll)) map.fitBounds(L.latLngBounds([ll]).extend(map.getBounds()), { padding: [40, 40], maxZoom: 19 });
-      } else { me.setLatLng(ll); meAcc.setLatLng(ll).setRadius(pos.acc); if (!map.getBounds().pad(pantalla ? -0.3 : -0.15).contains(ll)) map.panTo(ll); }
-    }
     if (pos && !weak) {
       const tr = T.trail, last = tr[tr.length - 1];
-      if (!last || dist({ lat: last[0], lng: last[1] }, pos) >= 3) {
+      if (!last || dist({ lat: last[0], lng: last[1] }, pos) >= 1.5) {
         tr.push([+pos.lat.toFixed(6), +pos.lng.toFixed(6)]);
         if (tr.length > 800) tr.splice(0, tr.length - 800);
         saveT();
-        if (trailLine) { trailLine.setLatLngs(tr); trailCase.setLatLngs(tr); }
       }
     }
     publishLive(false);
@@ -1102,12 +1358,13 @@ function showGame() {
       for (const t of traps()) {
         if (t.lat == null || T.warned[t.id] || T.fallen[t.id]) continue;
         const d = dist(pos, t);
-        if (d <= WR()) { T.warned[t.id] = now; saveT(); openWarn(t, Math.max(1, Math.round(d))); break; }
+        nearHits[t.id] = d <= WR() ? (nearHits[t.id] || 0) + 1 : 0;
+        if (nearHits[t.id] >= (pos.sim ? 1 : 2)) { T.warned[t.id] = now; saveT(); openWarn(t, Math.max(1, Math.round(d))); break; }
       }
     }
 
     const tgt = target();
-    drawMarks(tgt);
+    drawPlano(tgt, pos && now - pos.t < 30000 ? pos : null);
     const sn = $('#sideNext');
     if (sn) sn.textContent = activeWarn ? 'Trampa a la vista: ¿qué le responderían?' : now < T.lockUntil ? 'Recalculando después de una trampa' : !tgt ? 'Recorrido completo' : tgt.type === 'dest' ? 'Rumbo a la capilla' : `Rumbo al punto ${goodsDone() + 1} de ${goods().length}`;
     if (activeWarn) return nav('stop', 'warn', 'Peligro', `Trampa a ${activeWarn.d} m: lean el aviso y desvíen`, 'Recalculando');
@@ -1120,14 +1377,14 @@ function showGame() {
       return nav('off', 'nosig', denied ? 'Sin permiso' : 'Sin señal', `${label}${tgt.hint ? ' · ' + tgt.hint : ''}`, denied ? 'Activen la ubicación del navegador' : 'Sigan por la ruta y busquen el cartel');
     }
     const d = dist(pos, tgt), b = bearing(pos, tgt), h = Compass.heading;
-    if (lastTgt === tgt.id && lastD != null) { if (d < lastD - 2) trend = 'Más cerca'; else if (d > lastD + 2) trend = 'Más lejos'; }
+    if (lastTgt === tgt.id && lastD != null) { if (d < lastD - 1.5) trend = 'Más cerca'; else if (d > lastD + 1.5) trend = 'Más lejos'; }
     else trend = '';
-    if (lastTgt !== tgt.id || Math.abs(d - lastD) > 2) { lastD = d; lastTgt = tgt.id; }
+    if (lastTgt !== tgt.id || Math.abs(d - lastD) > 1.5) { lastD = d; lastTgt = tgt.id; }
     if (d <= AR()) {
       if (!T.arrived[tgt.id]) { T.arrived[tgt.id] = now; saveT(); Sound.ping(); buzz(90); }
       return nav('go', 'flag', 'Llegaron', `${label} · busquen el cartel y escanéenlo`, 'Están en la zona');
     }
-    nav('go', 'arrow', fmtDist(d), label + (tgt.hint ? ' · ' + tgt.hint : ''), trend || (h != null ? 'Brújula activa' : 'Flecha = norte del mapa'), h != null ? b - h : b);
+    nav('go', 'arrow', fmtDist(d), label + (tgt.hint ? ' · ' + tgt.hint : ''), trend || (h != null ? 'Brújula activa' : 'Flecha según el plano'), h != null ? b - h : b + plano.rot());
   };
 
   const offGeo = Geo.on(() => updateGame());
@@ -1314,14 +1571,13 @@ function showFinal() {
   Geo.stop();
   const ok = Object.values(T.avoided).filter(a => a.ok).length, fell = Object.keys(T.fallen).length;
   setView('final', `<main class="page">
-    <div class="hero-sign"><span class="hero-arrow">${ICON.flag}</span><p class="kicker light">${T.pantalla ? 'Llegó' : 'Llegaron'} a la capilla · ${esc(teamLabel(T))}</p>
-      <h1>${T.score} puntos</h1><p>Tiempo: ${fmtTime(T.done - T.start)}</p></div>
+    ${poster(`${T.pantalla ? 'Llegó' : 'Llegaron'} a la capilla · ${teamLabel(T)}`, `<p class="go-badge">${T.score} puntos</p><p class="poster-note">Tiempo: ${fmtTime(T.done - T.start)}</p>`)}
     <div class="stats3">
       <div><strong>${goodsDone()}</strong><span>puntos que guían</span></div>
       <div><strong>${ok}</strong><span>trampas detectadas</span></div>
       <div><strong>${fell}</strong><span>trampas en las que cayeron</span></div>
     </div>
-    ${window.L && (T.trail || []).length > 1 ? '<p class="kicker">Así fue el recorrido</p><div class="final-map" id="fmap"></div>' : ''}
+    ${(T.trail || []).length > 1 ? '<p class="kicker">Así fue el recorrido</p><div class="final-map" id="fmap"></div>' : ''}
     <div class="card"><p class="kicker">Frase del punto 1</p><h2>El Espíritu guía a sus hijos y les enseña a discernir juntos.</h2></div>
     ${PUNTO2}
     <p>${esc(BY_ID.capilla.body)}</p>
@@ -1330,19 +1586,13 @@ function showFinal() {
   </main>`);
   Sound.good();
   if ($('#fmap')) {
-    const fm = L.map('fmap', { zoomControl: false, attributionControl: true });
-    tiles(fm);
-    L.polyline(T.trail, { color: '#ffffff', weight: 11, opacity: .9 }).addTo(fm);
-    const line = L.polyline(T.trail, { color: '#0B6B45', weight: 6, opacity: .95 }).addTo(fm);
-    game.p.forEach(r => {
-      const p = gp(r[0]); if (!p || p.lat == null) return;
-      let kind = null;
-      if (p.type === 'trap') { if (T.warned[p.id] || T.fallen[p.id] || T.avoided[p.id]) kind = 'trap'; }
-      else if (T.visited[p.id]) kind = p.type === 'dest' ? 'destL' : 'visited';
-      if (kind) L.marker([p.lat, p.lng], { icon: mkIcon(kind, ''), interactive: false, keyboard: false }).addTo(fm);
-    });
-    fm.fitBounds(line.getBounds(), { padding: [30, 30], maxZoom: 19 });
-    cleanup.push(() => fm.remove());
+    const pts = game.p.map(r => gp(r[0])).filter(Boolean);
+    const fp = makePlano($('#fmap'));
+    fp.setPoints(pts);
+    const st = { visited: new Set(Object.keys(T.visited)), seen: new Set([...Object.keys(T.warned), ...Object.keys(T.fallen), ...Object.keys(T.avoided)]), target: null };
+    const { items } = planoItems(pts, st);
+    fp.render({ items, rings: [], trail: T.trail, pos: null });
+    cleanup.push(() => fp.destroy());
   }
   const a = $('#fAgain'); if (a) a.onclick = () => { store.del(tKey()); T = null; showTeam(); };
   const h = $('#fHome'); if (h) h.onclick = () => showHome();
@@ -1353,7 +1603,7 @@ function showScreen() {
   Geo.stop();
   if (!Cloud.ok) {
     return setView('screen', `<main class="page">
-      <div class="hero-sign"><span class="hero-arrow">${ICON.nosig}</span><p class="kicker light">Pantalla grande</p><h1>Falta conectar la nube</h1><p>La transmisión en vivo necesita Firebase</p></div>
+      ${poster('Pantalla grande · Falta conectar la nube')}
       <p class="lead">Mientras tanto, conecta el celular del jugador al proyector, o usa la <a href="../">presentación «El GPS y la señal perdida»</a> como plan B.</p></main>`);
   }
   setView('screen', `<div class="tv screen">
@@ -1364,36 +1614,25 @@ function showScreen() {
     <div class="tv-map"><div id="tmap"></div><div class="live-badge" id="liveBadge">EN VIVO</div>
       <div class="scr-wait" id="scrWait"><div class="card"><h2>Esperando al jugador</h2><p>Cuando toque «Empezar recorrido» en su celular, su camino aparece aquí en vivo.</p></div></div></div>
     <aside class="side">
+      <p class="side-title">El Espíritu y la misión</p><p class="side-ref">Hechos 13:1-4</p>
       <p class="kicker" id="scrWho">Ruta a la capilla</p>
       <h2 id="sideNext">Esperando al jugador…</h2>
       <div class="stats3 mini"><div><strong id="sScore">0</strong><span>puntos</span></div><div><strong id="sProg">0/0</strong><span>ruta</span></div><div><strong id="sTime">0:00</strong><span>tiempo</span></div></div>
-      <ul class="legend">
-        <li>${pin('#0B6B45', PIN_IN.dot)}<span>Próximo punto</span></li>
-        <li>${pin('#7B8A82', PIN_IN.check)}<span>Punto visitado</span></li>
-        <li>${pin('#C33A2E', PIN_IN.bang)}<span>Trampa detectada</span></li>
-        <li>${pin('#B07A00', PIN_IN.flag)}<span>La capilla</span></li>
-        <li><span class="me"></span><span>Jugador</span></li>
-        <li><span class="trail"></span><span>Camino recorrido</span></li>
-      </ul>
+      ${LEGEND}
       <button class="btn small" id="sndBtn">Activar sonido</button>
       <p class="small" id="scrStale"></p>
     </aside>
     <div class="scr-over" id="scrOver" hidden></div>
   </div>`);
 
-  let R = null, D = null, map = null, me = null, meAcc = null, trailCase = null, trailLine = null, marks = {}, fitted = false;
+  let R = null, D = null;
+  const plano = makePlano($('#tmap'));
+  cleanup.push(() => plano.destroy());
   let overKey = '', lastWarnId = '', lastEvAt = 0, evUntil = 0, evHTML = '', lastRot = null;
   const P = id => { if (!R) return null; const r = R.p.find(x => x[0] === id); return r && BY_ID[id] ? { ...BY_ID[id], lat: r[1], lng: r[2], hint: r[3] || '' } : null; };
   const goodsR = () => R ? R.p.filter(r => BY_ID[r[0]] && BY_ID[r[0]].type === 'good').map(r => r[0]) : [];
   const hasDest = () => !!(R && R.p.some(r => BY_ID[r[0]] && BY_ID[r[0]].type === 'dest'));
 
-  if (window.L) {
-    map = L.map('tmap', { zoomControl: false }).setView([-15, -60], 3);
-    tiles(map);
-    trailCase = L.polyline([], { color: '#ffffff', weight: 12, opacity: .9, interactive: false }).addTo(map);
-    trailLine = L.polyline([], { color: '#0B6B45', weight: 7, opacity: .95, interactive: false }).addTo(map);
-    cleanup.push(() => map.remove());
-  } else $('#tmap').innerHTML = '<div class="map-off">El mapa necesita internet.</div>';
 
   function nav(tone, icon, distTxt, text, chip, rot) {
     const n = $('#nav'); if (!n) return;
@@ -1410,23 +1649,13 @@ function showScreen() {
     $('#navText').textContent = text;
     const c = $('#navChip'); c.textContent = chip || ''; c.hidden = !chip;
   }
-  function drawMarks(tgtId) {
-    if (!map || !R) return;
-    const vis = new Set(D ? D.visited || [] : []), seen = new Set(D ? [...(D.warned || []), ...(D.fallen || []), ...(D.avoided || [])] : []);
-    R.p.forEach(r => {
-      const p = P(r[0]); if (!p || p.lat == null) return;
-      let kind = null, label = '';
-      if (p.type === 'trap') { if (seen.has(p.id)) { kind = 'trap'; label = 'Trampa'; } }
-      else if (vis.has(p.id)) kind = p.type === 'dest' ? 'destL' : 'visited';
-      else if (tgtId === p.id) { kind = p.type === 'dest' ? 'dest' : 'target'; label = p.type === 'dest' ? 'Capilla' : 'Próximo'; }
-      else if (p.type === 'dest') kind = 'destL';
-      const key = kind + label, m = marks[p.id];
-      if (!kind) { if (m) { m.remove(); delete marks[p.id]; } return; }
-      if (m && m._key === key) return;
-      if (m) m.remove();
-      const nm = L.marker([p.lat, p.lng], { icon: mkIcon(kind, label), interactive: false, keyboard: false }).addTo(map);
-      nm._key = key; marks[p.id] = nm;
-    });
+  function drawPlano(tgtId, tr, pos) {
+    if (!R) { plano.render({ items: [], rings: [], trail: [], pos: null }); return; }
+    const pts = R.p.map(r => P(r[0])).filter(Boolean);
+    const st = { visited: new Set(D ? D.visited || [] : []), seen: new Set(D ? [...(D.warned || []), ...(D.fallen || []), ...(D.avoided || [])] : []), target: tgtId,
+      warnR: (R.r && +R.r[0]) || WARN_R, arriveR: (R.r && +R.r[1]) || ARRIVE_R };
+    const { items, rings } = planoItems(pts, st);
+    plano.render({ items, rings, trail: tr, pos, name: D && D.run ? (D.name || 'Jugador') : '' });
   }
   function overlay(key, html) {
     const o = $('#scrOver'); if (!o) return;
@@ -1465,9 +1694,7 @@ function showScreen() {
       nav('off', 'spin', '', 'Esperando al jugador…', 'Ruta a la capilla');
       $('#sideNext').textContent = 'Esperando al jugador…'; $('#scrWho').textContent = 'Ruta a la capilla';
       $('#sScore').textContent = '0'; $('#sTime').textContent = '0:00'; $('#sProg').textContent = `0/${goodsR().length + (hasDest() ? 1 : 0)}`;
-      if (trailLine) { trailLine.setLatLngs([]); trailCase.setLatLngs([]); }
-      if (me) { me.remove(); meAcc.remove(); me = meAcc = null; }
-      drawMarks(null); overlay('', ''); $('#scrStale').textContent = '';
+      drawPlano(null, [], null); overlay('', ''); $('#scrStale').textContent = '';
       return;
     }
     $('#scrWho').textContent = 'En vivo · ' + (D.name || 'Jugador');
@@ -1479,18 +1706,8 @@ function showScreen() {
     $('#scrStale').textContent = !D.done && age > 15 ? `Última señal del celular del jugador hace ${age} s.` : '';
 
     const tr = []; const f = D.trail || []; for (let i = 0; i + 1 < f.length; i += 2) tr.push([f[i], f[i + 1]]);
-    if (trailLine) { trailLine.setLatLngs(tr); trailCase.setLatLngs(tr); }
-    if (map && D.pos) {
-      const ll = [D.pos.lat, D.pos.lng];
-      if (!me) {
-        meAcc = L.circle(ll, { radius: D.pos.acc || 5, color: '#1F6FEB', weight: 1, fillOpacity: .1, interactive: false }).addTo(map);
-        me = L.circleMarker(ll, { radius: 11, color: '#fff', weight: 4, fillColor: '#1F6FEB', fillOpacity: 1, interactive: false }).addTo(map);
-      } else { me.setLatLng(ll); meAcc.setLatLng(ll).setRadius(D.pos.acc || 5); }
-      if (!fitted) { map.setView(ll, 19); fitted = true; }
-      else if (!map.getBounds().pad(-0.25).contains(ll)) map.panTo(ll);
-    }
     const tgt = D.target ? P(D.target) : null;
-    drawMarks(tgt ? tgt.id : null);
+    drawPlano(tgt ? tgt.id : null, tr, D.pos && !D.weak ? D.pos : (D.pos || null));
 
     const vg = (D.visited || []).filter(id => BY_ID[id] && BY_ID[id].type === 'good').length;
     const label = tgt ? (tgt.type === 'dest' ? 'Destino final: la capilla' : `Punto ${vg + 1} de ${goodsR().length}`) : '';
@@ -1504,7 +1721,7 @@ function showScreen() {
     else {
       const d = dist(D.pos, tgt);
       if (d <= ((R && R.r && +R.r[1]) || ARRIVE_R)) nav('go', 'flag', 'Llegó', label + ' · busca el cartel', 'En la zona');
-      else nav('go', 'arrow', fmtDist(d), label + (tgt.hint ? ' · ' + tgt.hint : ''), 'Flecha = norte del mapa', bearing(D.pos, tgt));
+      else nav('go', 'arrow', fmtDist(d), label + (tgt.hint ? ' · ' + tgt.hint : ''), 'Flecha según el plano', bearing(D.pos, tgt) + plano.rot());
     }
 
     if (D.warn) {
@@ -1525,11 +1742,7 @@ function showScreen() {
 
   const unR = Cloud.routeRef().onSnapshot(s => {
     R = s.exists ? Cloud.fromCloud(s.data()) : null;
-    Object.values(marks).forEach(m => m.remove()); marks = {};
-    if (map && R && !fitted) {
-      const pts = R.p.filter(r => r[1] != null).map(r => [r[1], r[2]]);
-      if (pts.length) { map.fitBounds(pts, { padding: [60, 60], maxZoom: 19 }); fitted = true; }
-    }
+    if (R) plano.setPoints(R.p.map(r => P(r[0])).filter(Boolean));
     render();
   }, e => { console.error(e); toast('No pude leer el recorrido de la nube.'); });
   const unD = Cloud.liveRef().onSnapshot(s => { D = s.exists ? s.data() : null; render(); }, e => { console.error(e); toast('No pude conectarme a la transmisión.'); });
