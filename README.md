@@ -15,6 +15,8 @@ Versión con GPS real para recorrer el predio en equipos (un celular por equipo,
 
 Con «Probar en este celular» puedes ensayar el recorrido tocando el mapa, sin moverte.
 
+**Jugador en pantalla grande:** en el modo líder, «Generar enlace del jugador» crea un enlace aparte para el adolescente que juega con el celular conectado a la pantalla. La clase ve en vivo su posición, el camino que va dejando, las advertencias de trampas (para ayudarlo a responder) y el recorrido completo al final. En horizontal, el mapa ocupa la pantalla y a la derecha queda un panel con la leyenda.
+
 ## Cómo usar la presentación
 
 - **En línea:** abre la página de GitHub Pages de este repositorio.
