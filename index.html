@@ -4,11 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>[hidden]{display:none!important}img{max-width:100%}</style>
-<title>El GPS y la señal perdida</title>
+<title>El Espíritu y la misión · El GPS y la señal perdida</title>
+<meta name="theme-color" content="#EC4217">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Overpass+Mono:wght@500;700&family=Overpass:wght@400;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Gochi+Hand&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* Layout: tablero para proyectar. Celular con GPS a la izquierda, texto grande a la derecha, una parada por escena. */
 :root{
@@ -21,26 +22,6 @@
   --f-display:"Overpass", "Arial Narrow", system-ui, sans-serif;
   --f-body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-mono:"Overpass Mono", ui-monospace, "SF Mono", Menlo, monospace;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0F1512; --surface:#18211C; --ink:#E5ECE7; --muted:#A0AEA6; --line:#2E3A34;
-    --sign:#147A51; --sign-ink:#FFFFFF;
-    --route:#2FD08C; --route-case:#0B4A31;
-    --warn:#F3B41C; --warn-ink:#2B1F00; --stop:#D9493D; --off:#56625C;
-    --land:#16201B; --block:#1F2A24; --street:#34433B; --street-case:#111814; --park:#1C3828; --label:#86948C;
-    --bezel:#050806;
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#0F1512; --surface:#18211C; --ink:#E5ECE7; --muted:#A0AEA6; --line:#2E3A34;
-  --sign:#147A51; --sign-ink:#FFFFFF;
-  --route:#2FD08C; --route-case:#0B4A31;
-  --warn:#F3B41C; --warn-ink:#2B1F00; --stop:#D9493D; --off:#56625C;
-  --land:#16201B; --block:#1F2A24; --street:#34433B; --street-case:#111814; --park:#1C3828; --label:#86948C;
-  --bezel:#050806;
-  color-scheme:dark;
 }
 
 html,body{height:100%}
@@ -182,6 +163,66 @@ h2{margin:0;font:800 clamp(2.1rem,1.1rem + 3.3vw,4.1rem)/1.02 var(--f-display);l
   .spin,#ovList,.pop,.copy.enter{animation:none}
   #carRot,.banner,.veil,.route path{transition:none}
 }
+
+/* ===== Tema GO (afiche «El Espíritu y la misión»): rojo, crema y azul marino ===== */
+:root{
+  --bg:#EC4217; --surface:#FBF4E9; --ink:#1B2266; --muted:#5D6190; --line:#E4D6C1;
+  --sign:#2536A8; --sign-ink:#FFFFFF; --route:#2536A8; --route-case:#141D6B;
+  --warn:#FFB321; --warn-ink:#2A1A00; --stop:#E5320B; --off:#5D6190;
+  --land:#F3E6D2; --block:#FBF4E9; --street:#FFFFFF; --street-case:#E2D2B8; --park:#F6C9B5; --label:#8A7C66;
+  --bezel:#141A4F; --navy:#2536A8; --red:#EC4217; --cream:#FBF4E9;
+  --f-display:"Anton","Impact","Arial Narrow",sans-serif;
+  --f-body:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Space Mono",ui-monospace,Menlo,monospace;
+  --f-hand:"Gochi Hand","Comic Sans MS",cursive;
+  color-scheme:light;
+}
+body{background:var(--red);color:#fff}
+.kicker{color:var(--cream);font-weight:700}
+h1{font:400 clamp(1.7rem,1.2rem + 1.6vw,2.6rem)/.95 var(--f-display);text-transform:uppercase;letter-spacing:.01em;color:#fff}
+.hand-ref{margin:4px 0 0;font:400 1.25rem/1 var(--f-hand);color:#fff;text-transform:uppercase}
+.hand-ref span{text-transform:none;color:var(--cream)}
+.brand-mark{background:var(--cream);color:var(--navy);border-radius:6px;box-shadow:4px 4px 0 var(--navy);transform:rotate(-4deg)}
+.tool{border:2px solid var(--cream);color:var(--cream);border-radius:6px;font-family:var(--f-mono)}
+.tool:hover{background:rgba(251,244,233,.12);border-color:var(--cream)}
+.tool[aria-pressed="true"]{background:var(--cream);color:var(--navy);border-color:var(--cream)}
+.stops::before{background:repeating-linear-gradient(90deg,rgba(251,244,233,.6) 0 10px,transparent 10px 16px)}
+.stop{border-color:var(--cream);background:var(--red)}
+.stop.done{background:var(--cream);border-color:var(--cream)}
+.stop[aria-current="step"]{background:var(--navy);border-color:var(--cream)}
+.eyebrow{color:var(--cream)}
+.chip{background:var(--navy);color:#fff;border-radius:3px}
+h2{font:400 clamp(2.4rem,1.3rem + 3.6vw,4.6rem)/.95 var(--f-display);text-transform:uppercase;letter-spacing:.005em;color:#fff}
+.sub{color:#fff}
+.verse blockquote{color:var(--cream);font-family:var(--f-body);font-style:italic;font-size:clamp(1.05rem,.95rem + .35vw,1.25rem);line-height:1.5}
+.verse figcaption{color:var(--cream)}
+.sign{position:relative;background:var(--cream);color:var(--navy);border:0;border-radius:4px;box-shadow:7px 7px 0 rgba(23,30,90,.3);padding:20px 22px 20px;transform:rotate(-1deg)}
+.sign::before{content:"";position:absolute;top:-12px;left:28px;width:92px;height:24px;transform:rotate(-5deg);background-color:var(--navy);background-image:linear-gradient(rgba(255,255,255,.35) 1.5px,transparent 1.5px),linear-gradient(90deg,rgba(255,255,255,.35) 1.5px,transparent 1.5px);background-size:8px 8px}
+.sign-label{color:var(--stop);opacity:1;font-family:var(--f-mono)}
+.sign p{font:400 clamp(1.4rem,1.1rem + 1vw,2rem)/1.15 var(--f-hand);color:var(--navy)}
+.eje span{color:var(--cream)}
+.eje strong{font:400 clamp(1.3rem,1rem + .8vw,1.8rem)/1.05 var(--f-display);text-transform:uppercase;color:#fff}
+.teacher{background:var(--cream);color:var(--ink);border:0;border-radius:4px;box-shadow:6px 6px 0 rgba(23,30,90,.3)}
+.teacher h3{color:var(--stop)}
+.act{background:var(--navy);color:#fff;border-radius:10px;font:400 1.1rem/1 var(--f-display);text-transform:uppercase;letter-spacing:.05em;box-shadow:4px 4px 0 #0E1550}
+.phone{box-shadow:10px 10px 0 rgba(23,30,90,.35)}
+.banner{background:var(--navy)}
+.b-dist{font:400 2.2em/1 var(--f-display)}
+.b-text{font:700 1.02em/1.2 var(--f-body)}
+.tray{background:var(--cream)}
+.tray strong{font:400 1.4em/1 var(--f-display);color:var(--red)}
+.overlay{background:var(--cream)}
+#ovList b{color:var(--stop)}
+#ovList span{font:400 1.2em/1.1 var(--f-hand)}
+.rs-bg{fill:var(--red)}
+.rs-t{font-family:var(--f-display);font-weight:400}
+.pill-t{font-family:var(--f-display);font-weight:400}
+.m-label{font-family:var(--f-mono)}
+.bottom{border-top:2px dashed rgba(251,244,233,.5)}
+.navbtn{font:400 16px/1 var(--f-display);text-transform:uppercase;letter-spacing:.05em;border:2.5px solid var(--cream);color:var(--cream);border-radius:10px}
+.navbtn.primary{background:var(--cream);color:var(--navy);box-shadow:4px 4px 0 var(--navy)}
+.count{color:var(--cream)}
+.count kbd{border-color:rgba(251,244,233,.5)}
 </style>
 </head>
 <body>
@@ -191,8 +232,9 @@ h2{margin:0;font:800 clamp(2.1rem,1.1rem + 3.3vw,4.1rem)/1.02 var(--f-display);l
     <div class="brand">
       <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21V12a3 3 0 0 1 3-3h8"/><path d="M14 5l4 4-4 4"/></svg></span>
       <div>
-        <p class="kicker">GO · Lección 6 · Punto 1</p>
-        <h1>El GPS y la señal perdida</h1>
+        <p class="kicker">Serie: Una vida en el Espíritu · Lección 6</p>
+        <h1>El Espíritu y la misión</h1>
+        <p class="hand-ref">Hechos 13:1-4 · <span>El GPS y la señal perdida</span></p>
       </div>
     </div>
     <nav class="stops" id="stops" aria-label="Escenas"></nav>
