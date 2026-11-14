@@ -365,7 +365,16 @@ details.more summary{color:var(--navy)}
 .sim{background:var(--navy);font-family:var(--f-mono);border-radius:3px}
 .legend li{font:700 1rem/1.2 var(--f-body)}
 .legend svg{width:30px;height:30px}
-.scr-wait{background:rgba(251,244,233,.85)}
+.scr-wait{position:absolute;inset:auto 0 0 0;z-index:650;background:transparent;display:flex;justify-content:center;padding:24px;pointer-events:none}
+.scr-wait[hidden]{display:none!important}
+.scr-wait .card{box-shadow:7px 7px 0 var(--navy)}
+.iconpick{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:8px}
+.ic{position:relative;display:grid;justify-items:center;gap:4px;padding:8px 4px;border:2px solid var(--line);border-radius:8px;background:#fff;color:var(--navy);cursor:pointer;font-size:.72rem;font-weight:700}
+.ic input{position:absolute;opacity:0;pointer-events:none}
+.ic:has(input:checked){border-color:var(--navy);background:var(--good-bg)}
+.ic:has(input:focus-visible){outline:3px solid var(--warn)}
+.prow-ic{width:30px;height:30px;border-radius:50%;display:inline-grid;place-items:center;background:var(--navy);color:#fff}
+.prow-ic.trap{background:var(--stop)} .prow-ic.dest{background:var(--red)}
 .sheet{border-radius:10px 10px 0 0;background:var(--cream)}
 .sheet-head{background:var(--navy);border-radius:10px 10px 0 0}
 .sheet-head h2{font-size:1.6rem}
@@ -459,7 +468,25 @@ const PRESETS = [
     q:'¿Hacia dónde lleva siempre el Espíritu?', options:['Hacia que yo sea conocido','Hacia Jesús anunciado','Hacia lo más emocionante'], ok:1 }
 ];
 const PRESET_IDS = new Set(PRESETS.map(p => p.id));
-const CONTENT_KEYS = { good: ['name', 'sign', 'title', 'body', 'ref'], dest: ['name', 'sign', 'title', 'body', 'ref'], trap: ['name', 'sign', 'why', 'q', 'options', 'ok'] };
+const CONTENT_KEYS = { good: ['name', 'sign', 'title', 'body', 'ref', 'icon'], dest: ['name', 'sign', 'title', 'body', 'ref', 'icon'], trap: ['name', 'sign', 'why', 'q', 'options', 'ok', 'icon'] };
+// Imágenes de los carteles (trazos de 24 × 24)
+const GLYPHS = {
+  musica:   { label: 'Música', d: 'M9 18V5l11-2v13 M9 18a3 3 0 1 1-3-3 3 3 0 0 1 3 3z M20 16a3 3 0 1 1-3-3 3 3 0 0 1 3 3z' },
+  llama:    { label: 'Llama', d: 'M12 22c4 0 7-3 7-7 0-5-5-7-5-12-3 2-5 5-5 8-1-1-2-2-2-4-2 2-2 5-2 8 0 4 3 7 7 7z' },
+  biblia:   { label: 'Biblia', d: 'M3 5.5C6 4.5 9 4.5 12 6.5c3-2 6-2 9-1V19c-3-1-6-1-9 1-3-2-6-2-9-1z M12 6.5V20' },
+  personas: { label: 'Personas', d: 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z M2.5 21a6.5 6.5 0 0 1 13 0 M17 11a2.8 2.8 0 1 0 0-5.6 M16.5 14.2A5.5 5.5 0 0 1 21.5 20' },
+  pasos:    { label: 'Pasos', d: 'M3 20h5v-5h5v-5h5V5h3' },
+  capilla:  { label: 'Capilla', d: 'M12 2v5 M9.5 4.5h5 M4 21V12l8-5 8 5v9z M10 21v-5h4v5' },
+  corazon:  { label: 'Corazón', d: 'M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z' },
+  paloma:   { label: 'Paloma', d: 'M3 13c4 0 6-2 8-5 1 3 3 5 7 5l3-2-1 4c-2 4-6 6-11 5L4 18l3-2c-2 0-3-1-4-3z M14 9l3-5' },
+  mundo:    { label: 'Mundo', d: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M3 12h18 M12 3c3 3 3 15 0 18 M12 3c-3 3-3 15 0 18' },
+  estrella: { label: 'Estrella', d: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z' },
+  peligro:  { label: 'Peligro', d: 'M12 3 2 20h20z M12 10v4.5 M12 17.2v.3' },
+  pregunta: { label: 'Pregunta', d: 'M9 9a3 3 0 1 1 4.2 2.7c-.8.4-1.2 1-1.2 1.8V15 M12 18.2v.3' }
+};
+const DEFAULT_ICON = { adora: 'musica', ora: 'llama', palabra: 'biblia', juntos: 'personas', paso: 'pasos', capilla: 'capilla' };
+const iconOf = c => (c && c.icon && GLYPHS[c.icon]) ? c.icon : c && DEFAULT_ICON[c.id] ? DEFAULT_ICON[c.id] : c && c.type === 'trap' ? 'peligro' : c && c.type === 'dest' ? 'capilla' : 'estrella';
+const glyphSVG = (key, size = 24, color = 'currentColor') => `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${GLYPHS[key].d}"/></svg>`;
 let CARTELS = [], BY_ID = {}, BY_CODE = {};
 // Mezcla los carteles originales con los textos editados y los carteles nuevos del líder
 function rebuildCartels(map) {
@@ -641,8 +668,9 @@ function makePlano(el, opts = {}) {
     h += `<path d="${grid}" stroke="#2536A8" stroke-opacity=".09" stroke-width="1"/>`;
     // terreno
     const tw = (tb.x1 - tb.x0), th = (tb.y1 - tb.y0);
-    h += `<rect x="${X(tb.x0)}" y="${Y(tb.y0)}" width="${tw * sc}" height="${th * sc}" rx="10" fill="#F3E6D2" stroke="#2536A8" stroke-width="3" stroke-dasharray="10 7"/>`;
-    h += `<text x="${X(tb.x0) + 4}" y="${Y(tb.y1) + 17 * big}" font-size="${11 * big}" font-weight="700" fill="#2536A8" letter-spacing="1">TERRENO ≈ ${Math.round(tw)} × ${Math.round(th)} M</text>`;
+    const hasPts = pts.length > 0;
+    if (hasPts) h += `<rect x="${X(tb.x0)}" y="${Y(tb.y0)}" width="${tw * sc}" height="${th * sc}" rx="10" fill="#F3E6D2" stroke="#2536A8" stroke-width="3" stroke-dasharray="10 7"/>`;
+    if (hasPts) h += `<text x="${X(tb.x0) + 4}" y="${Y(tb.y1) + 17 * big}" font-size="${11 * big}" font-weight="700" fill="#2536A8" letter-spacing="1">TERRENO ≈ ${Math.round(tw)} × ${Math.round(th)} M</text>`;
     // anillos (zonas)
     (s.rings || []).forEach(r => { const [cx, cy] = P(r.lat, r.lng); h += `<circle cx="${cx}" cy="${cy}" r="${Math.max(6, r.r * sc)}" fill="${r.color}" fill-opacity=".08" stroke="${r.color}" stroke-opacity=".55" stroke-width="2" stroke-dasharray="6 5"/>`; });
     // recorrido
@@ -652,14 +680,17 @@ function makePlano(el, opts = {}) {
     }
     // carteles
     (s.items || []).forEach(it => {
-      const [x, y] = P(it.lat, it.lng), r = 15 * big;
+      const [x, y] = P(it.lat, it.lng), r = 17 * big;
+      // imagen del cartel dentro de la ficha
+      const glyph = (key, color, k = 1) => { const g = GLYPHS[key] || GLYPHS.estrella, sz = r * 1.15 * k; return `<g transform="translate(${(x - sz / 2).toFixed(1)} ${(y - sz / 2).toFixed(1)}) scale(${(sz / 24).toFixed(3)})" fill="none" stroke="${color}" stroke-width="${(2.2 * 24 / sz * big).toFixed(2)}" stroke-linecap="round" stroke-linejoin="round"><path d="${g.d}"/></g>`; };
       let shape = '';
-      if (it.kind === 'trap') shape = `<path d="${star(x, y, r * 1.35, r * .75)}" fill="#E5320B" stroke="#fff" stroke-width="3"/><text x="${x}" y="${y + 6 * big}" text-anchor="middle" font-size="${17 * big}" font-weight="700" fill="#fff">!</text>`;
-      else if (it.kind === 'visited') shape = `<circle cx="${x}" cy="${y}" r="${r}" fill="#8A8FB5" stroke="#fff" stroke-width="3"/><path d="M${x - 6 * big} ${y}l${4 * big} ${5 * big} ${8 * big}-${9 * big}" fill="none" stroke="#fff" stroke-width="${3.4 * big}" stroke-linecap="round" stroke-linejoin="round"/>`;
-      else if (it.kind === 'dest') shape = `${it.target ? `<circle class="pulse" cx="${x}" cy="${y}" r="${r * 1.2}" fill="#E5320B" fill-opacity=".35"/>` : ''}<path d="${star(x, y, r * 1.3, r * .95, 10)}" fill="#E5320B" stroke="#fff" stroke-width="3"/><path d="M${x - 4 * big} ${y + 7 * big}V${y - 8 * big}h${9 * big}l-2 ${3.5 * big} 2 ${3.5 * big}h-${9 * big}" fill="none" stroke="#fff" stroke-width="${2.6 * big}" stroke-linejoin="round" stroke-linecap="round"/>`;
-      else if (it.kind === 'target') shape = `<circle class="pulse" cx="${x}" cy="${y}" r="${r * 1.2}" fill="#2536A8" fill-opacity=".35"/><circle cx="${x}" cy="${y}" r="${r}" fill="#2536A8" stroke="#fff" stroke-width="3"/><circle cx="${x}" cy="${y}" r="${r * .38}" fill="#fff"/>`;
-      else shape = `<circle cx="${x}" cy="${y}" r="${r * .8}" fill="#FBF4E9" stroke="#2536A8" stroke-width="3"/>`;
-      h += `<g>${shape}${it.label ? `<text class="hand" x="${x}" y="${y - r - 9 * big}" text-anchor="middle" font-size="${20 * big}" fill="${it.kind === 'trap' || it.kind === 'dest' ? '#E5320B' : '#2536A8'}" stroke="#FBF4E9" stroke-width="5" paint-order="stroke">${esc(it.label)}</text>` : ''}</g>`;
+      if (it.kind === 'trap') shape = `<path d="${star(x, y, r * 1.45, r * .85, 9)}" fill="#E5320B" stroke="#fff" stroke-width="3"/>${glyph(it.icon || 'peligro', '#fff', .95)}`;
+      else if (it.kind === 'unknown') shape = `<rect x="${x - r}" y="${y - r}" width="${r * 2}" height="${r * 2}" rx="${r * .3}" fill="#FBF4E9" stroke="#2536A8" stroke-width="3" stroke-dasharray="5 4" transform="rotate(-6 ${x} ${y})"/>${glyph('pregunta', '#2536A8')}`;
+      else if (it.kind === 'visited') shape = `<circle cx="${x}" cy="${y}" r="${r}" fill="#8A8FB5" stroke="#fff" stroke-width="3"/>${glyph(it.icon, '#fff')}<circle cx="${x + r * .8}" cy="${y - r * .8}" r="${r * .42}" fill="#2536A8" stroke="#fff" stroke-width="2"/><path d="M${x + r * .6} ${y - r * .8}l${r * .17} ${r * .2} ${r * .3}-${r * .36}" fill="none" stroke="#fff" stroke-width="${2.2 * big}" stroke-linecap="round" stroke-linejoin="round"/>`;
+      else if (it.kind === 'dest') shape = `${it.target ? `<circle class="pulse" cx="${x}" cy="${y}" r="${r * 1.25}" fill="#E5320B" fill-opacity=".35"/>` : ''}<path d="${star(x, y, r * 1.4, r * 1.05, 10)}" fill="${it.done ? '#8A8FB5' : '#E5320B'}" stroke="#fff" stroke-width="3"/>${glyph(it.icon || 'capilla', '#fff', 1.05)}`;
+      else if (it.kind === 'target') shape = `<circle class="pulse" cx="${x}" cy="${y}" r="${r * 1.25}" fill="#2536A8" fill-opacity=".35"/><circle cx="${x}" cy="${y}" r="${r}" fill="#2536A8" stroke="#fff" stroke-width="3"/>${glyph(it.icon, '#fff')}`;
+      else shape = `<circle cx="${x}" cy="${y}" r="${r}" fill="#FBF4E9" stroke="#2536A8" stroke-width="3"/>${glyph(it.icon, '#2536A8')}`;
+      h += `<g>${shape}${it.label ? `<text class="hand" x="${x}" y="${y - r * 1.45 - 6 * big}" text-anchor="middle" font-size="${19 * big}" fill="${it.kind === 'trap' || it.kind === 'dest' ? '#E5320B' : '#2536A8'}" stroke="#FBF4E9" stroke-width="5" paint-order="stroke">${esc(it.label)}</text>` : ''}</g>`;
     });
     // jugador
     if (posM) {
@@ -686,21 +717,25 @@ function planoItems(list, st) {
   const items = [], rings = [];
   list.forEach(p => {
     if (!p || p.lat == null) return;
+    const icon = iconOf(p);
     if (p.type === 'trap') {
-      if (st.seen.has(p.id)) { items.push({ lat: p.lat, lng: p.lng, kind: 'trap', label: 'Trampa' }); if (st.warnR) rings.push({ lat: p.lat, lng: p.lng, r: st.warnR, color: '#E5320B' }); }
+      // Las trampas se ven como «cartel por descubrir» hasta que se detectan: así la clase también discierne
+      if (st.seen.has(p.id)) { items.push({ lat: p.lat, lng: p.lng, kind: 'trap', icon, label: 'Trampa' }); if (st.warnR) rings.push({ lat: p.lat, lng: p.lng, r: st.warnR, color: '#E5320B' }); }
+      else if (st.showUnknown !== false) items.push({ lat: p.lat, lng: p.lng, kind: 'unknown', label: '' });
       return;
     }
-    if (st.visited.has(p.id)) items.push({ lat: p.lat, lng: p.lng, kind: p.type === 'dest' ? 'dest' : 'visited', label: p.type === 'dest' ? 'Capilla' : '' });
-    else if (st.target === p.id) { items.push({ lat: p.lat, lng: p.lng, kind: p.type === 'dest' ? 'dest' : 'target', target: true, label: p.type === 'dest' ? 'Capilla' : 'Próximo' }); if (st.arriveR) rings.push({ lat: p.lat, lng: p.lng, r: st.arriveR, color: '#2536A8' }); }
-    else if (p.type === 'dest') items.push({ lat: p.lat, lng: p.lng, kind: 'dest', label: 'Capilla' });
-    else items.push({ lat: p.lat, lng: p.lng, kind: 'pending', label: '' });
+    if (st.visited.has(p.id)) items.push({ lat: p.lat, lng: p.lng, kind: p.type === 'dest' ? 'dest' : 'visited', done: p.type === 'dest', icon, label: p.type === 'dest' ? 'Capilla' : '' });
+    else if (st.target === p.id) { items.push({ lat: p.lat, lng: p.lng, kind: p.type === 'dest' ? 'dest' : 'target', target: true, icon, label: p.type === 'dest' ? 'Capilla' : 'Próximo' }); if (st.arriveR) rings.push({ lat: p.lat, lng: p.lng, r: st.arriveR, color: '#2536A8' }); }
+    else if (p.type === 'dest') items.push({ lat: p.lat, lng: p.lng, kind: 'dest', icon, label: 'Capilla' });
+    else items.push({ lat: p.lat, lng: p.lng, kind: 'pending', icon, label: '' });
   });
   return { items, rings };
 }
 const LEGEND = `<ul class="legend">
-  <li><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="11" fill="#2536A8" stroke="#fff" stroke-width="2.5"/><circle cx="15" cy="15" r="4" fill="#fff"/></svg><span>Próximo punto</span></li>
-  <li><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="9" fill="#FBF4E9" stroke="#2536A8" stroke-width="2.5"/></svg><span>Punto por descubrir</span></li>
-  <li><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="11" fill="#8A8FB5" stroke="#fff" stroke-width="2.5"/><path d="M10 15l3.5 4 7-8" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Punto visitado</span></li>
+  <li><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="12" fill="#2536A8" stroke="#fff" stroke-width="2.5"/><g transform="translate(7 7) scale(.667)" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="${GLYPHS.biblia.d}"/></g></svg><span>Próximo punto</span></li>
+  <li><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="12" fill="#FBF4E9" stroke="#2536A8" stroke-width="2.5"/><g transform="translate(7 7) scale(.667)" fill="none" stroke="#2536A8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="${GLYPHS.musica.d}"/></g></svg><span>Punto que guía</span></li>
+  <li><svg viewBox="0 0 30 30"><rect x="3" y="3" width="24" height="24" rx="6" fill="#FBF4E9" stroke="#2536A8" stroke-width="2.5" stroke-dasharray="4 3"/><g transform="translate(7 7) scale(.667)" fill="none" stroke="#2536A8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="${GLYPHS.pregunta.d}"/></g></svg><span>Cartel por descubrir: ¿bueno o trampa?</span></li>
+  <li><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="12" fill="#8A8FB5" stroke="#fff" stroke-width="2.5"/><path d="M10 15l3.5 4 7-8" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Punto visitado</span></li>
   <li><svg viewBox="0 0 30 30"><path d="M15 1 18 9 26 5 22 13 29 15 22 17 26 25 18 21 15 29 12 21 4 25 8 17 1 15 8 13 4 5 12 9Z" fill="#E5320B"/></svg><span>Trampa detectada</span></li>
   <li><span class="me" style="background:#E5320B;box-shadow:0 0 0 1px #E5320B"></span><span>Jugador</span></li>
   <li><span class="trail" style="background:#2536A8"></span><span>Camino recorrido</span></li>
@@ -810,7 +845,26 @@ function syncLeaderCartels() {
 }
 syncLeaderCartels();
 leader.pts.capilla.use = true;
-const saveLeader = () => store.set('gpsgo-leader', leader);
+const saveLeader = () => { store.set('gpsgo-leader', leader); scheduleCloudSave(); };
+let cloudTimer = null;
+function scheduleCloudSave() {
+  if (typeof view === 'undefined' || view !== 'leader' || !Cloud.ok) return;
+  clearTimeout(cloudTimer);
+  cloudTimer = setTimeout(autoSaveRoute, 1200);
+}
+async function autoSaveRoute() {
+  const line = document.getElementById('lCloud');
+  const g = buildGame();
+  if (!Cloud.user) { if (line) line.innerHTML = '<span class="dot mid"></span><span><b>Entra como líder (arriba)</b> para que los carteles que colocas aparezcan solos en la pantalla grande.</span>'; return; }
+  if (!g.p.some(r => BY_ID[r[0]] && BY_ID[r[0]].type === 'good')) return;
+  try {
+    await Cloud.saveRoute(g);
+    if (line) line.innerHTML = `<span class="dot ok"></span><span>Guardado automático ${new Date().toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}: la pantalla grande ya muestra estos carteles.</span>`;
+  } catch (e) {
+    console.error(e);
+    if (line) line.innerHTML = `<span class="dot bad"></span><span>${e && e.code === 'permission-denied' ? 'Esta cuenta no es la de líder: no se pudo guardar.' : 'No se pudo guardar automáticamente. Revisa la conexión.'}</span>`;
+  }
+}
 
 let T = null;
 const tKey = () => 'gpsgo-team-' + game.g;
@@ -970,7 +1024,9 @@ function editorHTML(p) {
   const f = (k, label, max, area) => `<label class="lbl" for="ed-${k}">${label}</label>` + (area
     ? `<textarea class="input" id="ed-${k}" data-k="${k}" rows="3" maxlength="${max}">${esc(p[k] || '')}</textarea>`
     : `<input class="input" id="ed-${k}" data-k="${k}" maxlength="${max}" value="${esc(p[k] || '')}">`);
+  const cur = iconOf(p);
   let body = f('name', 'Nombre (solo lo ves tú)', 40) + f('sign', 'Frase del cartel', 70);
+  body += `<p class="lbl">Imagen en el plano</p><div class="iconpick" role="radiogroup" aria-label="Imagen del cartel">${Object.keys(GLYPHS).filter(k => k !== 'pregunta').map(k => `<label class="ic" title="${GLYPHS[k].label}"><input type="radio" name="ed-icon" value="${k}" ${k === cur ? 'checked' : ''}>${glyphSVG(k, 26)}<span>${GLYPHS[k].label}</span></label>`).join('')}</div>`;
   if (p.type === 'trap') {
     body += f('why', 'Por qué es una trampa', 260, true) + f('q', 'Pregunta para discernir', 120);
     const opts = p.options || ['', '', ''];
@@ -1075,7 +1131,7 @@ function showLeader() {
   function drawPreview() {
     const pts = CARTELS.filter(p => leader.pts[p.id].use && leader.pts[p.id].lat != null).map(p => ({ ...p, lat: leader.pts[p.id].lat, lng: leader.pts[p.id].lng }));
     preview.setPoints(pts);
-    preview.render({ items: pts.map(p => ({ lat: p.lat, lng: p.lng, kind: p.type === 'trap' ? 'trap' : p.type === 'dest' ? 'dest' : 'target', label: p.code })), rings: pts.map(p => ({ lat: p.lat, lng: p.lng, r: p.type === 'trap' ? leader.r[0] : leader.r[1], color: p.type === 'trap' ? '#E5320B' : '#2536A8' })), trail: ftTrack, pos: Geo.pos && !Geo.pos.sim ? Geo.pos : null, name: 'Tú' });
+    preview.render({ items: pts.map(p => ({ lat: p.lat, lng: p.lng, kind: p.type === 'trap' ? 'trap' : p.type === 'dest' ? 'dest' : 'pending', icon: iconOf(p), label: p.code })), rings: pts.map(p => ({ lat: p.lat, lng: p.lng, r: p.type === 'trap' ? leader.r[0] : leader.r[1], color: p.type === 'trap' ? '#E5320B' : '#2536A8' })), trail: ftTrack, pos: Geo.pos && !Geo.pos.sim ? Geo.pos : null, name: 'Tú' });
   }
   function draw() {
     drawPreview();
@@ -1102,7 +1158,7 @@ function showLeader() {
       return `<div class="prow ${s.use ? '' : 'off'}" data-id="${p.id}">
         <div class="prow-top">
           <label class="sw" title="Usar en el juego"><input type="checkbox" data-act="use" aria-label="Usar ${esc(p.name)}" ${s.use ? 'checked' : ''} ${p.type === 'dest' ? 'disabled' : ''}><span></span></label>
-          <div class="prow-info"><div class="prow-name"><span class="tag ${p.type}">${TYPE_LABEL[p.type]}</span>${esc(p.name)}<span class="code">${p.code}</span>${p.custom ? '<span class="tag new">Nuevo</span>' : leader.content[p.id] ? '<span class="tag new">Editado</span>' : ''}</div>
+          <div class="prow-info"><div class="prow-name"><span class="prow-ic ${p.type}">${glyphSVG(iconOf(p), 20)}</span><span class="tag ${p.type}">${TYPE_LABEL[p.type]}</span>${esc(p.name)}<span class="code">${p.code}</span>${p.custom ? '<span class="tag new">Nuevo</span>' : leader.content[p.id] ? '<span class="tag new">Editado</span>' : ''}</div>
             <div class="prow-sign">«${esc(p.sign)}»</div><div class="status ${s.use && loc ? 'ok' : ''}">${st}</div></div>
         </div>
         ${editing === p.id ? editorHTML(p) : `<div class="prow-act"><button class="btn small" data-act="edit">Editar texto</button></div>`}
@@ -1140,6 +1196,7 @@ function showLeader() {
     if (b.dataset.act === 'save') {
       const ed = b.closest('.editor'), cur = BY_ID[id], data = {};
       ed.querySelectorAll('[data-k]').forEach(i => { data[i.dataset.k] = i.value.trim(); });
+      const ic = ed.querySelector('input[name="ed-icon"]:checked'); if (ic) data.icon = ic.value;
       if (!data.sign) return toast('Escribe la frase del cartel.');
       if (cur.type === 'trap') {
         data.options = [0, 1, 2].map(i => ed.querySelector('#ed-o' + i).value.trim());
@@ -1845,7 +1902,8 @@ function wireAuthCard() {
     const t = $('#authTxt'), b = $('#authBtns'); if (!t) return;
     if (!Cloud.auth()) { t.textContent = 'El ingreso de líder no está disponible en este navegador.'; b.innerHTML = ''; return; }
     if (u) {
-      t.innerHTML = `Entraste como líder con <b>${esc(u.email || 'tu cuenta')}</b>. Solo la cuenta de líder puede guardar el recorrido y usar el control en vivo.`;
+      t.innerHTML = `Entraste como líder con <b>${esc(u.email || 'tu cuenta')}</b>. Lo que marques se guarda solo y aparece en la pantalla grande.`;
+      if (view === 'leader') scheduleCloudSave();
       b.innerHTML = '<button class="btn small" id="authOut">Salir</button>';
       $('#authOut').onclick = () => Cloud.signOut();
     } else {
@@ -1941,7 +1999,7 @@ function showScreen() {
       <div style="min-width:0"><div class="nav-dist" id="navDist" hidden></div><div class="nav-text" id="navText">Esperando al jugador…</div><span class="nav-chip" id="navChip" hidden></span></div>
     </header>
     <div class="tv-map"><div id="tmap"></div><div class="live-badge" id="liveBadge">EN VIVO</div>
-      <div class="scr-wait" id="scrWait"><div class="card"><h2>Esperando al jugador</h2><p>Cuando toque «Empezar recorrido» en su celular, su camino aparece aquí en vivo.</p></div></div></div>
+      <div class="scr-wait" id="scrWait"><div class="card"><h2 id="scrWaitT">Esperando al jugador</h2><p id="scrWaitP">Cuando toque «Empezar recorrido» en su celular, su camino aparece aquí en vivo.</p></div></div></div>
     <aside class="side">
       <p class="side-title">El Espíritu y la misión</p><p class="side-ref">Hechos 13:1-4</p>
       <p class="kicker" id="scrWho">Ruta a la capilla</p>
@@ -2018,8 +2076,11 @@ function showScreen() {
   function render() {
     if (view !== 'screen') return;
     const now = Date.now();
-    const waiting = !D || !D.run;
-    $('#scrWait').hidden = !waiting;
+    const stale = !!(D && D.run && !D.done && now - D.t > 30 * 60000) || !!(D && D.done && now - D.done > 30 * 60000);
+    const waiting = !D || !D.run || stale;
+    $('#scrWait').hidden = !waiting && !!R;
+    if (!R) { $('#scrWaitT').textContent = 'Todavía no hay un recorrido guardado'; $('#scrWaitP').textContent = 'En el modo líder, entra con Google y coloca los carteles: aparecen aquí solos, con su imagen.'; }
+    else { $('#scrWaitT').textContent = 'Esperando al jugador'; $('#scrWaitP').textContent = 'Cuando toque «Empezar recorrido» en su celular, su camino aparece aquí en vivo.'; }
     $('#liveBadge').hidden = waiting;
     if (waiting) {
       nav('off', 'spin', '', 'Esperando al jugador…', 'Ruta a la capilla');
