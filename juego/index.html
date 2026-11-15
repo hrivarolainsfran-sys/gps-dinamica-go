@@ -389,7 +389,7 @@ details.more summary{color:var(--navy)}
 .class-q{background:var(--navy);color:#fff;font:400 1.35rem/1.15 var(--f-hand);border-radius:6px}
 .stats3 div{border:0;border-radius:6px;box-shadow:5px 5px 0 rgba(23,30,90,.25)}
 .stats3 strong{font:400 2.3rem/1 var(--f-display);color:var(--red)}
-.final-map{height:300px;border:2.5px solid var(--navy);border-radius:6px;background:var(--cream)}
+.final-map{position:relative;overflow:hidden;height:300px;border:2.5px solid var(--navy);border-radius:6px;background:var(--cream)}
 .plano{display:block;width:100%;height:100%;touch-action:manipulation}
 .plano text{font-family:var(--f-mono)}
 .plano .hand{font-family:var(--f-hand)}
@@ -408,6 +408,70 @@ details.more summary{color:var(--navy)}
 .optrow{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}
 .optrow input[type=radio]{width:22px;height:22px;accent-color:var(--navy)}
 .tag.new{background:var(--red);color:#fff}
+
+/* ===== Escena 3D (modo interior) ===== */
+.scene{--u:1;position:absolute;inset:0;overflow:hidden;perspective:900px;perspective-origin:50% 26%;background:linear-gradient(#0E1550 0%,#1B2266 30%,#3A2C8E 55%,#7E3B8C 75%,#EC4217 100%);user-select:none;-webkit-user-select:none}
+.scene.big{--u:1.45}
+.scene .sky{position:absolute;inset:0;pointer-events:none;opacity:.8;background-image:
+  radial-gradient(1.6px 1.6px at 8% 12%,#fff,transparent),radial-gradient(1.4px 1.4px at 22% 30%,#fff,transparent),radial-gradient(1.8px 1.8px at 37% 8%,#fff,transparent),
+  radial-gradient(1.3px 1.3px at 52% 22%,#fff,transparent),radial-gradient(1.7px 1.7px at 66% 10%,#fff,transparent),radial-gradient(1.4px 1.4px at 81% 26%,#fff,transparent),
+  radial-gradient(1.6px 1.6px at 93% 14%,#fff,transparent),radial-gradient(1.2px 1.2px at 15% 40%,#fff,transparent),radial-gradient(1.2px 1.2px at 74% 38%,#fff,transparent)}
+.scene .sc-cam{position:absolute;left:50%;top:60%;width:0;height:0;overflow:visible;transform-style:preserve-3d;transition:transform .55s ease-out}
+.scene .floor{position:absolute;left:0;top:0;transform-style:preserve-3d;border-radius:6px;background-color:#F6EAD6;
+  background-image:linear-gradient(90deg,rgba(37,54,168,.10) 1px,transparent 1px),linear-gradient(rgba(37,54,168,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(37,54,168,.20) 2px,transparent 2px),linear-gradient(rgba(37,54,168,.20) 2px,transparent 2px);
+  box-shadow:0 0 0 8px #FBF4E9,0 0 0 13px #2536A8,0 40px 80px rgba(0,0,0,.55)}
+.scene .floor-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.scene .floor-pulse{animation:fpulse 1.4s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes fpulse{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.6);opacity:0}}
+.scene .walls,.scene .things{position:absolute;inset:0;transform-style:preserve-3d}
+.scene .wall{position:absolute;top:0;background:linear-gradient(rgba(251,244,233,.75),rgba(251,244,233,.35));border-top:5px solid #2536A8}
+.scene .wall.front{left:0;transform-origin:0 0;transform:rotateX(90deg)}
+.scene .wall.side{transform-origin:0 0;transform:rotateY(-90deg)}
+.scene .th,.scene .hero{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d}
+.scene .hero{transition:transform .55s ease-out}
+.scene .bb{position:absolute;left:-60px;bottom:0;width:120px;display:flex;flex-direction:column;align-items:center;transform-origin:50% 100%;transition:transform .55s ease-out;pointer-events:none}
+.scene .board{position:relative;width:calc(48px*var(--u));height:calc(42px*var(--u));border-radius:9px;display:grid;place-items:center;background:#FBF4E9;color:#2536A8;border:3px solid #2536A8;box-shadow:4px 4px 0 rgba(14,21,80,.35)}
+.scene .board .ico{display:grid;place-items:center;width:70%;height:70%;z-index:1}
+.scene .board .ico svg{width:100%;height:100%}
+.scene .post{width:calc(7px*var(--u));height:calc(28px*var(--u));background:#141D6B;border-radius:0 0 3px 3px}
+.scene .lbl{font:400 calc(17px*var(--u))/1 var(--f-hand);color:#fff;background:#2536A8;padding:4px 9px 3px;border-radius:5px;margin-bottom:5px;white-space:nowrap;box-shadow:3px 3px 0 rgba(14,21,80,.35)}
+.scene .k-target .board{background:#2536A8;color:#fff;border-color:#fff}
+.scene .k-visited .board{background:#8A8FB5;color:#fff;border-color:#fff}
+.scene .k-unknown .board{border-style:dashed;transform:rotate(-5deg)}
+.scene .k-trap .board{background:transparent;border:0;box-shadow:none;color:#fff}
+.scene .k-trap .burst{position:absolute;inset:-12%;width:124%;height:124%}
+.scene .k-trap .lbl,.scene .k-dest .lbl{background:#E5320B}
+.scene .k-dest .board{width:calc(56px*var(--u));height:calc(50px*var(--u));background:#EC4217;color:#fff;border-color:#fff}
+.scene .badge{position:absolute;top:-9px;right:-9px;width:20px;height:20px;border-radius:50%;background:#2536A8;color:#fff;font:700 12px/20px var(--f-body);text-align:center;border:2px solid #fff}
+.scene .beam{position:absolute;bottom:calc(30px*var(--u));left:50%;width:calc(34px*var(--u));height:calc(260px*var(--u));transform:translateX(-50%);background:linear-gradient(to top,rgba(255,255,255,.85),rgba(255,255,255,0));filter:blur(3px);border-radius:40%;z-index:-1}
+.scene .bob{font:700 calc(22px*var(--u))/1 var(--f-body);color:#FFB321;text-shadow:0 2px 0 #141D6B;animation:bob 1s ease-in-out infinite;margin-bottom:2px}
+.scene .hero-bb{left:-50px;width:100px}
+.scene .hero-fig{width:calc(58px*var(--u));transition:transform .2s}
+.scene .hero-fig svg{width:100%;height:auto;display:block;filter:drop-shadow(0 4px 0 rgba(14,21,80,.25))}
+.scene .hero-name{font:400 calc(17px*var(--u))/1 var(--f-hand);color:#fff;background:#E5320B;padding:4px 9px 3px;border-radius:5px;margin-bottom:6px;white-space:nowrap;box-shadow:3px 3px 0 rgba(14,21,80,.35)}
+.scene .walking svg{animation:walkbob .36s ease-in-out infinite}
+.scene .walking .leg.l{animation:legl .36s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 0}
+.scene .walking .leg.r{animation:legl .36s ease-in-out infinite alternate-reverse;transform-box:fill-box;transform-origin:50% 0}
+.scene .walking .arm.f{animation:legl .36s ease-in-out infinite alternate-reverse;transform-box:fill-box;transform-origin:50% 0}
+@keyframes walkbob{50%{transform:translateY(-3px)}}
+@keyframes legl{from{transform:rotate(-18deg)}to{transform:rotate(18deg)}}
+.scene-n{position:absolute;top:12px;right:14px;display:grid;justify-items:center;gap:2px;color:#FBF4E9;font:700 10px/1 var(--f-mono);letter-spacing:.1em;transition:transform .55s ease-out;z-index:2}
+.scene-n svg{width:16px;height:24px}
+.tv.pantalla .sim,.tv .sim{z-index:700}
+.joy{position:absolute;left:18px;bottom:18px;z-index:660;width:120px;height:120px;border-radius:50%;background:rgba(251,244,233,.25);border:3px solid rgba(251,244,233,.8);touch-action:none;display:grid;place-items:center;backdrop-filter:blur(2px)}
+.joy-knob{width:54px;height:54px;border-radius:50%;background:#FBF4E9;border:3px solid #2536A8;box-shadow:3px 3px 0 rgba(14,21,80,.4);pointer-events:none;transition:transform .05s}
+@media (prefers-reduced-motion: reduce){ .scene .sc-cam,.scene .hero,.scene .bb{transition:none} .scene .walking svg,.scene .walking .leg,.scene .walking .arm,.scene .bob,.scene .floor-pulse{animation:none} }
+/* Modo líder: plano de la capilla */
+.seg2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg2 button{font:400 1rem/1.1 var(--f-display);text-transform:uppercase;letter-spacing:.04em;padding:.85em .6em;border-radius:10px;border:2.5px solid var(--navy);background:var(--cream);color:var(--navy);box-shadow:3px 3px 0 var(--navy);cursor:pointer}
+.seg2 button[aria-pressed="true"]{background:var(--navy);color:#fff}
+.inbox{display:grid;gap:10px}
+.dim{display:flex;align-items:center;gap:6px;font-weight:700}
+.dim .input{width:90px}
+.roomed{border:2.5px solid var(--navy);border-radius:6px;background:#FBF4E9;padding:4px}
+.roomed.placing{outline:4px solid var(--warn);cursor:crosshair}
+.roomsvg{display:block;width:100%;height:auto;max-height:70vh}
+
 /* Carteles impresos con el estilo del afiche */
 .cartel{background:var(--cream);border:2px dashed #C9B89E;border-radius:6px}
 .c-top{color:var(--navy);font-family:var(--f-mono)}
@@ -710,7 +774,7 @@ function makePlano(el, opts = {}) {
   if (opts.onTap) svg.addEventListener('click', e => { const r = svg.getBoundingClientRect(); const [lat, lng] = toLatLng(e.clientX - r.left, e.clientY - r.top); opts.onTap(lat, lng); });
   let ro = null;
   if ('ResizeObserver' in window) { ro = new ResizeObserver(() => { if (last) render(last); }); ro.observe(el); }
-  return { setPoints, render, rot: () => phi * 180 / Math.PI, destroy() { if (ro) ro.disconnect(); svg.remove(); } };
+  return { node: svg, setPoints, render, rot: () => phi * 180 / Math.PI, destroy() { if (ro) ro.disconnect(); svg.remove(); } };
 }
 function planoItems(list, st) {
   // list: puntos con lat/lng; st: { visited:Set, seen:Set, target:id }
@@ -740,6 +804,118 @@ const LEGEND = `<ul class="legend">
   <li><span class="me" style="background:#E5320B;box-shadow:0 0 0 1px #E5320B"></span><span>Jugador</span></li>
   <li><span class="trail" style="background:#2536A8"></span><span>Camino recorrido</span></li>
 </ul>`;
+
+
+/* ================= Modo interior: escena 3D tipo videojuego ================= */
+// Coordenadas de la capilla en metros (x: ancho, y: largo desde el frente) guardadas como lat/lng «sintéticos»
+// para reutilizar distancias, avisos y transmisión sin cambios.
+const M2LL = (x, y) => ({ lat: -y / 110540, lng: x / 111320 });
+const LL2M = (lat, lng) => [lng * 111320, -lat * 110540];
+const ROOM = {
+  isIn: g => !!(g && Array.isArray(g.r) && +g.r[2] === 1),
+  w: g => (g && g.r && +g.r[3] > 0) ? +g.r[3] : 23,
+  l: g => (g && g.r && +g.r[4] > 0) ? +g.r[4] : 22,
+  hd: g => (g && g.r && g.r[5] != null && +g.r[5] >= 0) ? +g.r[5] : null,
+  ent: g => { const w = ROOM.w(g), l = ROOM.l(g); return [(g && g.r && g.r[6] != null && +g.r[6] >= 0) ? +g.r[6] : w / 2, (g && g.r && g.r[7] != null && +g.r[7] >= 0) ? +g.r[7] : l - 1]; }
+};
+const TILT = 56;
+const AVATAR_SVG = `<svg viewBox="0 0 60 88" aria-hidden="true">
+  <g class="legs"><rect class="leg l" x="20" y="58" width="8" height="22" rx="4" fill="#141D6B"/><rect class="leg r" x="32" y="58" width="8" height="22" rx="4" fill="#141D6B"/>
+  <ellipse cx="23" cy="82" rx="6.5" ry="3.6" fill="#FBF4E9" stroke="#141D6B" stroke-width="1.5"/><ellipse cx="37" cy="82" rx="6.5" ry="3.6" fill="#FBF4E9" stroke="#141D6B" stroke-width="1.5"/></g>
+  <rect x="5" y="31" width="13" height="23" rx="5" fill="#FFB321" stroke="#141D6B" stroke-width="2"/>
+  <rect class="arm b" x="40" y="33" width="9" height="21" rx="4.5" fill="#2536A8" stroke="#141D6B" stroke-width="2"/>
+  <rect x="14" y="30" width="32" height="32" rx="11" fill="#2536A8" stroke="#141D6B" stroke-width="2"/>
+  <rect x="21" y="45" width="18" height="8" rx="3" fill="#1A2790"/>
+  <text x="30" y="42" text-anchor="middle" font-family="Anton,Impact,sans-serif" font-size="8" fill="#FBF4E9">GO!</text>
+  <rect class="arm f" x="11" y="33" width="9" height="21" rx="4.5" fill="#2536A8" stroke="#141D6B" stroke-width="2"/>
+  <circle cx="30" cy="19" r="13" fill="#F1C7A1" stroke="#141D6B" stroke-width="2"/>
+  <path d="M17 17c0-9 6-14 13-14s13 5 13 14z" fill="#EC4217" stroke="#141D6B" stroke-width="2"/>
+  <path d="M33 14h15c2.5 0 2.5 4.5 0 4.5H33z" fill="#EC4217" stroke="#141D6B" stroke-width="2"/>
+  <circle cx="36" cy="21" r="1.9" fill="#141D6B"/><path d="M33 26c2 1.3 4.2 1.3 6.2 0" stroke="#141D6B" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+  <circle cx="24" cy="23" r="2.3" fill="#F29A86" opacity=".7"/>
+</svg>`;
+function makeScene(el, opts = {}) {
+  const box = document.createElement('div');
+  box.className = 'scene' + (opts.big ? ' big' : '');
+  box.innerHTML = `<div class="sky" aria-hidden="true"></div>
+    <div class="sc-cam"><div class="floor"><svg class="floor-svg" aria-hidden="true"></svg><div class="walls"></div><div class="things"></div>
+      <div class="hero" hidden><div class="bb hero-bb"><div class="hero-name"></div><div class="hero-fig">${AVATAR_SVG}</div></div></div></div></div>
+    <div class="scene-n" aria-hidden="true"><svg viewBox="0 0 20 30"><path d="M10 1 17 22 10 17 3 22Z" fill="#FBF4E9"/></svg><span>FRENTE</span></div>`;
+  el.appendChild(box);
+  const cam = box.querySelector('.sc-cam'), floor = box.querySelector('.floor'), fsvg = box.querySelector('.floor-svg'), walls = box.querySelector('.walls'),
+    things = box.querySelector('.things'), hero = box.querySelector('.hero'), heroBB = hero.querySelector('.bb'), heroName = hero.querySelector('.hero-name'),
+    heroFig = hero.querySelector('.hero-fig'), nArrow = box.querySelector('.scene-n');
+  let W = 23, L = 22, S = 40, rz = 0, lastHero = null, walkTimer = null, last = null;
+  const star = (cx, cy, r1, r2, n) => { let d = ''; for (let i = 0; i < n * 2; i++) { const r = i % 2 ? r2 : r1, a = Math.PI * i / n - Math.PI / 2; d += (i ? 'L' : 'M') + (cx + r * Math.cos(a)).toFixed(1) + ' ' + (cy + r * Math.sin(a)).toFixed(1); } return d + 'Z'; };
+  function render(st) {
+    last = st;
+    const cw = box.clientWidth, ch = box.clientHeight; if (!cw || !ch) return;
+    const follow = !!st.hero && !st.fit;
+    S = follow ? Math.max(26, Math.min(84, Math.min(cw, ch * 1.2) / (opts.big ? 12 : 9.5)))
+               : Math.max(10, Math.min(cw / (W + 3), ch / ((L + 4) * 0.62)));
+    floor.style.width = (W * S) + 'px'; floor.style.height = (L * S) + 'px';
+    floor.style.backgroundSize = `${S}px ${S}px, ${S}px ${S}px, ${S * 5}px ${S * 5}px, ${S * 5}px ${S * 5}px`;
+    let target = st.rotate != null ? -st.rotate : 0;
+    while (target - rz > 180) target -= 360; while (target - rz < -180) target += 360; rz = target;
+    const cx = follow ? st.hero.x * S : W * S / 2, cy = follow ? st.hero.y * S : L * S / 2;
+    cam.style.top = follow ? '64%' : '52%';
+    cam.style.transform = `rotateX(${TILT}deg) rotateZ(${rz}deg) translate(${-cx}px, ${-cy}px)`;
+    nArrow.style.transform = `rotate(${rz}deg)`;
+    const counter = `rotateZ(${-rz}deg) rotateX(${-TILT}deg)`;
+    // Piso: frente, entrada, zonas, recorrido, sombra y vista del personaje
+    let g = `<rect x="0" y="0" width="${W * S}" height="${1.4 * S}" fill="#EC4217" fill-opacity=".22"/>
+      <text x="${W * S / 2}" y="${0.95 * S}" text-anchor="middle" font-family="Space Mono,monospace" font-weight="700" font-size="${Math.max(10, S * .5)}" fill="#EC4217" letter-spacing="3">FRENTE</text>`;
+    if (st.ent) g += `<rect x="${(st.ent[0] - 1.1) * S}" y="${(st.ent[1] - 0.45) * S}" width="${2.2 * S}" height="${0.9 * S}" rx="${0.2 * S}" fill="#2536A8" fill-opacity=".85"/>
+      <text x="${st.ent[0] * S}" y="${(st.ent[1] + 0.15) * S}" text-anchor="middle" font-family="Space Mono,monospace" font-weight="700" font-size="${Math.max(8, S * .3)}" fill="#FBF4E9">ENTRADA</text>`;
+    (st.rings || []).forEach(r => { g += `<circle cx="${r.x * S}" cy="${r.y * S}" r="${Math.max(4, r.r * S)}" fill="${r.color}" fill-opacity=".14" stroke="${r.color}" stroke-opacity=".7" stroke-width="2" stroke-dasharray="7 6"/>`; });
+    if (st.trail && st.trail.length > 1) g += `<polyline points="${st.trail.map(q => (q[0] * S).toFixed(1) + ',' + (q[1] * S).toFixed(1)).join(' ')}" fill="none" stroke="#2536A8" stroke-width="${Math.max(3, S * .13)}" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="${S * .05} ${S * .3}"/>`;
+    (st.items || []).forEach(it => { g += `<ellipse cx="${it.x * S}" cy="${it.y * S}" rx="${S * .55}" ry="${S * .4}" fill="#141D6B" fill-opacity=".22"/>`; if (it.kind === 'target' || (it.kind === 'dest' && it.target)) g += `<circle class="floor-pulse" cx="${it.x * S}" cy="${it.y * S}" r="${S * .9}" fill="none" stroke="#FFF" stroke-width="3"/>`; });
+    if (st.hero) {
+      const hx = st.hero.x * S, hy = st.hero.y * S, a = (st.hero.h || 0) * Math.PI / 180, R = S * 2.4, sp = .42;
+      g += `<path d="M${hx} ${hy}L${hx + Math.sin(a - sp) * R} ${hy - Math.cos(a - sp) * R}A${R} ${R} 0 0 1 ${hx + Math.sin(a + sp) * R} ${hy - Math.cos(a + sp) * R}Z" fill="#FFF" fill-opacity=".35"/>
+        <ellipse cx="${hx}" cy="${hy}" rx="${S * .5}" ry="${S * .32}" fill="#141D6B" fill-opacity=".35"/>`;
+    }
+    fsvg.setAttribute('viewBox', `0 0 ${W * S} ${L * S}`);
+    fsvg.innerHTML = g;
+    // Paredes (adelante y costados; la de atrás no, para ver el piso)
+    const wh = S * 1.1;
+    walls.innerHTML = `<div class="wall front" style="width:${W * S}px;height:${wh}px"></div>
+      <div class="wall side" style="left:0;width:${wh}px;height:${L * S}px"></div>
+      <div class="wall side" style="left:${W * S}px;width:${wh}px;height:${L * S}px"></div>`;
+    // Carteles de pie (siempre mirando a la cámara)
+    things.innerHTML = (st.items || []).map(it => {
+      const icon = it.kind === 'unknown' ? 'pregunta' : (it.icon || (it.kind === 'trap' ? 'peligro' : 'estrella'));
+      const badge = it.kind === 'visited' ? '<span class="badge">✓</span>' : '';
+      const beam = (it.kind === 'target' || (it.kind === 'dest' && it.target)) ? '<div class="beam"></div><div class="bob">▼</div>' : '';
+      const board = it.kind === 'trap'
+        ? `<svg class="burst" viewBox="0 0 60 60"><path d="${star(30, 30, 29, 18, 9)}" fill="#E5320B" stroke="#FFF" stroke-width="3"/></svg><span class="ico">${glyphSVG(icon, 26)}</span>`
+        : `<span class="ico">${glyphSVG(icon, 26)}</span>${badge}`;
+      return `<div class="th" style="transform:translate3d(${(it.x * S).toFixed(1)}px,${(it.y * S).toFixed(1)}px,0)"><div class="bb k-${it.kind}" style="transform:${counter}">${beam}${it.label ? `<div class="lbl">${esc(it.label)}</div>` : ''}<div class="board">${board}</div><div class="post"></div></div></div>`;
+    }).join('');
+    // Personaje
+    if (st.hero) {
+      hero.hidden = false;
+      hero.style.transform = `translate3d(${(st.hero.x * S).toFixed(1)}px,${(st.hero.y * S).toFixed(1)}px,0)`;
+      heroBB.style.transform = counter;
+      heroName.textContent = st.hero.name || ''; heroName.hidden = !st.hero.name;
+      const scr = ((st.hero.h || 0) + rz) * Math.PI / 180;
+      heroFig.style.transform = Math.sin(scr) < -0.05 ? 'scaleX(-1)' : 'scaleX(1)';
+      if (lastHero && Math.hypot(lastHero.x - st.hero.x, lastHero.y - st.hero.y) > 0.05) {
+        heroFig.classList.add('walking'); clearTimeout(walkTimer); walkTimer = setTimeout(() => heroFig.classList.remove('walking'), 900);
+      }
+      lastHero = { x: st.hero.x, y: st.hero.y };
+    } else hero.hidden = true;
+  }
+  let ro = null;
+  if ('ResizeObserver' in window) { ro = new ResizeObserver(() => { if (last) render(last); }); ro.observe(el); }
+  return { node: box, setRoom(w, l) { W = w; L = l; }, render, destroy() { if (ro) ro.disconnect(); clearTimeout(walkTimer); box.remove(); } };
+}
+// Lista de carteles para la escena (metros) a partir de planoItems
+function sceneItems(list, st) {
+  const { items, rings } = planoItems(list, st);
+  const m = it => { const [x, y] = LL2M(it.lat, it.lng); return { ...it, x, y }; };
+  return { items: items.map(m), rings: rings.map(m) };
+}
 
 /* ================= Sensores ================= */
 const Geo = {
@@ -787,6 +963,69 @@ const Compass = {
     } catch (e) {}
   }
 };
+
+// Movimiento dentro de la capilla: pasos (acelerómetro) + brújula; se corrige al escanear cada cartel. Joystick como respaldo.
+const Indoor = {
+  on: false, x: 0, y: 0, h: 0, roomHd: null, w: 23, l: 22, stepLen: 0.65, f: null, up: false, lastStep: 0, hb: null,
+  joyV: null, joyTimer: null, listening: false, steps: 0,
+  needsPermission() { return typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function'; },
+  requestMotion() {
+    const listen = () => { if (this.listening) return; this.listening = true; window.addEventListener('devicemotion', Indoor.onMotion); };
+    try {
+      if (this.needsPermission()) DeviceMotionEvent.requestPermission().then(r => { if (r === 'granted') listen(); }).catch(() => {});
+      else if (typeof DeviceMotionEvent !== 'undefined') listen();
+    } catch (e) {}
+  },
+  start(g, from) {
+    this.w = ROOM.w(g); this.l = ROOM.l(g); this.roomHd = ROOM.hd(g);
+    const e = from || ROOM.ent(g);
+    this.on = true; this.h = 0; this.moveTo(e[0], e[1]);
+    clearInterval(this.hb); this.hb = setInterval(() => this.push(), 2000);
+    if (!this.needsPermission()) this.requestMotion();
+  },
+  stop() { this.on = false; clearInterval(this.hb); this.hb = null; this.joy(null); },
+  compassOn() { return !this.joyV && Compass.heading != null && this.roomHd != null; },
+  facing() { return this.compassOn() ? (((Compass.heading - this.roomHd) % 360) + 360) % 360 : this.h; },
+  moveTo(x, y) { this.x = Math.max(0.3, Math.min(this.w - 0.3, x)); this.y = Math.max(0.3, Math.min(this.l - 0.3, y)); this.push(); },
+  stepOnce() {
+    if (!this.on || ctrlPaused || this.joyV) return;
+    const deg = this.facing(), a = deg * Math.PI / 180;
+    this.h = deg; this.steps++;
+    this.moveTo(this.x + Math.sin(a) * this.stepLen, this.y - Math.cos(a) * this.stepLen);
+  },
+  push() { if (!this.on) return; const ll = M2LL(this.x, this.y); Geo.setSim(ll.lat, ll.lng); },
+  joy(v) {
+    this.joyV = v; clearInterval(this.joyTimer); this.joyTimer = null;
+    if (v) this.joyTimer = setInterval(() => {
+      const m = Math.hypot(this.joyV.x, this.joyV.y); if (m < .18 || ctrlPaused) return;
+      this.h = (Math.atan2(this.joyV.x, -this.joyV.y) * 180 / Math.PI + 360) % 360;
+      this.moveTo(this.x + this.joyV.x * .14, this.y + this.joyV.y * .14);
+    }, 100);
+  },
+  onMotion(e) {
+    const a = e.accelerationIncludingGravity; if (!a || a.x == null) return;
+    const m = Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
+    Indoor.f = Indoor.f == null ? m : Indoor.f * .75 + m * .25;
+    const now = performance.now();
+    if (!Indoor.up && Indoor.f > 11.2) Indoor.up = true;
+    else if (Indoor.up && Indoor.f < 9.9) { Indoor.up = false; if (now - Indoor.lastStep > 300) { Indoor.lastStep = now; Indoor.stepOnce(); } }
+  }
+};
+function wireJoystick(el) {
+  const knob = el.querySelector('.joy-knob');
+  let id = null;
+  const set = e => {
+    const r = el.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2, R = r.width / 2;
+    let x = (e.clientX - cx) / R, y = (e.clientY - cy) / R; const m = Math.hypot(x, y); if (m > 1) { x /= m; y /= m; }
+    knob.style.transform = `translate(${x * R * .55}px, ${y * R * .55}px)`;
+    Indoor.joy({ x, y });
+  };
+  el.addEventListener('pointerdown', e => { id = e.pointerId; el.setPointerCapture(id); set(e); e.preventDefault(); });
+  el.addEventListener('pointermove', e => { if (e.pointerId === id) set(e); });
+  const end = e => { if (e.pointerId !== id) return; id = null; knob.style.transform = ''; Indoor.joy(null); };
+  el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+}
+
 const Sound = {
   ctx: null,
   init() { try { this.ctx = this.ctx || new (window.AudioContext || window.webkitAudioContext)(); if (this.ctx.state === 'suspended') this.ctx.resume(); } catch (e) {} },
@@ -837,6 +1076,8 @@ function freshLeader() {
 }
 if (!leader || !leader.pts) leader = freshLeader();
 if (!Array.isArray(leader.r)) leader.r = [WARN_R, ARRIVE_R];
+if (!leader.room || typeof leader.room !== 'object') leader.room = { w: 23, l: 22, hd: -1, ex: -1, ey: -1 };
+if (leader.inside == null) leader.inside = false;
 if (leader.lim == null) leader.lim = '';
 if (!leader.content || typeof leader.content !== 'object') leader.content = {};
 function syncLeaderCartels() {
@@ -1043,8 +1284,16 @@ function buildGame() {
   const p = [];
   syncLeaderCartels();
   const c = {};
-  CARTELS.forEach(pr => { const s = leader.pts[pr.id]; if (s && s.use) { p.push([pr.id, s.lat != null ? +s.lat.toFixed(6) : null, s.lng != null ? +s.lng.toFixed(6) : null, s.hint || '']); c[pr.id] = contentOf(pr); } });
-  return { v: 1, g: leader.g, p, r: leader.r.slice(), lim: leader.lim || '', c };
+  const inside = !!leader.inside, rm = leader.room;
+  CARTELS.forEach(pr => {
+    const s = leader.pts[pr.id]; if (!s || !s.use) return;
+    let lat = null, lng = null;
+    if (inside) { if (s.ix != null) { const ll = M2LL(s.ix, s.iy); lat = +ll.lat.toFixed(8); lng = +ll.lng.toFixed(8); } }
+    else if (s.lat != null) { lat = +s.lat.toFixed(6); lng = +s.lng.toFixed(6); }
+    p.push([pr.id, lat, lng, s.hint || '']); c[pr.id] = contentOf(pr);
+  });
+  const r = [leader.r[0], leader.r[1], inside ? 1 : 0, +rm.w || 23, +rm.l || 22, rm.hd != null ? +rm.hd : -1, rm.ex != null ? +rm.ex : -1, rm.ey != null ? +rm.ey : -1];
+  return { v: 1, g: leader.g, p, r, lim: leader.lim || '', c };
 }
 function showLeader() {
   syncLeaderCartels();
@@ -1060,11 +1309,22 @@ function showLeader() {
       <p>Los carteles buenos y las trampas se ven iguales: los equipos tienen que leerlos y discernir antes de escanear. Se imprimen una vez y sirven siempre.</p>
       <a class="btn" href="#carteles">Ver carteles para imprimir</a></section>
 
-    <section class="card"><p class="stepn">Paso 2</p><h2>Ubica cada cartel en el predio</h2>
-      <p>Pega cada cartel, párate al lado y toca <b>Marcar aquí</b>. Bajo techo el GPS no sirve: deja el punto como <b>Solo QR</b> y escribe una pista. Pon las trampas en el camino, a unos 8 m de los puntos buenos.</p>
-      <div class="gpsline" id="lGps"><span class="dot"></span><span>GPS: buscando señal…</span></div>
-      <div class="gpsline field" id="lField">Prueba de campo: camina entre los carteles y aquí verás a cuántos metros estás de cada uno.</div>
-      <div class="lmap" id="lmap"></div>
+    <section class="card"><p class="stepn">Paso 2</p><h2>Ubica cada cartel</h2>
+      <p class="lbl">¿Dónde es el juego?</p>
+      <div class="seg2" role="group" aria-label="Dónde es el juego"><button type="button" data-mode="in" aria-pressed="${leader.inside}">Dentro de la capilla</button><button type="button" data-mode="out" aria-pressed="${!leader.inside}">Al aire libre (GPS)</button></div>
+      <div id="inBox" ${leader.inside ? '' : 'hidden'} class="inbox">
+        <p>Adentro el GPS no sirve. Arma el plano de la capilla: toca <b>Ubicar en la capilla</b> en cada cartel y después toca el plano donde va. Durante el juego el personaje camina con los <b>pasos y la brújula</b> del celular, y queda exacto cada vez que escanea un cartel.</p>
+        <div class="row"><label class="dim">Ancho <input class="input" id="rmW" type="number" min="5" max="80" step="0.5" value="${leader.room.w}"> m</label><label class="dim">Largo <input class="input" id="rmL" type="number" min="5" max="80" step="0.5" value="${leader.room.l}"> m</label></div>
+        <p class="small">Arriba del plano está el <b>frente</b> (el altar o el escenario).</p>
+        <div class="roomed" id="roomEd"></div>
+        <p class="small" id="roomHint"></p>
+        <div class="row"><button class="btn small" type="button" id="entBtn">Ubicar la entrada</button><button class="btn small primary" type="button" id="calBtn">Calibrar la dirección</button></div>
+        <p class="small" id="calTxt"></p>
+      </div>
+      <p id="outHelp" ${leader.inside ? 'hidden' : ''}>Pega cada cartel, párate al lado y toca <b>Marcar aquí</b>. Bajo techo el GPS no sirve: deja el punto como <b>Solo QR</b> y escribe una pista. Pon las trampas en el camino, a unos 8 m de los puntos buenos.</p>
+      <div class="gpsline out-only" id="lGps"><span class="dot"></span><span>GPS: buscando señal…</span></div>
+      <div class="gpsline field out-only" id="lField">Prueba de campo: camina entre los carteles y aquí verás a cuántos metros estás de cada uno.</div>
+      <div class="lmap out-only" id="lmap"></div>
       <p class="kicker">Así se verá en la pantalla grande</p>
       <div class="final-map" id="lPlano"></div>
       <p class="summary" id="lSum"></p>
@@ -1072,10 +1332,10 @@ function showLeader() {
 
     <section class="card"><p class="stepn">Paso 3</p><h2>Ajusta las distancias</h2>
       <p>En un terreno chico, unos metros de error del GPS se notan. Haz una vuelta de prueba: si el aviso de trampa salta donde no debe, bájalo; si cuesta «llegar» a un punto, súbelo. Los círculos del mapa muestran cada zona.</p>
-      <label class="range"><span>Aviso de trampa <b id="rWv">${leader.r[0]} m</b></span><input type="range" id="rW" min="3" max="20" step="1" value="${leader.r[0]}"></label>
-      <label class="range"><span>Llegada a un punto <b id="rAv">${leader.r[1]} m</b></span><input type="range" id="rA" min="3" max="15" step="1" value="${leader.r[1]}"></label>
+      <label class="range"><span>Aviso de trampa <b id="rWv">${leader.r[0]} m</b></span><input type="range" id="rW" min="1" max="20" step="1" value="${leader.r[0]}"></label>
+      <label class="range"><span>Llegada a un punto <b id="rAv">${leader.r[1]} m</b></span><input type="range" id="rA" min="1" max="15" step="1" value="${leader.r[1]}"></label>
       <p class="small">Para un terreno de unos 12 × 30 m: aviso de 6 a 8 m y llegada de 4 a 6 m, con los carteles separados al menos 8 m. Al aire libre el GPS del celular suele errar entre 3 y 10 m, por eso la llegada siempre se confirma escaneando el cartel.</p>
-      <div class="fieldtest">
+      <div class="fieldtest out-only">
         <p class="kicker">Prueba de campo en tu predio</p>
         <ol class="check">
           <li>Párate junto a un cartel y toca <b>Medir quieto</b>: en 20 segundos mide cuánto «salta» el GPS ahí.</li>
@@ -1126,9 +1386,55 @@ function showLeader() {
   } else $('#lmap').innerHTML = '<div class="map-off">El mapa necesita internet. Igual puedes marcar los puntos con el GPS.</div>';
 
   const preview = makePlano($('#lPlano'));
-  let ftTrack = [], ftWalking = false, ftStill = null, ftOffWalk = null;
-  cleanup.push(() => preview.destroy());
+  const pScene = makeScene($('#lPlano'));
+  let ftTrack = [], ftWalking = false, ftStill = null, ftOffWalk = null, placingIn = null;
+  cleanup.push(() => preview.destroy(), () => pScene.destroy());
+  function applyMode() {
+    const inside = !!leader.inside;
+    app.querySelectorAll('.out-only').forEach(n => { n.hidden = inside; });
+    $('#inBox').hidden = !inside; $('#outHelp').hidden = inside;
+    app.querySelectorAll('.seg2 button').forEach(b => b.setAttribute('aria-pressed', String((b.dataset.mode === 'in') === inside)));
+    preview.node.style.display = inside ? 'none' : ''; pScene.node.style.display = inside ? '' : 'none';
+  }
+  function drawRoom() {
+    const ed = $('#roomEd'); if (!ed) return;
+    const rm = leader.room, w = +rm.w || 23, l = +rm.l || 22;
+    let h = `<svg class="roomsvg" viewBox="-1 -2 ${w + 2} ${l + 4}" role="img" aria-label="Plano de la capilla de ${w} por ${l} metros">`;
+    h += `<rect x="0" y="0" width="${w}" height="${l}" fill="#F3E6D2" stroke="#2536A8" stroke-width=".18"/>`;
+    for (let x = 1; x < w; x++) h += `<line x1="${x}" y1="0" x2="${x}" y2="${l}" stroke="#2536A8" stroke-opacity="${x % 5 ? .08 : .22}" stroke-width=".05"/>`;
+    for (let y = 1; y < l; y++) h += `<line x1="0" y1="${y}" x2="${w}" y2="${y}" stroke="#2536A8" stroke-opacity="${y % 5 ? .08 : .22}" stroke-width=".05"/>`;
+    h += `<rect x="0" y="0" width="${w}" height="1.3" fill="#EC4217" fill-opacity=".22"/><text x="${w / 2}" y="-.6" text-anchor="middle" font-size=".9" font-family="Space Mono,monospace" font-weight="700" fill="#EC4217">FRENTE</text>`;
+    h += `<text x="${w / 2}" y="${l + 1.5}" text-anchor="middle" font-size=".8" font-family="Space Mono,monospace" fill="#2536A8">${w} × ${l} m · cuadrícula de 1 m</text>`;
+    if (rm.ex >= 0) h += `<rect x="${rm.ex - 1}" y="${rm.ey - .4}" width="2" height=".8" rx=".2" fill="#2536A8"/><text x="${rm.ex}" y="${rm.ey + .25}" text-anchor="middle" font-size=".5" font-family="Space Mono,monospace" font-weight="700" fill="#FBF4E9">ENTRADA</text>`;
+    CARTELS.forEach(p => {
+      const s = leader.pts[p.id]; if (!s.use || s.ix == null) return;
+      const col = p.type === 'trap' ? '#E5320B' : p.type === 'dest' ? '#EC4217' : '#2536A8';
+      h += `<circle cx="${s.ix}" cy="${s.iy}" r=".75" fill="${col}" stroke="#fff" stroke-width=".12"/><g transform="translate(${s.ix - .5} ${s.iy - .5}) scale(${1 / 24})" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="${GLYPHS[iconOf(p)].d}"/></g>
+        <text x="${s.ix}" y="${s.iy - 1}" text-anchor="middle" font-size=".6" font-family="Space Mono,monospace" font-weight="700" fill="${col}">${p.code}</text>`;
+    });
+    h += '</svg>';
+    ed.innerHTML = h;
+    $('#roomHint').innerHTML = placingIn ? `<b>Toca el plano</b> donde va ${placingIn === 'ent' ? 'la entrada' : `«${esc(BY_ID[placingIn].name)}»`}.` : 'Toca «Ubicar en la capilla» en un cartel de la lista y después toca el plano.';
+    ed.classList.toggle('placing', !!placingIn);
+    const svg = ed.querySelector('svg');
+    svg.addEventListener('click', e => {
+      if (!placingIn) return;
+      const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+      const q = pt.matrixTransform(svg.getScreenCTM().inverse());
+      const x = Math.round(Math.max(0.3, Math.min(w - 0.3, q.x)) * 10) / 10, y = Math.round(Math.max(0.3, Math.min(l - 0.3, q.y)) * 10) / 10;
+      if (placingIn === 'ent') { rm.ex = x; rm.ey = y; toast('Entrada ubicada'); }
+      else { Object.assign(leader.pts[placingIn], { ix: x, iy: y, use: true }); toast(`«${BY_ID[placingIn].name}» ubicado en la capilla`); }
+      placingIn = null; saveLeader(); renderList(); drawRoom(); drawPreview(); buzz(40);
+    });
+  }
   function drawPreview() {
+    if (leader.inside) {
+      const rm = leader.room, w = +rm.w || 23, l = +rm.l || 22;
+      pScene.setRoom(w, l);
+      const items = CARTELS.filter(p => leader.pts[p.id].use && leader.pts[p.id].ix != null).map(p => ({ x: leader.pts[p.id].ix, y: leader.pts[p.id].iy, kind: p.type === 'trap' ? 'trap' : p.type === 'dest' ? 'dest' : 'pending', icon: iconOf(p), label: p.code }));
+      pScene.render({ items, rings: [], trail: [], ent: rm.ex >= 0 ? [rm.ex, rm.ey] : [w / 2, l - 1], hero: null, fit: true });
+      return;
+    }
     const pts = CARTELS.filter(p => leader.pts[p.id].use && leader.pts[p.id].lat != null).map(p => ({ ...p, lat: leader.pts[p.id].lat, lng: leader.pts[p.id].lng }));
     preview.setPoints(pts);
     preview.render({ items: pts.map(p => ({ lat: p.lat, lng: p.lng, kind: p.type === 'trap' ? 'trap' : p.type === 'dest' ? 'dest' : 'pending', icon: iconOf(p), label: p.code })), rings: pts.map(p => ({ lat: p.lat, lng: p.lng, r: p.type === 'trap' ? leader.r[0] : leader.r[1], color: p.type === 'trap' ? '#E5320B' : '#2536A8' })), trail: ftTrack, pos: Geo.pos && !Geo.pos.sim ? Geo.pos : null, name: 'Tú' });
@@ -1153,8 +1459,8 @@ function showLeader() {
     const groups = [['good', 'Puntos buenos'], ['dest', 'Destino'], ['trap', 'Trampas']];
     $('#lList').innerHTML = `<div class="row"><button class="btn small" data-act="addgood">+ Agregar punto bueno</button><button class="btn small" data-act="addtrap">+ Agregar trampa</button></div>` +
       groups.map(([ty, lbl]) => `<h3 class="grp">${lbl}</h3>` + CARTELS.filter(p => p.type === ty).map(p => {
-      const s = leader.pts[p.id], loc = s.lat != null;
-      const st = !s.use ? 'No se usa hoy' : loc ? (s.acc != null ? `Marcado con GPS · ±${s.acc} m` : 'Ubicado en el mapa') : 'Solo QR (sin GPS)';
+      const s = leader.pts[p.id], inside = !!leader.inside, loc = inside ? s.ix != null : s.lat != null;
+      const st = !s.use ? 'No se usa hoy' : inside ? (loc ? `En la capilla · ${s.ix} m, ${s.iy} m` : 'Sin ubicar en la capilla (solo QR)') : loc ? (s.acc != null ? `Marcado con GPS · ±${s.acc} m` : 'Ubicado en el mapa') : 'Solo QR (sin GPS)';
       return `<div class="prow ${s.use ? '' : 'off'}" data-id="${p.id}">
         <div class="prow-top">
           <label class="sw" title="Usar en el juego"><input type="checkbox" data-act="use" aria-label="Usar ${esc(p.name)}" ${s.use ? 'checked' : ''} ${p.type === 'dest' ? 'disabled' : ''}><span></span></label>
@@ -1162,16 +1468,20 @@ function showLeader() {
             <div class="prow-sign">«${esc(p.sign)}»</div><div class="status ${s.use && loc ? 'ok' : ''}">${st}</div></div>
         </div>
         ${editing === p.id ? editorHTML(p) : `<div class="prow-act"><button class="btn small" data-act="edit">Editar texto</button></div>`}
-        ${s.use ? `<div class="prow-act">
+        ${s.use ? (inside ? `<div class="prow-act">
+            <button class="btn small primary" data-act="iplace">${placingIn === p.id ? 'Toca el plano…' : 'Ubicar en la capilla'}</button>
+            ${loc ? '<button class="btn small" data-act="iclear">Quitar del plano</button>' : ''}</div>` : `<div class="prow-act">
             <button class="btn small primary" data-act="mark">Marcar aquí</button>
             <button class="btn small" data-act="place">${placing === p.id ? 'Toca el mapa…' : 'Ubicar en el mapa'}</button>
-            ${loc ? '<button class="btn small" data-act="clear">Dejar solo QR</button>' : ''}</div>
-          <input class="input" id="hint-${p.id}" data-act="hint" maxlength="60" placeholder="Pista opcional (ej.: salón del fondo)" value="${esc(s.hint)}">` : ''}
+            ${loc ? '<button class="btn small" data-act="clear">Dejar solo QR</button>' : ''}</div>`) + `
+          <input class="input" id="hint-${p.id}" data-act="hint" maxlength="60" placeholder="Pista opcional (ej.: junto al piano)" value="${esc(s.hint)}">` : ''}
       </div>`;
     }).join('')).join('');
     const used = CARTELS.filter(p => leader.pts[p.id].use);
     const n = ty => used.filter(p => p.type === ty).length;
-    $('#lSum').textContent = `Hoy se usan: ${n('good')} buenos · ${n('trap')} trampas · la capilla. Con GPS: ${used.filter(p => leader.pts[p.id].lat != null).length} de ${used.length}.`;
+    $('#lSum').textContent = leader.inside
+      ? `Hoy se usan: ${n('good')} buenos · ${n('trap')} trampas · el destino. Ubicados en la capilla: ${used.filter(p => leader.pts[p.id].ix != null).length} de ${used.length}.`
+      : `Hoy se usan: ${n('good')} buenos · ${n('trap')} trampas · la capilla. Con GPS: ${used.filter(p => leader.pts[p.id].lat != null).length} de ${used.length}.`;
   }
   const list = $('#lList');
   list.addEventListener('change', e => {
@@ -1189,6 +1499,8 @@ function showLeader() {
     if (b.dataset.act === 'mark') markHere(id, b);
     if (b.dataset.act === 'place') { placing = placing === id ? null : id; if (placing) { toast('Toca el mapa donde está el cartel'); $('#lmap').scrollIntoView({ behavior: 'smooth', block: 'center' }); } renderList(); }
     if (b.dataset.act === 'clear') { Object.assign(s, { lat: null, lng: null, acc: null }); saveLeader(); renderList(); draw(); }
+    if (b.dataset.act === 'iplace') { placingIn = placingIn === id ? null : id; renderList(); drawRoom(); if (placingIn) $('#roomEd').scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    if (b.dataset.act === 'iclear') { s.ix = null; s.iy = null; saveLeader(); renderList(); drawRoom(); drawPreview(); }
     if (b.dataset.act === 'edit') { editing = id; renderList(); const ed = list.querySelector('.editor'); if (ed) ed.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     if (b.dataset.act === 'cancel') { editing = null; renderList(); }
     if (b.dataset.act === 'restore') { delete leader.content[id]; editing = null; saveLeader(); syncLeaderCartels(); renderList(); draw(); toast('Texto original restaurado'); }
@@ -1314,6 +1626,28 @@ function showLeader() {
       buzz(60); drawPreview(); ftSuggest();
     }
   };
+
+  // ---- Modo interior: controles
+  app.querySelectorAll('.seg2 button').forEach(b => b.onclick = () => {
+    leader.inside = b.dataset.mode === 'in';
+    if (leader.inside && leader.r[0] > 6) { leader.r = [3, 2]; $('#rW').value = 3; $('#rA').value = 2; $('#rWv').textContent = '3 m'; $('#rAv').textContent = '2 m'; }
+    if (!leader.inside && leader.r[0] < 5) { leader.r = [WARN_R, ARRIVE_R]; $('#rW').value = WARN_R; $('#rA').value = ARRIVE_R; $('#rWv').textContent = WARN_R + ' m'; $('#rAv').textContent = ARRIVE_R + ' m'; }
+    saveLeader(); applyMode(); renderList(); drawRoom(); draw();
+  });
+  const dimIn = (id, k) => $(id).addEventListener('change', e => { const v = Math.max(5, Math.min(80, +e.target.value || 0)); leader.room[k] = v; e.target.value = v; saveLeader(); drawRoom(); drawPreview(); });
+  dimIn('#rmW', 'w'); dimIn('#rmL', 'l');
+  $('#entBtn').onclick = () => { placingIn = placingIn === 'ent' ? null : 'ent'; drawRoom(); };
+  const calTxt = () => { const hd = leader.room.hd; $('#calTxt').textContent = hd >= 0 ? `Dirección calibrada: el frente está a ${Math.round(hd)}° de la brújula. Si cambias de lugar el plano, vuelve a calibrar.` : 'Sin calibrar: párate en la entrada mirando hacia el frente (altar) con el celular derecho y toca «Calibrar la dirección». Sin esto, el personaje no sabe hacia dónde caminas.'; };
+  $('#calBtn').onclick = () => {
+    Compass.start();
+    const b = $('#calBtn'); b.disabled = true; b.textContent = 'Leyendo la brújula…';
+    setTimeout(() => {
+      b.disabled = false; b.textContent = 'Calibrar la dirección';
+      if (Compass.heading == null) return toast('No pude leer la brújula. En iPhone, acepta el permiso de movimiento y vuelve a intentar.');
+      leader.room.hd = Math.round(Compass.heading); saveLeader(); calTxt(); buzz(60); toast('Dirección calibrada');
+    }, 1200);
+  };
+  calTxt(); applyMode(); drawRoom();
 
   const setR = (i, el, out) => { leader.r[i] = +el.value; $(out).textContent = el.value + ' m'; saveLeader(); draw(); Geo.emit(); };
   $('#rW').addEventListener('input', e => setR(0, e.target, '#rWv'));
@@ -1480,10 +1814,10 @@ function showSetup() {
         <li><b class="n">−50</b><span>si escaneas una trampa, y 15 segundos recalculando</span></li>
       </ul>
       ${safetyHTML()}<button class="btn primary block" id="goBtn">Empezar recorrido</button>
-      <p class="small center">Antes de empezar, conecta este celular a la pantalla grande. Al empezar, pide permiso para usar la ubicación${Compass.needsPermission() ? ' y la brújula' : ''}.</p>
+      <p class="small center">Antes de empezar, conecta este celular a la pantalla grande. ${ROOM.isIn(game) ? 'Al empezar, pide permiso para la brújula y el movimiento: el personaje camina con tus pasos. Empieza parado en la entrada, mirando hacia el frente.' : `Al empezar, pide permiso para usar la ubicación${Compass.needsPermission() ? ' y la brújula' : ''}.`}</p>
     </main>`);
     $('#goBtn').onclick = () => {
-      Sound.init(); Compass.start();
+      Sound.init(); Compass.start(); if (ROOM.isIn(game)) Indoor.requestMotion();
       T = { team: 1, pantalla: true, name: $('#tName').value.trim(), start: Date.now(), visited: {}, warned: {}, avoided: {}, fallen: {}, arrived: {}, trail: [], lockUntil: 0, score: 0, done: 0 };
       saveT(); showGame();
     };
@@ -1502,14 +1836,14 @@ function showSetup() {
       <li><b class="n">−50</b><span>si escanean una trampa, y 15 segundos recalculando</span></li>
     </ul>
     ${safetyHTML()}<button class="btn primary block" id="goBtn">Empezar recorrido</button>
-    <p class="small center">Al empezar, el celular pide permiso para usar la ubicación${Compass.needsPermission() ? ' y la brújula' : ''}.</p>
+    <p class="small center">${ROOM.isIn(game) ? 'Al empezar, el celular pide permiso para la brújula y el movimiento. Empiecen parados en la entrada, mirando hacia el frente.' : `Al empezar, el celular pide permiso para usar la ubicación${Compass.needsPermission() ? ' y la brújula' : ''}.`}</p>
   </main>`);
   app.querySelector('.seg').addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return; team = +b.dataset.n;
     app.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
   });
   $('#goBtn').onclick = () => {
-    Sound.init(); Compass.start();
+    Sound.init(); Compass.start(); if (ROOM.isIn(game)) Indoor.requestMotion();
     T = { team, name: $('#tName').value.trim(), start: Date.now(), visited: {}, warned: {}, avoided: {}, fallen: {}, arrived: {}, trail: [], lockUntil: 0, score: 0, done: 0 };
     saveT(); showGame();
   };
@@ -1535,13 +1869,15 @@ function showGame() {
   const sim = isSim();
   if (sim) { Geo.stop(); Geo.sim = true; } else { Geo.sim = false; if (Geo.pos && Geo.pos.sim) Geo.pos = null; Geo.start(); }
   const pantalla = !!T.pantalla;
+  const interior = ROOM.isIn(game);
   T.trail = T.trail || [];
+  if (interior) { Geo.stop(); Geo.sim = true; }
   setView('team', `<div class="tv${pantalla ? ' pantalla' : ''}">
     <header class="nav" id="nav" data-tone="off" aria-live="polite">
       <div class="nav-ico" id="navIco"></div>
       <div style="min-width:0"><div class="nav-dist" id="navDist"></div><div class="nav-text" id="navText">Buscando señal…</div><span class="nav-chip" id="navChip" hidden></span></div>
     </header>
-    <div class="tv-map"><div id="tmap"></div><div class="pause-over" id="pauseOver" hidden><div class="card"><h2>Juego en pausa</h2><p>El líder pausó el recorrido. Enseguida seguimos.</p></div></div>${pantalla ? `<div class="live-badge">EN VIVO · ${esc(teamLabel(T)).toUpperCase()}</div>` : ''}${sim ? '<div class="sim">MODO PRUEBA · toca el plano para moverte</div>' : ''}</div>
+    <div class="tv-map"><div id="tmap"></div>${interior ? `<div class="joy" id="joy" ${sim || T.joy ? '' : 'hidden'} aria-label="Joystick para mover al personaje"><div class="joy-knob"></div></div>` : ''}<div class="pause-over" id="pauseOver" hidden><div class="card"><h2>Juego en pausa</h2><p>El líder pausó el recorrido. Enseguida seguimos.</p></div></div>${pantalla ? `<div class="live-badge">EN VIVO · ${esc(teamLabel(T)).toUpperCase()}</div>` : ''}${sim ? '<div class="sim">MODO PRUEBA · toca el plano para moverte</div>' : ''}</div>
     <aside class="side">
       <p class="side-title">El Espíritu y la misión</p><p class="side-ref">Hechos 13:1-4</p>
       <p class="kicker">${pantalla ? 'En vivo' : 'Recorrido'} · ${esc(teamLabel(T))}</p>
@@ -1559,10 +1895,20 @@ function showGame() {
   </div>`);
 
   const allPts = game.p.map(r => gp(r[0])).filter(Boolean);
-  const plano = makePlano($('#tmap'), sim ? { onTap: (lat, lng) => Geo.setSim(lat, lng) } : {});
-  plano.setPoints(allPts);
-  cleanup.push(() => plano.destroy());
-  if (sim) {
+  const plano = interior ? null : makePlano($('#tmap'), sim ? { onTap: (lat, lng) => Geo.setSim(lat, lng) } : {});
+  if (plano) { plano.setPoints(allPts); cleanup.push(() => plano.destroy()); }
+  let scene = null;
+  if (interior) {
+    scene = makeScene($('#tmap'), { big: pantalla });
+    scene.setRoom(ROOM.w(game), ROOM.l(game));
+    const lastT = T.trail[T.trail.length - 1];
+    Indoor.start(game, lastT ? LL2M(lastT[0], lastT[1]) : null);
+    if ($('#joy')) wireJoystick($('#joy'));
+    const ivS = setInterval(() => { if (view === 'team' && Indoor.compassOn()) drawPlano(target(), Geo.pos); }, 400);
+    cleanup.push(() => scene.destroy(), () => Indoor.stop(), () => clearInterval(ivS));
+    window.irA = (x, y) => Indoor.moveTo(x, y);
+  }
+  if (sim && !interior) {
     if (!Geo.pos || !Geo.pos.sim) {
       const c = allPts.filter(p => p.lat != null);
       if (c.length) { const south = c.reduce((a, p) => p.lat < a.lat ? p : a, c[0]); Geo.setSim(south.lat - 0.00006, south.lng); }
@@ -1571,6 +1917,13 @@ function showGame() {
   }
   const nearHits = {};
   function drawPlano(tgt, pos) {
+    if (scene) {
+      const st = { visited: new Set(Object.keys(T.visited)), seen: new Set([...Object.keys(T.warned), ...Object.keys(T.fallen), ...Object.keys(T.avoided)]), target: tgt ? tgt.id : null, warnR: WR(), arriveR: AR() };
+      const { items, rings } = sceneItems(allPts, st);
+      scene.render({ items, rings, trail: T.trail.map(q => LL2M(q[0], q[1])), ent: ROOM.ent(game),
+        hero: { x: Indoor.x, y: Indoor.y, h: Indoor.facing(), name: pantalla ? (T.name || 'Jugador') : '' }, rotate: Indoor.compassOn() ? Indoor.facing() : null });
+      return;
+    }
     const st = { visited: new Set(Object.keys(T.visited)), seen: new Set([...Object.keys(T.warned), ...Object.keys(T.fallen), ...Object.keys(T.avoided)]), target: tgt ? tgt.id : null, warnR: WR(), arriveR: AR() };
     const { items, rings } = planoItems(allPts, st);
     plano.render({ items, rings, trail: T.trail, pos: pos ? { lat: pos.lat, lng: pos.lng, acc: pos.acc } : null, name: pantalla ? (T.name || 'Jugador') : '' });
@@ -1603,7 +1956,7 @@ function showGame() {
 
     if (pos && !weak) {
       const tr = T.trail, last = tr[tr.length - 1];
-      if (!last || dist({ lat: last[0], lng: last[1] }, pos) >= 1.5) {
+      if (!last || dist({ lat: last[0], lng: last[1] }, pos) >= (interior ? 0.6 : 1.5)) {
         tr.push([+pos.lat.toFixed(6), +pos.lng.toFixed(6)]);
         if (tr.length > 800) tr.splice(0, tr.length - 800);
         saveT();
@@ -1642,7 +1995,8 @@ function showGame() {
       if (!T.arrived[tgt.id]) { T.arrived[tgt.id] = now; saveT(); Sound.ping(); buzz(90); }
       return nav('go', 'flag', 'Llegaron', `${label} · busquen el cartel y escanéenlo`, 'Están en la zona');
     }
-    nav('go', 'arrow', fmtDist(d), label + (tgt.hint ? ' · ' + tgt.hint : ''), trend || (h != null ? 'Brújula activa' : 'Flecha según el plano'), h != null ? b - h : b + plano.rot());
+    if (interior) nav('go', 'arrow', fmtDist(d), label + (tgt.hint ? ' · ' + tgt.hint : ''), trend || (Indoor.compassOn() ? 'Brújula activa' : 'Flecha según la capilla'), Indoor.compassOn() ? b - Indoor.facing() : b);
+    else nav('go', 'arrow', fmtDist(d), label + (tgt.hint ? ' · ' + tgt.hint : ''), trend || (h != null ? 'Brújula activa' : 'Flecha según el plano'), h != null ? b - h : b + plano.rot());
   };
 
   const offGeo = Geo.on(() => updateGame());
@@ -1684,7 +2038,7 @@ function publishLive(force) {
     run: T.start, name: T.name || 'Jugador', start: T.start, score: T.score,
     visited: Object.keys(T.visited), warned: Object.keys(T.warned), fallen: Object.keys(T.fallen),
     avoided: Object.keys(T.avoided).filter(k => T.avoided[k].ok),
-    pos: pos ? { lat: +pos.lat.toFixed(6), lng: +pos.lng.toFixed(6), acc: pos.acc || 0 } : null,
+    pos: pos ? { lat: +pos.lat.toFixed(8), lng: +pos.lng.toFixed(8), acc: pos.acc || 0, h: Indoor.on ? Math.round(Indoor.facing()) : null } : null,
     t: now, weak: !pos || pos.acc > WEAK_ACC || now - pos.t > 30000,
     trail: (T.trail || []).slice(-400).flat(),
     target: tgt ? tgt.id : null, lockUntil: T.lockUntil || 0, done: T.done || 0,
@@ -1730,6 +2084,7 @@ function handleCode(raw) {
   if (!pr) return sheetMsg('No reconozco ese código', 'Revisen las letras y números del cartel e inténtenlo de nuevo.');
   const p = gp(pr.id);
   if (!p) return sheetMsg('Ese cartel no está en el juego de hoy', 'Sigan buscando los puntos de su ruta.');
+  if (Indoor.on && p.lat != null) { const [ix, iy] = LL2M(p.lat, p.lng); Indoor.moveTo(ix, iy); }
   if (Date.now() < T.lockUntil) return sheetMsg('Todavía están recalculando', 'Esperen a que termine la cuenta para escanear.', 'warn');
   if (ctrlPaused) return sheetMsg('Juego en pausa', 'Esperen a que el líder reanude el recorrido.', 'warn');
   if (p.type === 'trap') return fallTrap(p);
@@ -1826,6 +2181,7 @@ function openMenu() {
   const w = openSheet(`<div class="sheet-head off"><div class="sh-k">${esc(teamLabel(T))}</div><h2>Opciones</h2></div>
     <div class="sheet-body"><div class="menu">
       ${needCompass ? '<button class="btn block" data-m="compass">Activar brújula</button>' : ''}
+      ${ROOM.isIn(game) ? `<button class="btn block" data-m="motion">Activar sensores de pasos</button><button class="btn block" data-m="joy">${T.joy ? 'Ocultar joystick' : 'Mover con el dedo (joystick)'}</button>` : ''}
       <button class="btn block" data-m="code">Escribir código de un cartel</button>
       <button class="btn block" data-m="home">Salir al inicio</button>
       <div id="mReset"><button class="btn danger block" data-m="reset">Reiniciar este equipo</button></div>
@@ -1836,6 +2192,8 @@ function openMenu() {
     const m = b.dataset.m;
     if (m === 'close') closeSheet();
     if (m === 'compass') { Compass.start(); closeSheet(); toast('Brújula activada'); }
+    if (m === 'motion') { Compass.start(); Indoor.requestMotion(); closeSheet(); toast('Sensores activados: camina y el personaje te sigue'); }
+    if (m === 'joy') { T.joy = !T.joy; saveT(); closeSheet(); const j = $('#joy'); if (j) j.hidden = !T.joy && !isSim(); }
     if (m === 'code') { closeSheet(); openCode(); }
     if (m === 'home') showHome();
     if (m === 'reset') $('#mReset', w).innerHTML = '<p><b>¿Seguro?</b> Se pierden los puntos y el tiempo de este equipo.</p><div class="row"><button class="btn danger" data-m="resetYes" style="flex:1">Sí, reiniciar</button><button class="btn" data-m="close" style="flex:1">Cancelar</button></div>';
@@ -2014,7 +2372,9 @@ function showScreen() {
 
   let R = null, D = null;
   const plano = makePlano($('#tmap'));
-  cleanup.push(() => plano.destroy());
+  const scene = makeScene($('#tmap'), { big: true });
+  scene.node.style.display = 'none';
+  cleanup.push(() => plano.destroy(), () => scene.destroy());
   let overKey = '', lastWarnId = '', lastEvAt = 0, evUntil = 0, evHTML = '', lastRot = null, ctrl = {}, spokenAns = '';
   const P = id => { if (!R) return null; const r = R.p.find(x => x[0] === id); return r && BY_ID[id] ? { ...BY_ID[id], lat: r[1], lng: r[2], hint: r[3] || '' } : null; };
   const goodsR = () => R ? R.p.filter(r => BY_ID[r[0]] && BY_ID[r[0]].type === 'good').map(r => r[0]) : [];
@@ -2037,6 +2397,18 @@ function showScreen() {
     const c = $('#navChip'); c.textContent = chip || ''; c.hidden = !chip;
   }
   function drawPlano(tgtId, tr, pos) {
+    if (R && ROOM.isIn(R)) {
+      plano.node.style.display = 'none'; scene.node.style.display = '';
+      scene.setRoom(ROOM.w(R), ROOM.l(R));
+      const pts = R.p.map(r => P(r[0])).filter(Boolean);
+      const st = { visited: new Set(D ? D.visited || [] : []), seen: new Set(D ? [...(D.warned || []), ...(D.fallen || []), ...(D.avoided || [])] : []), target: tgtId,
+        warnR: (R.r && +R.r[0]) || WARN_R, arriveR: (R.r && +R.r[1]) || ARRIVE_R };
+      const { items, rings } = sceneItems(pts, st);
+      const hero = pos ? (() => { const [x, y] = LL2M(pos.lat, pos.lng); return { x, y, h: pos.h || 0, name: D && D.run ? (D.name || 'Jugador') : '' }; })() : null;
+      scene.render({ items, rings, trail: (tr || []).map(q => LL2M(q[0], q[1])), ent: ROOM.ent(R), hero, rotate: null });
+      return;
+    }
+    plano.node.style.display = ''; scene.node.style.display = 'none';
     if (!R) { plano.render({ items: [], rings: [], trail: [], pos: null }); return; }
     const pts = R.p.map(r => P(r[0])).filter(Boolean);
     const st = { visited: new Set(D ? D.visited || [] : []), seen: new Set(D ? [...(D.warned || []), ...(D.fallen || []), ...(D.avoided || [])] : []), target: tgtId,
@@ -2113,7 +2485,7 @@ function showScreen() {
     else {
       const d = dist(D.pos, tgt);
       if (d <= ((R && R.r && +R.r[1]) || ARRIVE_R)) nav('go', 'flag', 'Llegó', label + ' · busca el cartel', 'En la zona');
-      else nav('go', 'arrow', fmtDist(d), label + (tgt.hint ? ' · ' + tgt.hint : ''), 'Flecha según el plano', bearing(D.pos, tgt) + plano.rot());
+      else nav('go', 'arrow', fmtDist(d), label + (tgt.hint ? ' · ' + tgt.hint : ''), R && ROOM.isIn(R) ? 'Flecha según la capilla' : 'Flecha según el plano', bearing(D.pos, tgt) + (R && ROOM.isIn(R) ? 0 : plano.rot()));
     }
 
     if (ctrl.paused && !D.done) {
