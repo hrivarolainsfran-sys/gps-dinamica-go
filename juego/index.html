@@ -410,45 +410,42 @@ details.more summary{color:var(--navy)}
 .tag.new{background:var(--red);color:#fff}
 
 /* ===== Escena 3D (modo interior) ===== */
-.scene{--u:1;position:absolute;inset:0;overflow:hidden;perspective:900px;perspective-origin:50% 26%;background:linear-gradient(#0E1550 0%,#1B2266 30%,#3A2C8E 55%,#7E3B8C 75%,#EC4217 100%);user-select:none;-webkit-user-select:none}
+.scene{--u:1;position:absolute;inset:0;overflow:hidden;perspective:900px;perspective-origin:50% 26%;background:radial-gradient(ellipse at 50% 12%,#a18a68 0%,#514439 42%,#292725 100%);user-select:none;-webkit-user-select:none}
 .scene.big{--u:1.45}
-.scene .sky{position:absolute;inset:0;pointer-events:none;opacity:.8;background-image:
-  radial-gradient(1.6px 1.6px at 8% 12%,#fff,transparent),radial-gradient(1.4px 1.4px at 22% 30%,#fff,transparent),radial-gradient(1.8px 1.8px at 37% 8%,#fff,transparent),
-  radial-gradient(1.3px 1.3px at 52% 22%,#fff,transparent),radial-gradient(1.7px 1.7px at 66% 10%,#fff,transparent),radial-gradient(1.4px 1.4px at 81% 26%,#fff,transparent),
-  radial-gradient(1.6px 1.6px at 93% 14%,#fff,transparent),radial-gradient(1.2px 1.2px at 15% 40%,#fff,transparent),radial-gradient(1.2px 1.2px at 74% 38%,#fff,transparent)}
+.scene .sky{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 28% 0%,rgba(255,226,173,.34),transparent 48%),radial-gradient(ellipse at 75% 0%,rgba(255,226,173,.22),transparent 45%),repeating-linear-gradient(90deg,transparent 0 19%,rgba(20,16,12,.12) 19% 20%);box-shadow:inset 0 24px 70px rgba(0,0,0,.4)}
 .scene .sc-cam{position:absolute;left:50%;top:60%;width:0;height:0;overflow:visible;transform-style:preserve-3d;transition:transform .55s ease-out}
-.scene .floor{position:absolute;left:0;top:0;transform-style:preserve-3d;border-radius:6px;background-color:#F6EAD6;
-  background-image:linear-gradient(90deg,rgba(37,54,168,.10) 1px,transparent 1px),linear-gradient(rgba(37,54,168,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(37,54,168,.20) 2px,transparent 2px),linear-gradient(rgba(37,54,168,.20) 2px,transparent 2px);
-  box-shadow:0 0 0 8px #FBF4E9,0 0 0 13px #2536A8,0 40px 80px rgba(0,0,0,.55)}
+.scene .floor{position:absolute;left:0;top:0;transform-style:preserve-3d;border-radius:3px;background-color:#b78a58;
+  background-image:repeating-linear-gradient(91deg,rgba(63,34,16,.09) 0 1px,transparent 1px 5px,rgba(255,230,183,.12) 5px 6px,transparent 6px 13px),linear-gradient(90deg,rgba(57,31,14,.38) 1px,rgba(255,234,192,.32) 2px,transparent 3px),linear-gradient(90deg,transparent 48%,rgba(76,43,22,.24) 49%,rgba(255,236,196,.18) 50%,transparent 51%),linear-gradient(0deg,rgba(60,34,18,.22) 1px,transparent 2px);
+  box-shadow:inset 0 0 65px rgba(64,36,17,.25),0 0 0 5px #6e4b2f,0 0 0 9px #39291f,0 35px 65px rgba(0,0,0,.45)}
 .scene .floor-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .scene .floor-pulse{animation:fpulse 1.4s ease-out infinite;transform-box:fill-box;transform-origin:center}
 @keyframes fpulse{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.6);opacity:0}}
 .scene .walls,.scene .things{position:absolute;inset:0;transform-style:preserve-3d}
-.scene .wall{position:absolute;top:0;background:linear-gradient(rgba(251,244,233,.75),rgba(251,244,233,.35));border-top:5px solid #2536A8}
+.scene .wall{position:absolute;top:0;background:repeating-linear-gradient(12deg,rgba(90,65,40,.05) 0 1px,transparent 1px 4px),linear-gradient(#baa78a,#f0e3cb 55%,#dac5a5);border-top:3px solid #6b4930;box-shadow:inset 0 3px 5px rgba(42,26,13,.3),inset 0 -2px 2px rgba(255,247,220,.65)}
 .scene .wall.front{left:0;transform-origin:0 0;transform:rotateX(90deg)}
 .scene .wall.side{transform-origin:0 0;transform:rotateY(-90deg)}
 .scene .th,.scene .hero{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d}
 .scene .hero{transition:transform .55s ease-out}
 .scene .bb{position:absolute;left:-60px;bottom:0;width:120px;display:flex;flex-direction:column;align-items:center;transform-origin:50% 100%;transition:transform .55s ease-out;pointer-events:none}
-.scene .board{position:relative;width:calc(48px*var(--u));height:calc(42px*var(--u));border-radius:9px;display:grid;place-items:center;background:#FBF4E9;color:#2536A8;border:3px solid #2536A8;box-shadow:4px 4px 0 rgba(14,21,80,.35)}
+.scene .board{position:relative;width:calc(48px*var(--u));height:calc(42px*var(--u));border-radius:3px;display:grid;place-items:center;background:linear-gradient(135deg,#fff9ed,#e7d6b9);color:#2536A8;border:3px solid #80603c;box-shadow:inset 0 1px 1px #fff8e8,2px 2px 0 #53391f,3px 4px 0 #49331f,5px 8px 9px rgba(42,27,13,.3)}
 .scene .board .ico{display:grid;place-items:center;width:70%;height:70%;z-index:1}
 .scene .board .ico svg{width:100%;height:100%}
-.scene .post{width:calc(7px*var(--u));height:calc(28px*var(--u));background:#141D6B;border-radius:0 0 3px 3px}
-.scene .lbl{font:400 calc(17px*var(--u))/1 var(--f-hand);color:#fff;background:#2536A8;padding:4px 9px 3px;border-radius:5px;margin-bottom:5px;white-space:nowrap;box-shadow:3px 3px 0 rgba(14,21,80,.35)}
-.scene .k-target .board{background:#2536A8;color:#fff;border-color:#fff}
-.scene .k-visited .board{background:#8A8FB5;color:#fff;border-color:#fff}
-.scene .k-unknown .board{border-style:dashed;transform:rotate(-5deg)}
-.scene .k-trap .board{background:transparent;border:0;box-shadow:none;color:#fff}
-.scene .k-trap .burst{position:absolute;inset:-12%;width:124%;height:124%}
-.scene .k-trap .lbl,.scene .k-dest .lbl{background:#E5320B}
-.scene .k-dest .board{width:calc(56px*var(--u));height:calc(50px*var(--u));background:#EC4217;color:#fff;border-color:#fff}
+.scene .post{position:relative;width:calc(7px*var(--u));height:calc(28px*var(--u));background:linear-gradient(90deg,#543820,#c3935e 40%,#86603a 70%,#4e3521);border-radius:0 0 2px 2px;box-shadow:2px 0 2px rgba(38,24,12,.25)}
+.scene .lbl{font:700 calc(15px*var(--u))/1.15 var(--f-body);color:#FBF4E9;background:linear-gradient(120deg,#3449ba,#2536A8);padding:4px 9px;border:1px solid rgba(251,244,233,.5);border-radius:3px;margin-bottom:5px;white-space:nowrap;box-shadow:0 2px 0 #19256c,2px 4px 6px rgba(31,22,14,.3)}
+.scene .k-target .board{background:linear-gradient(135deg,#4358c8,#2536A8);color:#fff;border-color:#e1c69b}
+.scene .k-visited .board{background:linear-gradient(135deg,#8992ae,#596580);color:#fff;border-color:#cbb28c}
+.scene .k-unknown .board{border-style:solid;transform:rotate(-5deg)}
+.scene .k-trap .board{background:linear-gradient(135deg,#fff9ed,#e7d6b9);color:#fff}
+.scene .k-trap .burst{position:absolute;inset:4%;width:92%;height:92%;filter:drop-shadow(0 1px 1px rgba(70,20,5,.3))}
+.scene .k-trap .lbl,.scene .k-dest .lbl{background:linear-gradient(120deg,#f35b30,#EC4217)}
+.scene .k-dest .board{width:calc(56px*var(--u));height:calc(50px*var(--u));background:linear-gradient(135deg,#fa7044,#EC4217);color:#fff;border-color:#e1c69b}
 .scene .badge{position:absolute;top:-9px;right:-9px;width:20px;height:20px;border-radius:50%;background:#2536A8;color:#fff;font:700 12px/20px var(--f-body);text-align:center;border:2px solid #fff}
 .scene .beam{position:absolute;bottom:calc(30px*var(--u));left:50%;width:calc(34px*var(--u));height:calc(260px*var(--u));transform:translateX(-50%);background:linear-gradient(to top,rgba(255,255,255,.85),rgba(255,255,255,0));filter:blur(3px);border-radius:40%;z-index:-1}
 .scene .bob{font:700 calc(22px*var(--u))/1 var(--f-body);color:#FFB321;text-shadow:0 2px 0 #141D6B;animation:bob 1s ease-in-out infinite;margin-bottom:2px}
 .scene .hero-bb{left:-50px;width:100px}
 .scene .hero-fig{width:calc(58px*var(--u));transition:transform .2s}
-.scene .hero-fig svg{width:100%;height:auto;display:block;filter:drop-shadow(0 4px 0 rgba(14,21,80,.25))}
-.scene .hero-name{font:400 calc(17px*var(--u))/1 var(--f-hand);color:#fff;background:#E5320B;padding:4px 9px 3px;border-radius:5px;margin-bottom:6px;white-space:nowrap;box-shadow:3px 3px 0 rgba(14,21,80,.35)}
+.scene .hero-fig svg{width:100%;height:auto;display:block;filter:drop-shadow(2px 3px 2px rgba(45,29,16,.28))}
+.scene .hero-name{font:700 calc(15px*var(--u))/1.15 var(--f-body);color:#fff;background:#EC4217;padding:4px 9px;border:1px solid #ffc1a9;border-radius:3px;margin-bottom:6px;white-space:nowrap;box-shadow:0 2px 0 #9b3016,2px 4px 6px rgba(31,22,14,.3)}
 .scene .walking svg{animation:walkbob .36s ease-in-out infinite}
 .scene .walking .leg.l{animation:legl .36s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 0}
 .scene .walking .leg.r{animation:legl .36s ease-in-out infinite alternate-reverse;transform-box:fill-box;transform-origin:50% 0}
@@ -460,7 +457,16 @@ details.more summary{color:var(--navy)}
 .tv.pantalla .sim,.tv .sim{z-index:700}
 .joy{position:absolute;left:18px;bottom:18px;z-index:660;width:120px;height:120px;border-radius:50%;background:rgba(251,244,233,.25);border:3px solid rgba(251,244,233,.8);touch-action:none;display:grid;place-items:center;backdrop-filter:blur(2px)}
 .joy-knob{width:54px;height:54px;border-radius:50%;background:#FBF4E9;border:3px solid #2536A8;box-shadow:3px 3px 0 rgba(14,21,80,.4);pointer-events:none;transition:transform .05s}
-@media (prefers-reduced-motion: reduce){ .scene .sc-cam,.scene .hero,.scene .bb{transition:none} .scene .walking svg,.scene .walking .leg,.scene .walking .arm,.scene .bob,.scene .floor-pulse{animation:none} }
+.scene::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 20%,rgba(255,232,188,.08),transparent 55%,rgba(25,20,16,.27));z-index:1}
+.scene .floor::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 45% 10%,rgba(255,244,209,.45),transparent 50%),linear-gradient(115deg,transparent 25%,rgba(255,236,183,.16) 40%,transparent 57%)}
+.scene .wall.front::after{content:"";position:absolute;inset:0 0 auto;height:16%;background:linear-gradient(#604329,#a47b4e,#5a3f28);border-bottom:1px solid #d7b886}
+.scene .wall.side{border-top:0;border-left:4px solid #6b4930;background:repeating-linear-gradient(87deg,rgba(90,65,40,.05) 0 1px,transparent 1px 4px),linear-gradient(90deg,#b5a084,#eee0c5)}
+.scene .wall.side::after{content:"";position:absolute;inset:0 auto 0 0;width:16%;background:linear-gradient(90deg,#604329,#a47b4e,#5a3f28);border-right:1px solid #d7b886}
+.scene .clerestory{position:absolute;left:36%;top:28%;width:28%;height:60%;border:3px solid #705333;border-radius:40% 40% 2px 2px;background:repeating-linear-gradient(90deg,transparent 0 23%,#816545 24% 26%,transparent 27% 50%),linear-gradient(15deg,#c8b780,#f9e9b5 55%,#fff8db);box-shadow:0 0 18px rgba(255,225,163,.5),inset 0 0 5px #fff5d5}
+.scene .post::after{content:"";position:absolute;bottom:0;left:calc(-10px*var(--u));width:calc(27px*var(--u));height:calc(4px*var(--u));border-radius:50%;background:linear-gradient(#9a7851,#493323);box-shadow:2px 3px 4px rgba(40,26,13,.5)}
+.scene .hero-bb::after{content:"";position:absolute;bottom:-2px;width:calc(35px*var(--u));height:calc(6px*var(--u));border-radius:50%;background:radial-gradient(ellipse,rgba(39,25,13,.5),transparent 72%);pointer-events:none}
+.scene .walking .arm.b{animation:legl .36s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 0}
+@media (prefers-reduced-motion: reduce){ .scene .sc-cam,.scene .hero,.scene .bb,.scene .hero-fig,.scene-n,.joy-knob{transition:none} .scene .walking svg,.scene .walking .leg,.scene .walking .arm,.scene .bob,.scene .floor-pulse{animation:none} }
 /* Modo líder: plano de la capilla */
 .seg2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .seg2 button{font:400 1rem/1.1 var(--f-display);text-transform:uppercase;letter-spacing:.04em;padding:.85em .6em;border-radius:10px;border:2.5px solid var(--navy);background:var(--cream);color:var(--navy);box-shadow:3px 3px 0 var(--navy);cursor:pointer}
@@ -820,19 +826,34 @@ const ROOM = {
 };
 const TILT = 56;
 const AVATAR_SVG = `<svg viewBox="0 0 60 88" aria-hidden="true">
-  <g class="legs"><rect class="leg l" x="20" y="58" width="8" height="22" rx="4" fill="#141D6B"/><rect class="leg r" x="32" y="58" width="8" height="22" rx="4" fill="#141D6B"/>
-  <ellipse cx="23" cy="82" rx="6.5" ry="3.6" fill="#FBF4E9" stroke="#141D6B" stroke-width="1.5"/><ellipse cx="37" cy="82" rx="6.5" ry="3.6" fill="#FBF4E9" stroke="#141D6B" stroke-width="1.5"/></g>
-  <rect x="5" y="31" width="13" height="23" rx="5" fill="#FFB321" stroke="#141D6B" stroke-width="2"/>
-  <rect class="arm b" x="40" y="33" width="9" height="21" rx="4.5" fill="#2536A8" stroke="#141D6B" stroke-width="2"/>
-  <rect x="14" y="30" width="32" height="32" rx="11" fill="#2536A8" stroke="#141D6B" stroke-width="2"/>
-  <rect x="21" y="45" width="18" height="8" rx="3" fill="#1A2790"/>
-  <text x="30" y="42" text-anchor="middle" font-family="Anton,Impact,sans-serif" font-size="8" fill="#FBF4E9">GO!</text>
-  <rect class="arm f" x="11" y="33" width="9" height="21" rx="4.5" fill="#2536A8" stroke="#141D6B" stroke-width="2"/>
-  <circle cx="30" cy="19" r="13" fill="#F1C7A1" stroke="#141D6B" stroke-width="2"/>
-  <path d="M17 17c0-9 6-14 13-14s13 5 13 14z" fill="#EC4217" stroke="#141D6B" stroke-width="2"/>
-  <path d="M33 14h15c2.5 0 2.5 4.5 0 4.5H33z" fill="#EC4217" stroke="#141D6B" stroke-width="2"/>
-  <circle cx="36" cy="21" r="1.9" fill="#141D6B"/><path d="M33 26c2 1.3 4.2 1.3 6.2 0" stroke="#141D6B" stroke-width="1.7" fill="none" stroke-linecap="round"/>
-  <circle cx="24" cy="23" r="2.3" fill="#F29A86" opacity=".7"/>
+  <defs>
+    <linearGradient id="go-skin" x2="1" y2=".3"><stop stop-color="#b87850"/><stop offset=".45" stop-color="#efc299"/><stop offset="1" stop-color="#d69b70"/></linearGradient>
+    <linearGradient id="go-blue" x2="1" y2=".3"><stop stop-color="#16225b"/><stop offset=".4" stop-color="#3d56bf"/><stop offset=".7" stop-color="#2536A8"/><stop offset="1" stop-color="#182463"/></linearGradient>
+    <linearGradient id="go-denim" x2="1" y2="0"><stop stop-color="#172638"/><stop offset=".45" stop-color="#445a72"/><stop offset="1" stop-color="#243348"/></linearGradient>
+    <linearGradient id="go-red" x2=".8" y2="1"><stop stop-color="#ff7950"/><stop offset=".55" stop-color="#EC4217"/><stop offset="1" stop-color="#a42d17"/></linearGradient>
+    <linearGradient id="go-pack" x2="1" y2=".3"><stop stop-color="#a86d16"/><stop offset=".4" stop-color="#ffd15d"/><stop offset="1" stop-color="#d99b24"/></linearGradient>
+  </defs>
+  <g class="legs">
+    <g class="leg l"><path d="M22 53 30 54 28 70 26 82 20 82 20 69Z" fill="url(#go-denim)"/><path d="m23 59-1 19" stroke="#8b9aaa" stroke-width=".6" opacity=".5"/><path d="M20 80h6l2 3-1 2H17c-1-2 0-4 3-5" fill="#d7d0bd" stroke="#403e38" stroke-width=".7"/><path d="M17 84h11" stroke="#faf4e7" stroke-width="1.5"/></g>
+    <g class="leg r"><path d="m30 54 9-1-1 17 1 12h-7l-3-14Z" fill="url(#go-denim)"/><path d="m35 59 1 19" stroke="#8b9aaa" stroke-width=".6" opacity=".5"/><path d="M32 80h7l4 2q3 3-1 3H31Z" fill="#e5dfce" stroke="#403e38" stroke-width=".7"/><path d="M31 84h13" stroke="#faf4e7" stroke-width="1.5"/></g>
+  </g>
+  <path d="M17 28Q7 26 7 36v16q3 7 13 4l3-22Z" fill="url(#go-pack)" stroke="#987025" stroke-width=".8"/>
+  <path d="M9 42h8v10H9Z" fill="#e8ad35" stroke="#a87624" stroke-width=".7"/><path d="M10 44h6M11 31q-2 2-2 8" fill="none" stroke="#ffe399" stroke-width="1"/>
+  <g class="arm b"><path d="M36 30q6-1 7 7l2 14-5 1-5-14Z" fill="url(#go-blue)"/><path d="m40 50 5-1 1 5q-1 4-4 2Z" fill="url(#go-skin)"/></g>
+  <path d="M24 24h10v8H24Z" fill="url(#go-skin)"/>
+  <path d="M23 28q6 4 12 0l6 6-2 23q-10 4-20 0l-1-23Z" fill="url(#go-blue)" stroke="#1b295f" stroke-width=".7"/>
+  <path d="m23 29 6 6 6-6M29 35v8" fill="none" stroke="#6681d8" stroke-width=".8"/>
+  <path d="M24 46h11l2 7H22Z" fill="#233895" stroke="#5d72bf" stroke-width=".6"/><path d="M20 55q9 3 18 0" fill="none" stroke="#13235e" stroke-width="2"/>
+  <text x="30" y="44" text-anchor="middle" font-family="Impact,Arial,sans-serif" font-weight="700" font-size="8" fill="#FBF4E9">GO!</text>
+  <path d="M20 29q-2 7 0 17" fill="none" stroke="#6a5128" stroke-width="3"/><path d="M20 29q-2 7 0 17" fill="none" stroke="#e7bd5d" stroke-width="1.5"/>
+  <g class="arm f"><path d="M20 31q-5 0-6 7l1 14 6-1 1-13Z" fill="url(#go-blue)" stroke="#1b295f" stroke-width=".7"/><path d="m16 37 1 11" stroke="#7290df" stroke-width=".8" opacity=".6"/><path d="m15 50 6-1v4q2 4-1 5-4 0-4-3Z" fill="url(#go-skin)"/><path d="m15 50 6-1" stroke="#17255d" stroke-width="2"/></g>
+  <path d="M22 13q1-9 11-8 9 1 9 9l-1 4 3 3-3 1q0 7-6 7l-8-3-4-7Z" fill="url(#go-skin)" stroke="#aa7453" stroke-width=".6"/>
+  <path d="M22 13q-1 8 4 10l1-7 5-4Z" fill="#493329"/>
+  <ellipse cx="26" cy="20" rx="2.5" ry="3.2" fill="#dfab80"/><path d="m26 19 1 2-1 1" fill="none" stroke="#ad7654" stroke-width=".6"/>
+  <path d="m35 17 4 .2" stroke="#674431" stroke-width="1" stroke-linecap="round"/><ellipse cx="37.5" cy="19.3" rx="1" ry="1.3" fill="#302d2b"/><circle cx="37.8" cy="19" r=".3" fill="#fff"/>
+  <path d="M35 25q3 1 5-1" fill="none" stroke="#8e503b" stroke-width=".8" stroke-linecap="round"/>
+  <path d="M21 14q-1-12 11-12 10 0 11 12Z" fill="url(#go-red)" stroke="#a53019" stroke-width=".7"/><path d="M32 3q5 3 5 10M23 11q9-2 18 1" fill="none" stroke="#ffb08a" stroke-width=".6" opacity=".7"/>
+  <path d="M31 12q10-1 18 3 2 2-2 3l-14-2Z" fill="url(#go-red)" stroke="#aa301b" stroke-width=".7"/>
 </svg>`;
 function makeScene(el, opts = {}) {
   const box = document.createElement('div');
@@ -863,9 +884,9 @@ function makeScene(el, opts = {}) {
     nArrow.style.transform = `rotate(${rz}deg)`;
     const counter = `rotateZ(${-rz}deg) rotateX(${-TILT}deg)`;
     // Piso: frente, entrada, zonas, recorrido, sombra y vista del personaje
-    let g = `<rect x="0" y="0" width="${W * S}" height="${1.4 * S}" fill="#EC4217" fill-opacity=".22"/>
-      <text x="${W * S / 2}" y="${0.95 * S}" text-anchor="middle" font-family="Space Mono,monospace" font-weight="700" font-size="${Math.max(10, S * .5)}" fill="#EC4217" letter-spacing="3">FRENTE</text>`;
-    if (st.ent) g += `<rect x="${(st.ent[0] - 1.1) * S}" y="${(st.ent[1] - 0.45) * S}" width="${2.2 * S}" height="${0.9 * S}" rx="${0.2 * S}" fill="#2536A8" fill-opacity=".85"/>
+    let g = `<rect x="0" y="0" width="${W * S}" height="${1.4 * S}" fill="#69452c" fill-opacity=".65" stroke="#d9bb83" stroke-width="2"/>
+      <text x="${W * S / 2}" y="${0.95 * S}" text-anchor="middle" font-family="Space Mono,monospace" font-weight="700" font-size="${Math.max(10, S * .5)}" fill="#FBF4E9" letter-spacing="3">FRENTE</text>`;
+    if (st.ent) g += `<rect x="${(st.ent[0] - 1.1) * S}" y="${(st.ent[1] - 0.45) * S}" width="${2.2 * S}" height="${0.9 * S}" rx="${0.2 * S}" fill="#2536A8" fill-opacity=".92" stroke="#dec8a2" stroke-width="2"/>
       <text x="${st.ent[0] * S}" y="${(st.ent[1] + 0.15) * S}" text-anchor="middle" font-family="Space Mono,monospace" font-weight="700" font-size="${Math.max(8, S * .3)}" fill="#FBF4E9">ENTRADA</text>`;
     (st.rings || []).forEach(r => { g += `<circle cx="${r.x * S}" cy="${r.y * S}" r="${Math.max(4, r.r * S)}" fill="${r.color}" fill-opacity=".14" stroke="${r.color}" stroke-opacity=".7" stroke-width="2" stroke-dasharray="7 6"/>`; });
     if (st.trail && st.trail.length > 1) g += `<polyline points="${st.trail.map(q => (q[0] * S).toFixed(1) + ',' + (q[1] * S).toFixed(1)).join(' ')}" fill="none" stroke="#2536A8" stroke-width="${Math.max(3, S * .13)}" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="${S * .05} ${S * .3}"/>`;
@@ -879,7 +900,7 @@ function makeScene(el, opts = {}) {
     fsvg.innerHTML = g;
     // Paredes (adelante y costados; la de atrás no, para ver el piso)
     const wh = S * 1.1;
-    walls.innerHTML = `<div class="wall front" style="width:${W * S}px;height:${wh}px"></div>
+    walls.innerHTML = `<div class="wall front" style="width:${W * S}px;height:${wh}px"><span class="clerestory" aria-hidden="true"></span></div>
       <div class="wall side" style="left:0;width:${wh}px;height:${L * S}px"></div>
       <div class="wall side" style="left:${W * S}px;width:${wh}px;height:${L * S}px"></div>`;
     // Carteles de pie (siempre mirando a la cámara)
