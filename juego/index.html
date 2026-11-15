@@ -528,6 +528,16 @@ details.more summary{color:var(--navy)}
 .cartel .board{background:var(--red);border:8px solid var(--red);box-shadow:inset 0 0 0 3px var(--cream);border-radius:6px;font:400 1.9rem/1.05 var(--f-display);text-transform:uppercase;letter-spacing:.01em}
 .cartel .code-big{font-family:var(--f-mono);color:var(--navy)}
 @media print{ .cartel{background:#fff} .cartel .board{font-size:30pt} }
+/* Historia: inicio y cierre en el flujo; espera del proyector desplazable. */
+.gps-story{gap:8px;text-align:left}
+.gps-story p{margin:0}
+.gps-story-axis{color:var(--navy);border-top:1px solid var(--line);padding-top:10px}
+#scrWait{max-height:100%;overflow:auto;align-items:flex-start;pointer-events:auto}
+#scrWait .gps-story-wait{width:min(100%,760px);max-width:760px;flex:none;gap:12px}
+#scrWait .gps-story{box-shadow:none;padding:0;font-size:clamp(1.1rem,1.7vw,1.65rem);line-height:1.35}
+#scrWait .gps-story h2{font-size:clamp(1.4rem,2.2vw,2rem)}
+#gpsStoryVoiceNote:empty{display:none}
+@media (max-height:450px){#scrWait{padding:10px}#scrWait .gps-story-wait{padding:14px;gap:8px}#scrWait .gps-story{font-size:1.05rem;gap:6px}}
 </style>
 </head>
 <body>
@@ -1883,6 +1893,38 @@ function safetyHTML() {
     ${game && game.lim ? `<li><b>Límites:</b> ${esc(game.lim)}</li>` : '<li>No salgan del predio.</li>'}
   </ul></div>`;
 }
+/* Historia del GPS: contenido de presentación, sin estado persistido. */
+const GPS_STORY = {
+  title: 'El GPS y la señal perdida',
+  intro: [
+    ['Paso a paso', 'El GPS muestra el próximo giro, no toda tu vida.'],
+    ['Recalcula con vos', 'Si te equivocás, no se apaga: busca otro camino.'],
+    ['En comunidad', 'Otros avisan del peligro; escuchá a líderes y padres.']
+  ],
+  ending: [
+    ['Paso a paso', 'Escuchá al Espíritu y da el próximo paso.'],
+    ['Recalcula con vos', 'Si te equivocás, volvé a buscar su guía.'],
+    ['En comunidad', 'Discerní con tus líderes, padres y amigos.']
+  ],
+  close: 'El Espíritu se da a conocer un paso a la vez. No tenés que descifrar toda tu vida hoy.',
+  axis: 'El Espíritu me guía, me envía y obra a través de mí, para que Cristo sea anunciado',
+  near: 'Tu próximo paso está cerca. Paso a paso.',
+  recalc: 'No se apaga: recalcula con vos.',
+  community: 'Tus líderes, padres y amigos también te avisan del peligro.'
+};
+function gpsStoryHTML(ending = false) {
+  const lines = ending ? GPS_STORY.ending : GPS_STORY.intro;
+  return `<section class="card gps-story"><p class="kicker">${ending ? 'Lo que nos llevamos' : 'Guía y discernimiento'}</p>
+    <h2>${GPS_STORY.title}</h2>
+    ${lines.map(([label, text]) => `<p><b>${label}:</b> ${text}</p>`).join('')}
+    ${ending ? `<p>${GPS_STORY.close}</p><p class="gps-story-axis"><b>${GPS_STORY.axis}</b></p>` : ''}</section>`;
+}
+function gpsStorySpeech(ending = false) {
+  const lines = ending ? GPS_STORY.ending : GPS_STORY.intro;
+  return GPS_STORY.title + '. ' + lines.map(([label, text]) => label + '. ' + text).join(' ') +
+    (ending ? ' ' + GPS_STORY.close + ' ' + GPS_STORY.axis + '.' : '');
+}
+
 function showSetup() {
   Geo.stop();
   const ng = goods().length, nt = traps().length;
@@ -1890,6 +1932,7 @@ function showSetup() {
   if (isPantalla()) {
     setView('setup', `<main class="page">
       ${poster((isSim() ? 'Modo prueba · ' : '') + 'Jugador en pantalla grande', `<p class="poster-note">${ng} punto${ng !== 1 ? 's' : ''} que guían · ${nt} trampa${nt !== 1 ? 's' : ''} · la capilla</p>`)}
+      ${gpsStoryHTML()}
       <p class="lead">Este celular se va a ver en la pantalla grande: toda la clase sigue tu recorrido en vivo. El GPS te lleva al próximo punto. Si te acercas a una trampa, la clase te ayuda a decidir.</p>
       <label class="lbl" for="tName">¿Quién maneja hoy?</label>
       <input class="input" id="tName" maxlength="24" placeholder="Nombre del jugador" autocomplete="off">
@@ -1910,6 +1953,7 @@ function showSetup() {
   }
   setView('setup', `<main class="page">
     ${poster((isSim() ? 'Modo prueba · ' : '') + 'Equipos', `<p class="poster-note">${ng} punto${ng !== 1 ? 's' : ''} que guían · ${nt} trampa${nt !== 1 ? 's' : ''} · la capilla</p>`)}
+    ${gpsStoryHTML()}
     <p class="lead">Recorran el predio con este celular. El GPS los lleva al próximo punto; en el camino hay carteles que parecen buenos pero son trampas. <b>Discutan juntos antes de escanear.</b></p>
     <label class="lbl" id="teamLbl">Número de equipo</label>
     <div class="seg" role="group" aria-labelledby="teamLbl">${[1,2,3,4,5,6].map(n => `<button type="button" data-n="${n}" aria-pressed="${n === 1}">${n}</button>`).join('')}</div>
@@ -2067,7 +2111,7 @@ function showGame() {
     const sn = $('#sideNext');
     if (sn) sn.textContent = activeWarn ? 'Trampa a la vista: ¿qué le responderían?' : now < T.lockUntil ? 'Recalculando después de una trampa' : !tgt ? 'Recorrido completo' : tgt.type === 'dest' ? 'Rumbo a la capilla' : `Rumbo al punto ${goodsDone() + 1} de ${goods().length}`;
     if (activeWarn) return nav('stop', 'warn', 'Peligro', `Trampa a ${activeWarn.d} m: lean el aviso y desvíen`, 'Recalculando');
-    if (now < T.lockUntil) return nav('warn', 'spin', Math.ceil((T.lockUntil - now) / 1000) + ' s', 'Recalculando… cayeron en una trampa', 'Esperen y sigan la ruta');
+    if (now < T.lockUntil) return nav('warn', 'spin', Math.ceil((T.lockUntil - now) / 1000) + ' s', 'Recalculando… cayeron en una trampa', GPS_STORY.recalc);
     if (!tgt) return nav('go', 'flag', '', 'Recorrido completo');
     const label = tgt.type === 'dest' ? 'Destino final: la capilla' : `Punto ${goodsDone() + 1} de ${goods().length}`;
     if (tgt.lat == null) return nav('off', 'qr', 'Bajo techo', `${label}${tgt.hint ? ' · ' + tgt.hint : ''}`, 'Busquen el cartel y escanéenlo');
@@ -2081,7 +2125,7 @@ function showGame() {
     if (lastTgt !== tgt.id || Math.abs(d - lastD) > 1.5) { lastD = d; lastTgt = tgt.id; }
     if (d <= AR()) {
       if (!T.arrived[tgt.id]) { T.arrived[tgt.id] = now; saveT(); Sound.ping(); buzz(90); }
-      return nav('go', 'flag', 'Llegaron', `${label} · busquen el cartel y escanéenlo`, 'Están en la zona');
+      return nav('go', 'flag', 'Llegaron', `${label} · busquen el cartel y escanéenlo`, tgt.type === 'good' ? GPS_STORY.near : 'Están en la zona');
     }
     if (interior) nav('go', 'arrow', fmtDist(d), label + (tgt.hint ? ' · ' + tgt.hint : ''), trend || (Indoor.compassOn() ? 'Brújula activa' : 'Flecha según la capilla'), Indoor.compassOn() ? b - Indoor.facing() : b);
     else nav('go', 'arrow', fmtDist(d), label + (tgt.hint ? ' · ' + tgt.hint : ''), trend || (h != null ? 'Brújula activa' : 'Flecha según el plano'), h != null ? b - h : b + plano.rot());
@@ -2142,6 +2186,7 @@ function openWarn(t, d) {
   const w = openSheet(`<div class="sheet-head stop"><div class="sh-k">${ICON.warn} Recalculando</div><h2>Reporte de peligro a ${d} m</h2></div>
     <div class="sheet-body">
       <p>Cerca hay un cartel que parece un buen camino, pero otros conductores lo reportaron. Léanlo juntos:</p>
+      <p class="small">${GPS_STORY.community}</p>
       <div class="cartel-quote">«${esc(t.sign)}»</div>
       <p><b>${esc(t.q)}</b></p>
       ${T.pantalla ? '<p class="class-q">Clase: ¿qué le responderían? Díganlo en voz alta antes de que elija.</p>' : ''}
@@ -2200,6 +2245,7 @@ function fallTrap(t) {
   Sound.bad(); buzz([400, 120, 400]);
   const w = openSheet(`<div class="sheet-head stop"><div class="sh-k">${ICON.warn} Cayeron en una trampa</div><h2>«${esc(t.sign)}»</h2></div>
     <div class="sheet-body"><div class="pts bad">−50</div><p>${esc(t.why)}</p>
+    <p>${GPS_STORY.recalc}</p>
     <p class="small">El GPS está recalculando la ruta: esperen <span id="cd">15</span> segundos antes de seguir.</p>
     <button class="btn primary block">Entendido</button></div>`, () => updateGame());
   const iv = setInterval(() => { const el = w.querySelector('#cd'); if (!el) return clearInterval(iv); const s = Math.ceil((T.lockUntil - Date.now()) / 1000); if (s <= 0) { el.textContent = '0'; clearInterval(iv); } else el.textContent = s; }, 500);
@@ -2303,7 +2349,7 @@ function showFinal() {
       <div><strong>${fell}</strong><span>trampas en las que cayeron</span></div>
     </div>
     ${(T.trail || []).length > 1 ? '<p class="kicker">Así fue el recorrido</p><div class="final-map" id="fmap"></div>' : ''}
-    <div class="card"><p class="kicker">Frase del punto 1</p><h2>El Espíritu guía a sus hijos y les enseña a discernir juntos.</h2></div>
+    ${gpsStoryHTML(true)}
     ${PUNTO2}
     <p>${esc(BY_ID.capilla.body)}</p>
     <p class="lead center"><b>${T.pantalla ? '¡Un aplauso para quien manejó!' : 'Muéstrenle esta pantalla a su líder.'}</b></p>
@@ -2445,7 +2491,8 @@ function showScreen() {
       <div style="min-width:0"><div class="nav-dist" id="navDist" hidden></div><div class="nav-text" id="navText">Esperando al jugador…</div><span class="nav-chip" id="navChip" hidden></span></div>
     </header>
     <div class="tv-map"><div id="tmap"></div><div class="live-badge" id="liveBadge">EN VIVO</div>
-      <div class="scr-wait" id="scrWait"><div class="card"><h2 id="scrWaitT">Esperando al jugador</h2><p id="scrWaitP">Cuando toque «Empezar recorrido» en su celular, su camino aparece aquí en vivo.</p></div></div></div>
+      <div class="scr-wait" id="scrWait"><div class="card gps-story-wait"><h2 id="scrWaitT">Esperando al jugador</h2><p class="small" id="scrWaitP">Cuando toque «Empezar recorrido» en su celular, su camino aparece aquí en vivo.</p>
+        ${gpsStoryHTML()}<button class="btn" id="gpsStoryRead" type="button">Leer la historia</button><p class="small" id="gpsStoryVoiceNote" role="status"></p></div></div></div>
     <aside class="side">
       <p class="side-title">El Espíritu y la misión</p><p class="side-ref">Hechos 13:1-4</p>
       <p class="kicker" id="scrWho">Ruta a la capilla</p>
@@ -2514,23 +2561,23 @@ function showScreen() {
     const t = BY_ID[w.id]; if (!t) return '';
     const answered = w.ans === true || w.ans === false;
     if (hide && !answered) return `<div class="sheet-head stop"><div class="sh-k">${ICON.warn} Recalculando</div><h2>Reporte de peligro a ${w.d} m</h2></div>
-      <div class="sheet-body"><div class="cartel-quote">«${esc(t.sign)}»</div><p class="class-q">Lean el cartel juntos. ¿Es un buen camino?</p></div>`;
+      <div class="sheet-body"><p class="small">${GPS_STORY.community}</p><div class="cartel-quote">«${esc(t.sign)}»</div><p class="class-q">Lean el cartel juntos. ¿Es un buen camino?</p></div>`;
     return `<div class="sheet-head stop"><div class="sh-k">${ICON.warn} Recalculando</div><h2>Reporte de peligro a ${w.d} m</h2></div>
-      <div class="sheet-body"><div class="cartel-quote">«${esc(t.sign)}»</div><p><b>${esc(t.q)}</b></p>
+      <div class="sheet-body"><p class="small">${GPS_STORY.community}</p><div class="cartel-quote">«${esc(t.sign)}»</div><p><b>${esc(t.q)}</b></p>
       ${answered ? '' : '<p class="class-q">Clase: ¿qué le responderían? Díganlo en voz alta antes de que elija.</p>'}
       <div class="opts">${t.options.map((o, i) => `<div class="opt ${answered && i === t.ok ? 'ok' : ''}">${esc(o)}</div>`).join('')}</div>
       ${answered ? (w.ans ? '<div class="pts good">+50 · ¡Desvío a tiempo!</div>' : '<p><b>Esa no era.</b> La respuesta correcta está en verde.</p>') + `<p>${esc(t.why)}</p>` : ''}</div>`;
   }
   function evHTMLFor(ev) {
     const p = BY_ID[ev.id]; if (!p) return '';
-    if (ev.type === 'trap') return `<div class="sheet-head stop"><div class="sh-k">${ICON.warn} Cayó en una trampa</div><h2>«${esc(p.sign)}»</h2></div><div class="sheet-body"><div class="pts bad">−50</div><p>${esc(p.why)}</p><p class="small">Recalculando: 15 segundos de espera.</p></div>`;
+    if (ev.type === 'trap') return `<div class="sheet-head stop"><div class="sh-k">${ICON.warn} Cayó en una trampa</div><h2>«${esc(p.sign)}»</h2></div><div class="sheet-body"><div class="pts bad">−50</div><p>${esc(p.why)}</p><p>${GPS_STORY.recalc}</p><p class="small">Recalculando: 15 segundos de espera.</p></div>`;
     return `<div class="sheet-head"><div class="sh-k">Punto alcanzado</div><h2>${esc(p.title)}</h2></div><div class="sheet-body"><div class="pts good">+100</div><div class="cartel-quote">«${esc(p.sign)}»</div><p>${esc(p.body)}</p><p class="ref">${esc(p.ref)}</p></div>`;
   }
   function finalHTML() {
     const ok = (D.avoided || []).length, fell = (D.fallen || []).length;
     return `<div class="sheet-head"><div class="sh-k">${ICON.flag} Llegó a la capilla · ${esc(D.name || 'Jugador')}</div><h2>${D.score} puntos · ${fmtTime(D.done - D.start)}</h2></div>
       <div class="sheet-body"><div class="stats3"><div><strong>${(D.visited || []).filter(id => BY_ID[id] && BY_ID[id].type === 'good').length}</strong><span>puntos que guían</span></div><div><strong>${ok}</strong><span>trampas detectadas</span></div><div><strong>${fell}</strong><span>trampas en las que cayó</span></div></div>
-      <div class="card"><p class="kicker">Frase del punto 1</p><h2>El Espíritu guía a sus hijos y les enseña a discernir juntos.</h2></div>${PUNTO2}</div>`;
+      ${gpsStoryHTML(true)}${PUNTO2}</div>`;
   }
 
   function render() {
@@ -2566,13 +2613,13 @@ function showScreen() {
     $('#sideNext').textContent = D.done ? 'Llegó a la capilla' : D.warn ? 'Trampa a la vista: ¿qué le responderían?' : now < D.lockUntil ? 'Recalculando después de una trampa' : tgt ? (tgt.type === 'dest' ? 'Rumbo a la capilla' : `Rumbo al punto ${vg + 1} de ${goodsR().length}`) : '';
     if (D.done) nav('go', 'flag', 'Llegó', 'Recorrido completo', null);
     else if (D.warn) nav('stop', 'warn', 'Peligro', `Trampa a ${D.warn.d} m`, 'Recalculando');
-    else if (now < D.lockUntil) nav('warn', 'spin', Math.ceil((D.lockUntil - now) / 1000) + ' s', 'Recalculando… cayó en una trampa', null);
+    else if (now < D.lockUntil) nav('warn', 'spin', Math.ceil((D.lockUntil - now) / 1000) + ' s', 'Recalculando… cayó en una trampa', GPS_STORY.recalc);
     else if (!tgt) nav('go', 'flag', '', 'Recorrido completo', null);
     else if (tgt.lat == null) nav('off', 'qr', 'Bajo techo', label + (tgt.hint ? ' · ' + tgt.hint : ''), 'Busca el cartel');
     else if (D.weak || !D.pos) nav('off', 'nosig', 'Sin señal', label, 'Sigue por la ruta marcada');
     else {
       const d = dist(D.pos, tgt);
-      if (d <= ((R && R.r && +R.r[1]) || ARRIVE_R)) nav('go', 'flag', 'Llegó', label + ' · busca el cartel', 'En la zona');
+      if (d <= ((R && R.r && +R.r[1]) || ARRIVE_R)) nav('go', 'flag', 'Llegó', label + ' · busca el cartel', tgt.type === 'good' ? GPS_STORY.near : 'En la zona');
       else nav('go', 'arrow', fmtDist(d), label + (tgt.hint ? ' · ' + tgt.hint : ''), R && ROOM.isIn(R) ? 'Flecha según la capilla' : 'Flecha según el plano', bearing(D.pos, tgt) + (R && ROOM.isIn(R) ? 0 : plano.rot()));
     }
 
@@ -2581,19 +2628,19 @@ function showScreen() {
       overlay('pause', `<div class="sheet-head off"><div class="sh-k">Pausa</div><h2>Juego en pausa</h2></div><div class="sheet-body"><p>El líder pausó el recorrido. Enseguida seguimos.</p></div>`);
     } else if (D.warn) {
       const t = BY_ID[D.warn.id];
-      if (D.warn.id !== lastWarnId) { lastWarnId = D.warn.id; Sound.warn(); if (t) Voice.say(`Recalculando. Reporte de peligro. El cartel dice: ${t.sign}. ${ctrl.hideQ ? '¿Es un buen camino?' : t.q}`, true); }
+      if (D.warn.id !== lastWarnId) { lastWarnId = D.warn.id; Sound.warn(); if (t) Voice.say(`Recalculando. Reporte de peligro. ${GPS_STORY.community} El cartel dice: ${t.sign}. ${ctrl.hideQ ? '¿Es un buen camino?' : t.q}`, true); }
       const ansKey = D.warn.id + String(D.warn.ans);
       if ((D.warn.ans === true || D.warn.ans === false) && spokenAns !== ansKey && t) { spokenAns = ansKey; Voice.say((D.warn.ans ? '¡Desvío a tiempo! Más cincuenta. ' : 'Esa no era. ') + t.why, true); }
       overlay('w' + ansKey + (ctrl.hideQ ? 'h' : ''), warnHTML(D.warn, !!ctrl.hideQ));
     } else if (D.done) {
-      if (overKey !== 'final' + D.run) { Sound.good(); Voice.say(`${D.name || 'El jugador'} llegó a la capilla con ${D.score} puntos. El Espíritu guía a sus hijos y les enseña a discernir juntos.`, true); }
+      if (overKey !== 'final' + D.run) { Sound.good(); Voice.say(`${D.name || 'El jugador'} llegó a la capilla con ${D.score} puntos. ${gpsStorySpeech(true)}`, true); }
       overlay('final' + D.run, finalHTML());
     } else {
       if (D.ev && D.ev.at > lastEvAt && D.ev.at >= D.start && now - D.ev.at < 15000) {
         lastEvAt = D.ev.at; evUntil = now + 8000; evHTML = evHTMLFor(D.ev);
         if (D.ev.type === 'trap') Sound.bad(); else Sound.good();
         const p = BY_ID[D.ev.id];
-        if (p) Voice.say(D.ev.type === 'trap' ? `Cayó en una trampa. ${p.why}` : `Punto alcanzado. ${p.title}. ${p.body}`, true);
+        if (p) Voice.say(D.ev.type === 'trap' ? `Cayó en una trampa. ${GPS_STORY.recalc} ${p.why}` : `Punto alcanzado. ${p.title}. ${p.body}`, true);
       }
       if (now < evUntil && evHTML) overlay('e' + lastEvAt, evHTML); else overlay('', '');
       if (!D.warn) lastWarnId = '';
@@ -2610,6 +2657,13 @@ function showScreen() {
   cleanup.push(unCtl, () => { try { speechSynthesis.cancel(); } catch (e) {} });
   const iv = setInterval(render, 1000);
   cleanup.push(unR, unD, () => clearInterval(iv));
+  // La lectura inicial requiere un clic; usa la voz y sus controles existentes.
+  $('#gpsStoryRead').onclick = () => {
+    if (!Voice.ok()) { $('#gpsStoryVoiceNote').textContent = 'La voz no está disponible. Podés leer la historia en pantalla.'; return; }
+    Sound.init(); Voice.on = true; Voice.pick();
+    $('#sndBtn').hidden = true; $('#voiceBtn').hidden = false; $('#voiceBtn').textContent = 'Silenciar voz';
+    Voice.say(gpsStorySpeech(), true);
+  };
   $('#sndBtn').onclick = () => {
     Sound.init(); Sound.ping(); Voice.on = Voice.ok(); Voice.pick();
     Voice.say('Sonido y voz activados.', true);
